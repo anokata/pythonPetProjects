@@ -19,9 +19,13 @@ class Game:
   
   window = None
   score_label = None
+  infoLabel = None
+  labels = []
   scoreText1 = "Player: "
   scoreText2 = "Bot: "
   difficult = 100
+  
+  wall = None
   
   def __init__(self):
     random.seed()
@@ -32,7 +36,12 @@ class Game:
     self.player = Player(window.height, pyglet.image.load('player.png'))
     self.bot = Bot(window.height, pyglet.image.load('player.png'), window.width - 20)
     
+    wallimg = pyglet.image.load('wall.png')
+    self.wall = pyglet.sprite.Sprite(wallimg, window.width // 2, - wallimg.height + window.height - 40)
+        
     self.score_label = pyglet.text.Label(text=self.getScore(), x=window.width // 2, y=window.height - 30, anchor_x='center', anchor_y='center')
+    self.infoLabel = pyglet.text.Label(text=self.getInfo(), x=10, y=10)
+    self.labels += [self.infoLabel]
     pyglet.gl.glClearColor(0.7,0.5,0.3, 1)
     #window.push_handlers(pyglet.window.event.WindowEventLogger())
     pyglet.clock.schedule_interval(self.mechanic, 1.0/30)
@@ -40,10 +49,14 @@ class Game:
     @window.event
     def on_draw():
       window.clear()
-      g.score_label.draw()
-      g.ball.sprite.draw()
-      g.player.sprite.draw()
-      g.bot.sprite.draw()
+      self.wall.draw()
+      self.score_label.draw()
+      self.ball.sprite.draw()
+      self.player.sprite.draw()
+      self.bot.sprite.draw()
+      for x in self.labels:
+        x.draw()
+      
 
     @window.event
     def on_key_press(symbol, mod):
@@ -67,11 +80,13 @@ class Game:
     self.bot.randStep(self.ball.sprite.y, self.ball.sprite.x > self.window.width // 2)
     self.checkBallOut()
     self.isCollision()
+    self.updateLabels()
     
   def isCollision(self):
     colis = self.collisoinsDetect()
     if colis:
-      self.ball.dx = abs(self.ball.dx) + self.difficult
+      if abs(self.ball.dx) < self.ball.maxspeed:
+        self.ball.dx = abs(self.ball.dx) + self.difficult
       if type(colis) == Player:
         self.ball.dx = abs(self.ball.dx)
       else:
@@ -85,6 +100,12 @@ class Game:
   
   def updateScore(self):
     self.score_label.text = self.getScore()
+  
+  def updateLabels(self):
+    self.infoLabel.text = self.getInfo()
+    
+  def getInfo(self):
+    return "SPD: " + str(abs(self.ball.dx)) + ' | '
     
   def checkBallOut(self):
     isout = self.ball.isOut()
@@ -184,6 +205,7 @@ class Ball():
   rightX = 0
   top = 0
   bottom = 0
+  maxspeed = 1000
   
   def __init__(self, img, width, height):
     center_image(img)
