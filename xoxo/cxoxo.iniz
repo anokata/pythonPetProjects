@@ -1,0 +1,7 @@
+[main]
+boardsize = 6
+playeronename = Lisa
+playertwoname = bot
+playeronewins = 1
+playertwowins = 2
+
