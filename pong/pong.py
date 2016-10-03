@@ -21,6 +21,7 @@ class Game:
   score_label = None
   scoreText1 = "Player: "
   scoreText2 = "Bot: "
+  difficult = 100
   
   def __init__(self):
     random.seed()
@@ -63,13 +64,21 @@ class Game:
   def mechanic(self, dt):
     self.ball.step(dt)
     self.player.step()
-    self.bot.randStep()
+    self.bot.randStep(self.ball.sprite.y, self.ball.sprite.x > self.window.width // 2)
     self.checkBallOut()
+    self.isCollision()
+    
+  def isCollision(self):
     colis = self.collisoinsDetect()
     if colis:
-      self.ball.dx = - self.ball.dx
+      self.ball.dx = abs(self.ball.dx) + self.difficult
+      if type(colis) == Player:
+        self.ball.dx = abs(self.ball.dx)
+      else:
+        self.ball.dx = - abs(self.ball.dx)
+      
       if colis.isMove:
-        self.ball.dy += colis.isMove * colis.speed
+        self.ball.dy += colis.isMove * colis.speed * 2
     
   def getScore(self):
     return self.scoreText1 + ' ' + str(self.playerWins) + '   ' + self.scoreText2 + ' ' + str(self.botWins)
@@ -91,7 +100,7 @@ class Game:
     for x in faces:
       hei = max(self.ball.top, x.top) - min(self.ball.bottom, x.bottom)
       allheight = self.ball.sprite.height + x.sprite.height
-      wid = max(self.ball.leftX, x.effectiveX) - min(self.ball.rightX, x.effectiveX)
+      wid = max(self.ball.leftX, x.left) - min(self.ball.rightX, x.right)
       allwid = self.ball.sprite.width + 0
       
       if hei <= allheight and wid <= allwid:
@@ -109,16 +118,18 @@ class Player:
   yMin = 0
   yMax = 0
   sprite = 0
-  effectiveX = 0
   top = 0
   bottom = 0
+  left = 0
+  right = 0
   
   def __init__(self, height, img, x=20):
     center_image(img)
     self.sprite = pyglet.sprite.Sprite(img, x = x, y = height // 2)
     self.yMin = img.height // 2 - self.speed
     self.yMax = height - img.height // 2 + self.speed
-    self.effectiveX = x + self.sprite.width // 2
+    self.left = x // 2# - self.sprite.width // 2
+    self.right = x // 2# + self.sprite.width // 2
   
   def step(self):
     if self.isMove == direction.up:
@@ -134,18 +145,35 @@ class Player:
 class Bot(Player):
   i = 0
   maxi = 4
+  accur = 20
   
-  def randStep(self):
+  def __init__(self, height, img, x):
+    super().__init__(height, img, x)
+    self.left = x
+    self.right = x
+  
+  def randStep(self, ballY, inBotArea):
     self.i += 1
     if self.i > self.maxi:
       self.i = 0
-      self.isMove = random.choice([direction.up, direction.down, False])
+      if inBotArea:
+        if abs(ballY - self.sprite.y) > self.accur:
+          if ballY > self.sprite.y:
+            self.isMove = direction.up
+          else:
+            self.isMove = direction.down
+        else:
+          self.isMove = False
+      else:
+        #self.isMove = random.choice([direction.up, direction.down, False])
+        self.isMove = False
     self.step()
 
 class Ball():
   sprite = None
   dx = 200
   dy = 200
+  speed = 200
   collided = []
   wh = 0
   yMax = 0
@@ -184,17 +212,17 @@ class Ball():
       
   def isOut(self):
     if self.sprite.x < self.wh:
-      self.ballReturn()
+      self.ballReturn(1)
       return -1
     if self.sprite.x > self.xMax:
-      self.ballReturn()
+      self.ballReturn(-1)
       return 1
     return 0
   
-  def ballReturn(self):
+  def ballReturn(self, direct):
     self.sprite.x = self.midX
     self.sprite.y = self.midY
-    self.dx = random.choice([-200,200,150,-150])
+    self.dx = self.speed * direct
     self.dy = 200
 
 
