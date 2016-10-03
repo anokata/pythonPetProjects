@@ -1,0 +1,6 @@
+sound - http://www.pymedia.org/
+image - http://www.pythonware.com/products/pil/
+glfw  - http://trac.defuze.org/browser/oss/pygflw
+opengl- http://pyopengl.sourceforge.net/
+
+

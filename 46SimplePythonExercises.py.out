@@ -1,0 +1,457 @@
+1 #46 Simple Python Exercises
+2 #Define a function max() that takes two numbers as arguments and returns the largest of them. Use the if-then-else construct available in Python. (It is true that Python has the max() function built in, but writing it yourself is nevertheless a good exercise.)
+3 def max(a, b):
+4   if a > b:
+5     return a
+6   else:
+7     return b
+8 print(max(1,2),max(2,1), max(3,8))
+9 #Define a function max_of_three() that takes three numbers as arguments and returns the largest of them.
+10 def max_of_three(a,b,c):
+11   return max(a,(max(b,c)))
+12 print(max_of_three(1,2,3),max_of_three(8,7,6),max_of_three(8,10,3))
+13 #
+14 #Define a function that computes the length of a given list or string. (It is true that Python has the len() function built in, but writing it yourself is nevertheless a good exercise.)
+15 def leng(x):
+16   l = 0
+17   for i in x:
+18     l += 1
+19   return l
+20 print(leng("abladfalsfd;"),leng([2,3,"",7]))
+21 #Write a function that takes a character (i.e. a string of length 1) and returns True if it is a vowel, False otherwise.
+22 def vow(c):
+23   vowels = "aeiouy"
+24   return c in vowels
+25 print(vow('a'),vow('b'))
+26 #Write a function translate() that will translate a text into "rövarspråket" (Swedish for "robber's language"). That is, double every consonant and place an occurrence of "o" in between. For example, translate("this is fun") should return the string "tothohisos isos fofunon".
+27 def translate(s):
+28   r = ""
+29   for x in s:
+30     if not vow(x) and not x == ' ':
+31       r += x + "o" + x
+32     else:
+33       r += x
+34   return r
+35 print(translate("this is fun"))
+36 #Define a function sum() and a function multiply() that sums and multiplies (respectively) all the numbers in a list of numbers. For example, sum([1, 2, 3, 4]) should return 10, and multiply([1, 2, 3, 4]) should return 24.
+37 def sum(a):
+38   s = 0
+39   for x in a:
+40     s += x
+41   return s
+42 def mul(a):
+43   m = 1
+44   for x in a:
+45     m *= x
+46   return m
+47 print(sum([1,2,3,4]), mul([1,2,3,4]))
+48 #Define a function reverse() that computes the reversal of a string. For example, reverse("I am testing") should return the string "gnitset ma I".
+49 def reverse(s):
+50   r=""
+51   for x in range(leng(s)-1, -1, -1):
+52     r += s[x]
+53   return r
+54 print(reverse("I am testing"))
+55 #Define a function is_palindrome() that recognizes palindromes (i.e. words that look the same written backwards). For example, is_palindrome("radar") should return True.
+56 def is_palindrome(s):
+57   for x in range(len(s) // 2):
+58     #print(x, s[x], s[len(s) -x - 1], len(s) - x - 1)
+59     if s[x] != s[len(s) - x - 1]:
+60       return False
+61   return True
+62 print(is_palindrome("radar"), is_palindrome("zoxaxoz"))
+63 #Write a function is_member() that takes a value (i.e. a number, string, etc) x and a list of values a, and returns True if x is a member of a, False otherwise. (Note that this is exactly what the in operator does, but for the sake of the exercise you should pretend Python did not have this operator.)
+64 def is_member(l, v):
+65   for x in l:
+66     if x == v:
+67       return True
+68   return False
+69 print(is_member(list("123456678"),"6"),is_member(list("123456678"),"1"),is_member(list("123456678"),'8'), is_member("lj;lj","a"),is_member([1,5,6],6))
+70 #Define a function overlapping() that takes two lists and returns True if they have at least one member in common, False otherwise. You may use your is_member() function, or the in operator, but for the sake of the exercise, you should (also) write it using two nested for-loops.
+71 def overlapping(x, y):
+72   for a in x:
+73     for b in y:
+74       if a == b:
+75         return True
+76   return False
+77 print(overlapping("23456789","rtyuio"), overlapping("56789","2345"))
+78 #Define a function generate_n_chars() that takes an integer n and a character c and returns a string, n characters long, consisting only of c:s. For example, generate_n_chars(5,"x") should return the string "xxxxx". (Python is unusual in that you can actually write an expression 5 * "x" that will evaluate to "xxxxx". For the sake of the exercise you should ignore that the problem can be solved in this manner.)
+79 def generate_n_chars(n, c):
+80   s = ''
+81   x = 0
+82   while x < n:
+83     s += c
+84     x += 1
+85   return s
+86 print(generate_n_chars(10,"a"),generate_n_chars(5,"5"))
+87 #Define a procedure histogram() that takes a list of integers and prints a histogram to the screen. For example, histogram([4, 9, 7]) should print the following:
+88 #****
+89 #*********
+90 #*******
+91 def histogram(l):
+92   for x in l:
+93     print(generate_n_chars(x,"*"))
+94 histogram([4,9,7,1,2,3,8,8,1,0,1,5,1,1])
+95 #The function max() from exercise 1) and the function max_of_three() from exercise 2) will only work for two and three numbers, respectively. But suppose we have a much larger number of numbers, or suppose we cannot tell in advance how many they are? Write a function max_in_list() that takes a list of numbers and returns the largest one.
+96 def max_in_list(l):
+97   m = l[0]
+98   for x in l:
+99     if x > m:
+100       m = x
+101   return m
+102 print(max_in_list([-20,2,-30,8,10,8,1]))
+103 #Write a program that maps a list of words into a list of integers representing the lengths of the correponding words.
+104 def wordsLens1(l):
+105   r = []
+106   for x in l:
+107     r += [len(x)]
+108   return r
+109 def wordsLens2(l):
+110   return [len(x) for x in l]
+111 def wordsLens3(l):
+112   return list(map(len, l))
+113 print(wordsLens1(["x","run","asdf",'']))
+114 print(wordsLens2(["x","run","asdf",'']))
+115 print(wordsLens3(["x","run","asdf",'']))
+116 #Write a function find_longest_word() that takes a list of words and returns the length of the longest one.
+117 def find_longest_word(l):
+118   return max_in_list(wordsLens3(l))
+119 print(find_longest_word(["x","run","asdf",'']))
+120 #Write a function filter_long_words() that takes a list of words and an integer n and returns the list of words that are longer than n.
+121 def filter_long_words(l,n):
+122   r = []
+123   for x in l:
+124     if len(x) > n:
+125       r += [x]
+126   return r
+127 print(filter_long_words(["x","run","asdf",'kkkkkk'],3))
+128 #Write a version of a palindrome recognizer that also accepts phrase palindromes such as "Go hang a salami I'm a lasagna hog.", "Was it a rat I saw?", "Step on no pets", "Sit on a potato pan, Otis", "Lisa Bonet ate no basil", "Satan, oscillate my metallic sonatas", "I roamed under it as a tired nude Maori", "Rise to vote sir", or the exclamation "Dammit, I'm mad!". Note that punctuation, capitalization, and spacing are usually ignored.
+129 def is_palindrome2(s):
+130   z = ''
+131   for x in s.lower():
+132     if x.isalpha():
+133       z += x
+134   #print(z)
+135   return is_palindrome(z)
+136 print(is_palindrome2("Was it a rat I saw?"), is_palindrome2("Was it a rat I saz?"))
+137 #A pangram is a sentence that contains all the letters of the English alphabet at least once, for example: The quick brown fox jumps over the lazy dog. Your task here is to write a function to check a sentence to see if it is a pangram or not.
+138 def is_pangram(s):
+139   alphabet = set(map(chr, range(ord('a'), ord('z') + 1)))
+140   x = set(s)
+141   return (alphabet - x) == set()
+142 print(is_pangram("The quick brown fox jumps over the lazy dogggg"))
+143 print(is_pangram("The quick brown fox jumps over the lazy do"))
+144 #"99 Bottles of Beer" is a traditional song in the United States and Canada:
+145 #99 bottles of beer on the wall, 99 bottles of beer.
+146 #Take one down, pass it around, 98 bottles of beer on the wall.
+147 #The same verse is repeated, each time with one fewer bottle. The song is completed when the singer or singers reach zero.
+148 #
+149 #Your task here is write a Python program capable of generating all the verses of the song.
+150 def a99bofb():
+151   for x in range(99,0,-1):
+152     print(str(x) + ' bottles of beer on the wall, ' + str(x) + ' bottles of beer.')
+153     print('Take one down, pass it around, ' + str(x-1) + ' bottles of beer on the wall.')
+154 a99bofb()
+155 #Represent a small bilingual lexicon as a Python dictionary in the following fashion {"merry":"god", "christmas":"jul", "and":"och", "happy":gott", "new":"nytt", "year":"år"} and use it to translate your Christmas cards from English into Swedish. That is, write a function translate() that takes a list of English words and returns a list of Swedish words.
+156 def strToWordList(s):
+157   return s.split(' ')
+158 def translate(l):
+159   a = {"merry":"god", "christmas":"jul", "and":"och", "happy":"gott", "new":"nytt", "year":"år"}
+160   return list(map(lambda x: a.get(x,x), strToWordList(l)))
+161 print(translate("We wish you a merry christmas and xmas. happy new year!"))
+162 #Write a function char_freq() that takes a string and builds a frequency listing of the characters contained in it. Represent the frequency listing as a Python dictionary. Try it with something like char_freq("abbabcbdbabdbdbabababcbcbab").
+163 def char_freq(s):
+164   r = {}
+165   for x in s:
+166     if not x in r:
+167       r[x] = 1
+168     else:
+169       r[x] += 1
+170   return r
+171 print(char_freq("abbabcbdbabdbdbabababcbcbab"))
+172 #In cryptography, a Caesar cipher is a very simple encryption techniques in which each letter in the plain text is replaced by a letter some fixed number of positions down the alphabet. For example, with a shift of 3, A would be replaced by D, B would become E, and so on. The method is named after Julius Caesar, who used it to communicate with his generals. ROT-13 ("rotate by 13 places") is a widely used example of a Caesar cipher where the shift is 13. In Python, the key for ROT-13 may be represented by means of the following dictionary:
+173 #
+174 #key = {'a':'n', 'b':'o', 'c':'p', 'd':'q', 'e':'r', 'f':'s', 'g':'t', 'h':'u', 
+175 #       'i':'v', 'j':'w', 'k':'x', 'l':'y', 'm':'z', 'n':'a', 'o':'b', 'p':'c', 
+176 #       'q':'d', 'r':'e', 's':'f', 't':'g', 'u':'h', 'v':'i', 'w':'j', 'x':'k',
+177 #       'y':'l', 'z':'m', 'A':'N', 'B':'O', 'C':'P', 'D':'Q', 'E':'R', 'F':'S', 
+178 #       'G':'T', 'H':'U', 'I':'V', 'J':'W', 'K':'X', 'L':'Y', 'M':'Z', 'N':'A', 
+179 #       'O':'B', 'P':'C', 'Q':'D', 'R':'E', 'S':'F', 'T':'G', 'U':'H', 'V':'I', 
+180 #       'W':'J', 'X':'K', 'Y':'L', 'Z':'M'}
+181 #Your task in this exercise is to implement an encoder/decoder of ROT-13. Once you're done, you will be able to read the following secret message:
+182 #   Pnrfne pvcure? V zhpu cersre Pnrfne fnynq!
+183 #Note that since English has 26 characters, your ROT-13 program will be able to both encode and decode texts written in English.
+184 key = {'a':'n', 'b':'o', 'c':'p', 'd':'q', 'e':'r', 'f':'s', 'g':'t', 'h':'u', 
+185        'i':'v', 'j':'w', 'k':'x', 'l':'y', 'm':'z', 'n':'a', 'o':'b', 'p':'c', 
+186        'q':'d', 'r':'e', 's':'f', 't':'g', 'u':'h', 'v':'i', 'w':'j', 'x':'k',
+187        'y':'l', 'z':'m', 'A':'N', 'B':'O', 'C':'P', 'D':'Q', 'E':'R', 'F':'S', 
+188        'G':'T', 'H':'U', 'I':'V', 'J':'W', 'K':'X', 'L':'Y', 'M':'Z', 'N':'A', 
+189        'O':'B', 'P':'C', 'Q':'D', 'R':'E', 'S':'F', 'T':'G', 'U':'H', 'V':'I', 
+190        'W':'J', 'X':'K', 'Y':'L', 'Z':'M'}
+191 def rot13decode(msg):
+192   m = ''
+193   for x in msg:
+194     if x in key:
+195       m += key[x]
+196     else:
+197       m += x
+198   return m
+199 def rot13encode2(msg):
+200   return ''.join((list(map(lambda x: key[x], msg))))
+201 print(rot13decode("Pnrfne pvcure? V zhpu cersre Pnrfne fnynq!"))
+202 #Define a simple "spelling correction" function correct() that takes a string and sees to it that 1) two or more occurrences of the space character is compressed into one, and 2) inserts an extra space after a period if the period is directly followed by a letter. E.g. correct("This   is  very funny  and    cool.Indeed!") should return "This is very funny and cool. Indeed!" Tip: Use regular expressions!
+203 def correct(s): #N:23
+204   import re
+205   nomorespace = re.sub('\s\s+',' ',s)
+206   return re.sub('\.(\w)','. \g<1>',nomorespace)
+207 print(correct("This   is  very funny  and    cool.Indeed!"))
+208 #The third person singular verb form in English is distinguished by the suffix -s, which is added to the stem of the infinitive form: run -> runs. A simple set of rules can be given as follows:
+209 #If the verb ends in y, remove it and add ies
+210 #If the verb ends in o, ch, s, sh, x or z, add es
+211 #By default just add s
+212 #Your task in this exercise is to define a function make_3sg_form() which given a verb in infinitive form returns its third person singular form. Test your function with words like try, brush, run and fix. Note however that the rules must be regarded as heuristic, in the sense that you must not expect them to work for all cases. Tip: Check out the string method endswith().
+213 def make_3sg_form(s):
+214   import re
+215   if s.endswith('y'):
+216     return s[:-1] + 'ies'
+217   else:
+218     return re.sub('(o$|ch$|s$|sh$|x$|z$)','\g<1>e',s) + 's'
+219 print(make_3sg_form('try'), make_3sg_form('brush'), make_3sg_form('run'), make_3sg_form('fix'))
+220 #In English, the present participle is formed by adding the suffix -ing to the infinite form: go -> going. A simple set of heuristic rules can be given as follows:
+221 #If the verb ends in e, drop the e and add ing (if not exception: be, see, flee, knee, etc.)
+222 #If the verb ends in ie, change ie to y and add ing
+223 #For words consisting of consonant-vowel-consonant, double the final letter before adding ing
+224 #By default just add ing
+225 #Your task in this exercise is to define a function make_ing_form() which given a verb in infinitive form returns its present participle form. Test your function with words such as lie, see, move and hug. However, you must not expect such simple rules to work for all cases.
+226 
+227 #Higher order functions and list comprehensions
+228 
+229 #Using the higher order function reduce(), write a function max_in_list() that takes a list of numbers and returns the largest one. Then ask yourself: why define and call a new function, when I can just as well call the reduce() function directly?
+230 def max_in_list2(l):
+231   import functools
+232   return functools.reduce(max, l)
+233 print(max_in_list2([1,2,3,4,66,5,43,4,4]))
+234 #Write a program that maps a list of words into a list of integers representing the lengths of the correponding words. Write it in three different ways: 1) using a for-loop, 2) using the higher order function map(), and 3) using list comprehensions.
+235 
+236 #Write a function find_longest_word() that takes a list of words and returns the length of the longest one. Use only higher order functions.
+237 def find_longest_word2(l):
+238   import functools
+239   return functools.reduce(lambda x, y: max(x, len(y)),l,0)
+240 print(find_longest_word2(["x","run","asdf",'']))
+241 #Using the higher order function filter(), define a function filter_long_words() that takes a list of words and an integer n and returns the list of words that are longer than n.
+242 def filter_long_words2(l, n):
+243   return list(filter(lambda x: x if len(x) > n else False, l))
+244 print(filter_long_words2(["x","run","asdf",'kkkkkk'],3))
+245 #Represent a small bilingual lexicon as a Python dictionary in the following fashion {"merry":"god", "christmas":"jul", "and":"och", "happy":gott", "new":"nytt", "year":"år"} and use it to translate your Christmas cards from English into Swedish. Use the higher order function map() to write a function translate() that takes a list of English words and returns a list of Swedish words.
+246 def translate2(s):
+247   d = {"merry":"god", "christmas":"jul", "and":"och", "happy":"gott", "new":"nytt", "year":"år"} 
+248   return list(map(lambda x: d.get(x, x), s))
+249 print(translate2("We wish you a merry christmas and xmas. happy new year!".split()))
+250 #Implement the higher order functions map(), filter() and reduce(). (They are built-in but writing them yourself may be a good exercise.)
+251 def map2(f,l):
+252   r = []
+253   for x in l:
+254     r += [f(x)]
+255   return r
+256 print(map2(lambda x: x*x, list(range(10))))
+257 def odd(x):
+258   return x % 2 == 1
+259 def filter2(f, l):
+260   r = []
+261   for x in l:
+262     if f(x):
+263       r += [x]
+264   return r
+265 print(filter2(odd, list(range(10))))
+266 def reduce2(f,l,i = False):
+267   if not i:
+268     i = l[0]
+269   r = i
+270   for x in l:
+271     r = f(r, x)
+272   return r
+273 print(reduce2(lambda x, y: x * y,list(range(1,10))))
+274 #Simple exercises including I/O
+275 
+276 #Write a version of a palindrome recogniser that accepts a file name from the user, reads each line, and prints the line to the screen if it is a palindrome.
+277 def palindromF(fn):
+278   fileobj = open(fn, 'r')
+279   while True:
+280     line = fileobj.readline()
+281     #print(is_palindrome2(line))
+282     if not line:
+283       break
+284     if is_palindrome2(line):
+285       print(line)
+286   fileobj.close()
+287 palindromF('pali.txt')
+288 #According to Wikipedia, a semordnilap is a word or phrase that spells a different word or phrase backwards. ("Semordnilap" is itself "palindromes" spelled backwards.) Write a semordnilap recogniser that accepts a file name (pointing to a list of words) from the user and finds and prints all pairs of words that are semordnilaps to the screen. For example, if "stressed" and "desserts" is part of the word list, the the output should include the pair "stressed desserts". Note, by the way, that each pair by itself forms a palindrome!
+289 def semordnilap(fn):
+290   with open(fn, 'rt') as f:
+291   #  for line in f:
+292     a = f.read().split()
+293     printed = []
+294     for x in a:
+295       if x[::-1] in a and not x in printed:
+296         print(x, x[::-1])
+297         printed += [x[::-1]]
+298 semordnilap('semo.txt')
+299 #Write a procedure char_freq_table() that, when run in a terminal, accepts a file name from the user, builds a frequency listing of the characters contained in the file, and prints a sorted and nicely formatted character frequency table to the screen.
+300 def char_freq_table(fn):
+301   with open(fn, 'rt') as f:
+302     cf = char_freq(f.read())
+303     import math
+304     col = int(math.ceil(math.sqrt(len(cf))))
+305     i = 0
+306     for x,y in sorted(cf.items(), key=lambda x: x[1]):
+307       print( (str(ord(x)) + ' : ' + str(y)).center(10) , end='|\n' if col == i else '    ')
+308       i+=1
+309       if i > col:
+310         i = 0
+311 char_freq_table('semo.txt')
+312 #The International Civil Aviation Organization (ICAO) alphabet assigns code words to the letters of the English alphabet acrophonically (Alfa for A, Bravo for B, etc.) so that critical combinations of letters (and numbers) can be pronounced and understood by those who transmit and receive voice messages by radio or telephone regardless of their native language, especially when the safety of navigation or persons is essential. Here is a Python dictionary covering one version of the ICAO alphabet:
+313 #
+314 #d = {'a':'alfa', 'b':'bravo', 'c':'charlie', 'd':'delta', 'e':'echo', 'f':'foxtrot',
+315 #     'g':'golf', 'h':'hotel', 'i':'india', 'j':'juliett', 'k':'kilo', 'l':'lima',
+316 #     'm':'mike', 'n':'november', 'o':'oscar', 'p':'papa', 'q':'quebec', 'r':'romeo',
+317 #     's':'sierra', 't':'tango', 'u':'uniform', 'v':'victor', 'w':'whiskey', 
+318 #     'x':'x-ray', 'y':'yankee', 'z':'zulu'}
+319 #Your task in this exercise is to write a procedure speak_ICAO() able to translate any text (i.e. any string) into spoken ICAO words. You need to import at least two libraries: os and time. On a mac, you have access to the system TTS (Text-To-Speech) as follows: os.system('say ' + msg), where msg is the string to be spoken. (Under UNIX/Linux and Windows, something similar might exist.) Apart from the text to be spoken, your procedure also needs to accept two additional parameters: a float indicating the length of the pause between each spoken ICAO word, and a float indicating the length of the pause between each word spoken.
+320 def speak_ICAO(s, charPause, wordPause):
+321   d = {'a':'alfa', 'b':'bravo', 'c':'charlie', 'd':'delta', 'e':'echo', 'f':'foxtrot',
+322      'g':'golf', 'h':'hotel', 'i':'india', 'j':'juliett', 'k':'kilo', 'l':'lima',
+323      'm':'mike', 'n':'november', 'o':'oscar', 'p':'papa', 'q':'quebec', 'r':'romeo',
+324      's':'sierra', 't':'tango', 'u':'uniform', 'v':'victor', 'w':'whiskey', 
+325      'x':'x-ray', 'y':'yankee', 'z':'zulu'}
+326   import os
+327   import time
+328   for x in s:
+329     print(d.get(x,''))
+330     if ' ' == x:
+331       time.sleep(wordPause)
+332     else:
+333       time.sleep(charPause)
+334   
+335 def icaotest():
+336   speak_ICAO("some birds can fly", 0.1, 0.5)
+337 #python -i 46Sim...
+338 #A hapax legomenon (often abbreviated to hapax) is a word which occurs only once in either the written record of a language, the works of an author, or in a single text. Define a function that given the file name of a text will return all its hapaxes. Make sure your program ignores capitalization.
+339 def hapax(fn): # Гапакс
+340   with open(fn, 'rt') as f:
+341     contents = f.read().lower()
+342     wordFreq = dict()
+343     for x in contents.split():
+344       if x in wordFreq:
+345         wordFreq[x] += 1
+346       else:
+347         wordFreq[x] = 1
+348     #hapaxes = list(filter(lambda x: x == 1, wordFreq.values()))
+349     hapaxes = []
+350     for s,n in wordFreq.items():
+351       if n == n:
+352         hapaxes += [s]
+353     return hapaxes
+354 print(hapax('semo.txt'))
+355 #Write a program that given a text file will create a new text file in which all the lines from the original file are numbered from 1 to n (where n is the number of lines in the file).
+356 def numFileLines(fn):
+357   with open(fn, 'rt') as fin:
+358     with open(fn+'.out', 'wt') as fout:
+359       n = 1
+360       for x in fin:
+361         fout.write(str(n) + ' ' + x)
+362         n += 1
+363 numFileLines('46SimplePythonExercises.py')
+364 #Write a program that will calculate the average word length of a text stored in a file (i.e the sum of all the lengths of the word tokens in the text, divided by the number of word tokens).
+365 def avgWordLen(fn):
+366   with open(fn, 'rt') as f:
+367     words = f.read().split()
+368     return sum(wordsLens3(words)) / len(words)
+369 print(avgWordLen('semo.txt'))
+370 #Write a program able to play the "Guess the number"-game, where the number to be guessed is randomly chosen between 1 and 20. (Source: http://inventwithpython.com) This is how it should work when run in a terminal:
+371 #
+372 #>>> import guess_number
+373 #Hello! What is your name?
+374 #Torbjörn
+375 #Well, Torbjörn, I am thinking of a number between 1 and 20.
+376 #Take a guess.
+377 #10
+378 #Your guess is too low.
+379 #Take a guess.
+380 #15
+381 #Your guess is too low.
+382 #Take a guess.
+383 #18
+384 #Good job, Torbjörn! You guessed my number in 3 guesses!
+385 #An anagram is a type of word play, the result of rearranging the letters of a word or phrase to produce a new word or phrase, using all the original letters exactly once; e.g., orchestra = carthorse, A decimal point = I'm a dot in place. Write a Python program that, when started 1) randomly picks a word w from given list of words, 2) randomly permutes w (thus creating an anagram of w), 3) presents the anagram to the user, and 4) enters an interactive loop in which the user is invited to guess the original word. It may be a good idea to work with (say) colour words only. The interaction with the program may look like so:
+386 #
+387 #>>> import anagram
+388 #Colour word anagram: onwbr
+389 #Guess the colour word!
+390 #black
+391 #Guess the colour word!
+392 #brown
+393 #Correct!
+394 #In a game of Lingo, there is a hidden word, five characters long. The object of the game is to find this word by guessing, and in return receive two kinds of clues: 1) the characters that are fully correct, with respect to identity as well as to position, and 2) the characters that are indeed present in the word, but which are placed in the wrong position. Write a program with which one can play Lingo. Use square brackets to mark characters correct in the sense of 1), and ordinary parentheses to mark characters correct in the sense of 2). Assuming, for example, that the program conceals the word "tiger", you should be able to interact with it in the following way:
+395 #
+396 #>>> import lingo
+397 #snake
+398 #Clue: snak(e)
+399 #fiest
+400 #Clue: f[i](e)s(t)
+401 #times
+402 #Clue: [t][i]m[e]s
+403 #tiger
+404 #Clue: [t][i][g][e][r]
+405 
+406 #Somewhat harder exercises
+407 
+408 #A sentence splitter is a program capable of splitting a text into sentences. The standard set of heuristics for sentence splitting includes (but isn't limited to) the following rules:
+409 #
+410 #Sentence boundaries occur at one of "." (periods), "?" or "!", except that
+411 #
+412 #Periods followed by whitespace followed by a lower case letter are not sentence boundaries.
+413 #Periods followed by a digit with no intervening whitespace are not sentence boundaries.
+414 #Periods followed by whitespace and then an upper case letter, but preceded by any of a short list of titles are not sentence boundaries. Sample titles include Mr., Mrs., Dr., and so on.
+415 #Periods internal to a sequence of letters with no adjacent whitespace are not sentence boundaries (for example, www.aptex.com, or e.g).
+416 #Periods followed by certain kinds of punctuation (notably comma and more periods) are probably not sentence boundaries.
+417 #Your task here is to write a program that given the name of a text file is able to write its content with each sentence on a separate line. Test your program with the following short text: Mr. Smith bought cheapsite.com for 1.5 million dollars, i.e. he paid a lot for it. Did he mind? Adam Jones Jr. thinks he didn't. In any case, this isn't true... Well, with a probability of .9 it isn't. The result should be:
+418 #
+419 #Mr. Smith bought cheapsite.com for 1.5 million dollars, i.e. he paid a lot for it.
+420 #Did he mind?
+421 #Adam Jones Jr. thinks he didn't.
+422 #In any case, this isn't true...
+423 #Well, with a probability of .9 it isn't.
+424 #An anagram is a type of word play, the result of rearranging the letters of a word or phrase to produce a new word or phrase, using all the original letters exactly once; e.g., orchestra = carthorse. Using the word list at http://www.puzzlers.org/pub/wordlists/unixdict.txt, write a program that finds the sets of words that share the same characters that contain the most words in them.
+425 #
+426 #Your task in this exercise is as follows:
+427 #
+428 #Generate a string with N opening brackets ("[") and N closing brackets ("]"), in some arbitrary order.
+429 #Determine whether the generated string is balanced; that is, whether it consists entirely of pairs of opening/closing brackets (in that order), none of which mis-nest.
+430 #Examples:
+431 #
+432 #   []        OK   ][        NOT OK
+433 #   [][]      OK   ][][      NOT OK
+434 #   [[][]]    OK   []][[]    NOT OK
+435 #A certain childrens game involves starting with a word in a particular category. Each participant in turn says a word, but that word must begin with the final letter of the previous word. Once a word has been given, it cannot be repeated. If an opponent cannot give a word in the category, they fall out of the game. For example, with "animals" as the category,
+436 #
+437 #Child 1: dog 
+438 #Child 2: goldfish
+439 #Child 1: hippopotamus
+440 #Child 2: snake
+441 #...
+442 #Your task in this exercise is as follows: Take the following selection of 70 English Pokemon names (extracted from Wikipedia's list of Pokemon) and generate the/a sequence with the highest possible number of Pokemon names where the subsequent name starts with the final letter of the preceding name. No Pokemon name is to be repeated.
+443 #
+444 #audino bagon baltoy banette bidoof braviary bronzor carracosta charmeleon
+445 #cresselia croagunk darmanitan deino emboar emolga exeggcute gabite
+446 #girafarig gulpin haxorus heatmor heatran ivysaur jellicent jumpluff kangaskhan
+447 #kricketune landorus ledyba loudred lumineon lunatone machamp magnezone mamoswine
+448 #nosepass petilil pidgeotto pikachu pinsir poliwrath poochyena porygon2
+449 #porygonz registeel relicanth remoraid rufflet sableye scolipede scrafty seaking
+450 #sealeo silcoon simisear snivy snorlax spoink starly tirtouga trapinch treecko
+451 #tyrogue vigoroth vulpix wailord wartortle whismur wingull yamask
+452 #An alternade is a word in which its letters, taken alternatively in a strict sequence, and used in the same order as the original word, make up at least two other words. All letters must be used, but the smaller words are not necessarily of the same length. For example, a word with seven letters where every second letter is used will produce a four-letter word and a three-letter word. Here are two examples:
+453 #
+454 #  "board": makes "bad" and "or".
+455 #  "waists": makes "wit" and "ass".
+456 #Using the word list at http://www.puzzlers.org/pub/wordlists/unixdict.txt, write a program that goes through each word in the list and tries to make two smaller words using every second letter. The smaller words must also be members of the list. Print the words to the screen in the above fashion.
+457 #
