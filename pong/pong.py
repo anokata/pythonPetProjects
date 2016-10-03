@@ -15,8 +15,11 @@ class Game:
   
   window = None
   score_label = None
+  scoreText1 = "Player: "
+  scoreText2 = "Bot: "
   
   def __init__(self):
+    random.seed()
     self.window = pyglet.window.Window()
     window = self.window
     
@@ -24,7 +27,7 @@ class Game:
     self.player = Player(window.height, pyglet.image.load('player.png'))
     self.bot = Bot(window.height, pyglet.image.load('player.png'), window.width - 20)
     
-    self.score_label = pyglet.text.Label(text="Player: 0  Bot: 0", x=window.width // 2, y=window.height - 30, anchor_x='center', anchor_y='center')
+    self.score_label = pyglet.text.Label(text=self.getScore(), x=window.width // 2, y=window.height - 30, anchor_x='center', anchor_y='center')
     pyglet.gl.glClearColor(0.7,0.5,0.3, 1)
     #window.push_handlers(pyglet.window.event.WindowEventLogger())
     pyglet.clock.schedule_interval(self.mechanic, 1.0/30)
@@ -57,6 +60,22 @@ class Game:
     self.ball.step(dt)
     self.player.step()
     self.bot.randStep()
+    self.checkBallOut()
+    
+  def getScore(self):
+    return self.scoreText1 + ' ' + str(self.playerWins) + '   ' + self.scoreText2 + ' ' + str(self.botWins)
+  
+  def updateScore(self):
+    self.score_label.text = self.getScore()
+    
+  def checkBallOut(self):
+    isout = self.ball.isOut()
+    if 1 == isout:
+      self.playerWins += 1
+      self.updateScore()
+    if -1 == isout:
+      self.botWins += 1
+      self.updateScore()
 
 class direction:
   up = 1
@@ -96,17 +115,23 @@ class Bot(Player):
 
 class Ball():
   sprite = None
-  dx = 10
-  dy = 100
+  dx = 200
+  dy = 200
   collided = []
   wh = 0
   yMax = 0
+  xMax = 0
+  midX = 0
+  midY = 0
   
   def __init__(self, img, width, height):
     center_image(img)
+    self.midX = width // 2
+    self.midY = height // 2
     self.sprite = pyglet.sprite.Sprite(img, x = width // 2, y = height // 2)
     self.wh = img.width // 2
     self.yMax = height - self.wh
+    self.xMax = width - self.wh
 
   def step(self, dt):
     self.sprite.rotation += 100 * dt
@@ -119,6 +144,21 @@ class Ball():
       self.dy = - self.dy
     if self.sprite.y > self.yMax:
       self.dy = - self.dy
+      
+  def isOut(self):
+    if self.sprite.x < self.wh:
+      self.ballReturn()
+      return -1
+    if self.sprite.x > self.xMax:
+      self.ballReturn()
+      return 1
+    return 0
+  
+  def ballReturn(self):
+    self.sprite.x = self.midX
+    self.sprite.y = self.midY
+    self.dx = random.choice([-200,200,150,-150])
+    self.dy = 200
 
 
 if __name__ == '__main__':
