@@ -6,6 +6,10 @@ def center_image(image):
   image.anchor_x = image.width // 2
   image.anchor_y = image.height // 2
 
+#def distance(x, y, a, b):
+#  from math import sqrt
+# return sqrt(x*x)
+
 class Game:
   playerWins = 0
   botWins = 0
@@ -61,6 +65,11 @@ class Game:
     self.player.step()
     self.bot.randStep()
     self.checkBallOut()
+    colis = self.collisoinsDetect()
+    if colis:
+      self.ball.dx = - self.ball.dx
+      if colis.isMove:
+        self.ball.dy += colis.isMove * colis.speed
     
   def getScore(self):
     return self.scoreText1 + ' ' + str(self.playerWins) + '   ' + self.scoreText2 + ' ' + str(self.botWins)
@@ -76,6 +85,19 @@ class Game:
     if -1 == isout:
       self.botWins += 1
       self.updateScore()
+  
+  def collisoinsDetect(self):
+    faces = [self.player, self.bot]
+    for x in faces:
+      hei = max(self.ball.top, x.top) - min(self.ball.bottom, x.bottom)
+      allheight = self.ball.sprite.height + x.sprite.height
+      wid = max(self.ball.leftX, x.effectiveX) - min(self.ball.rightX, x.effectiveX)
+      allwid = self.ball.sprite.width + 0
+      
+      if hei <= allheight and wid <= allwid:
+        return x
+    return False
+
 
 class direction:
   up = 1
@@ -87,12 +109,16 @@ class Player:
   yMin = 0
   yMax = 0
   sprite = 0
+  effectiveX = 0
+  top = 0
+  bottom = 0
   
   def __init__(self, height, img, x=20):
     center_image(img)
     self.sprite = pyglet.sprite.Sprite(img, x = x, y = height // 2)
     self.yMin = img.height // 2 - self.speed
     self.yMax = height - img.height // 2 + self.speed
+    self.effectiveX = x + self.sprite.width // 2
   
   def step(self):
     if self.isMove == direction.up:
@@ -101,6 +127,9 @@ class Player:
     if self.isMove == direction.down:
       if (self.sprite.y - self.speed) > self.yMin:
         self.sprite.y -= self.speed
+    
+    self.top = self.sprite.y + self.sprite.height // 2
+    self.bottom = self.sprite.y - self.sprite.height // 2
 
 class Bot(Player):
   i = 0
@@ -123,6 +152,10 @@ class Ball():
   xMax = 0
   midX = 0
   midY = 0
+  leftX = 0
+  rightX = 0
+  top = 0
+  bottom = 0
   
   def __init__(self, img, width, height):
     center_image(img)
@@ -137,6 +170,10 @@ class Ball():
     self.sprite.rotation += 100 * dt
     self.sprite.x += self.dx * dt
     self.sprite.y += self.dy * dt
+    self.rightX = self.sprite.x + self.sprite.width // 2
+    self.leftX = self.sprite.x - self.sprite.width // 2
+    self.top = self.sprite.y + self.sprite.height // 2
+    self.bottom = self.sprite.y - self.sprite.height // 2
     self.collisoins()
 
   def collisoins(self):
