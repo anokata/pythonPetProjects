@@ -134,6 +134,11 @@ class Game:
   scoreText2 = "Bot: "
   difficult = 100
   
+  gameWindowLeft = 20
+  gameWindowUp = 20
+  gameWindowWidth = 0
+  gameWindowHeigth = 0
+  
   wall = None
   redParticles = None
   blueParticles = None
@@ -146,26 +151,32 @@ class Game:
   stateBallCapt = 2
   
   background = None
+  foreground = None
   
   def __init__(self):
     random.seed()
     self.drawable = list()
     self.stepping = list()
     
-    self.window = pyglet.window.Window(width=700)
+    self.window = pyglet.window.Window(width=800, height = 550)
     window = self.window
+    self.gameWindowHeigth = window.height - 20
+    self.gameWindowWidth = window.width - 100
     
-    self.background = pyglet.sprite.Sprite(pyglet.image.load('board1.png'))
+    self.background = pyglet.sprite.Sprite(pyglet.image.load('board1.png'), x=self.gameWindowLeft)
     self.addToDrawable(self.background)
+    self.foreground = pyglet.sprite.Sprite(pyglet.image.load('foreground.png'))
+    self.addToDrawable(self.foreground)
     
-    self.ball = Ball(pyglet.image.load('ball3.png'), window.width, window.height)
-    self.player = Player(window.height, pyglet.image.load('player.png'))
-    self.bot = Bot(window.height, pyglet.image.load('player.png'), window.width - 20)
+    self.ball = Ball(pyglet.image.load('ball3.png'), self.gameWindowWidth, self.gameWindowHeigth, self.gameWindowLeft)
+    
+    self.player = Player(pyglet.image.load('player.png'), self.gameWindowLeft, self.gameWindowLeft , self.gameWindowHeigth - self.gameWindowLeft)
+    self.bot = Bot(pyglet.image.load('player.png'), self.gameWindowWidth, self.gameWindowLeft, self.gameWindowHeigth - self.gameWindowLeft)
     
     wallimg = pyglet.image.load('wall.png')
-    self.wall = pyglet.sprite.Sprite(wallimg, window.width // 2, - wallimg.height + window.height - 40)
+    self.wall = pyglet.sprite.Sprite(wallimg, self.gameWindowWidth // 2, - wallimg.height + self.gameWindowHeigth - 40)
         
-    self.score_label = pyglet.text.Label(text=self.getScore(), x=window.width // 2, y=window.height - 30, anchor_x='center', anchor_y='center')
+    self.score_label = pyglet.text.Label(text=self.getScore(), x=self.gameWindowWidth // 2, y=self.gameWindowHeigth - 30, anchor_x='center', anchor_y='center')
     self.infoLabel = pyglet.text.Label(text=self.getInfo(), x=10, y=10)
 
     self.addToDrawable(self.infoLabel)
@@ -263,7 +274,7 @@ class Game:
   def mechanicRun(self, dt):
     self.ball.step(dt)
     self.player.step()
-    self.bot.randStep(self.ball.sprite.y, self.ball.sprite.x > self.window.width // 2)
+    self.bot.randStep(self.ball.sprite.y, self.ball.sprite.x > self.gameWindowWidth // 2)
     self.checkBallOut()
     self.isCollision()
     self.mechanicStd(dt)
@@ -299,8 +310,17 @@ class Game:
   def getInfo(self):
     return "SPD: " + str(abs(self.ball.dx)) + '  '
     
+  def isBallOut(self):
+    if self.ball.sprite.x < self.gameWindowUp:
+      #self.ball.ballReturn(1)
+      return -1
+    if self.ball.sprite.x > self.gameWindowWidth:
+      self.ball.ballReturn(-1)
+      return 1
+    return 0
+    
   def checkBallOut(self):
-    isout = self.ball.isOut()
+    isout = self.isBallOut()
     if 1 == isout:
       self.playerWins += random.randint(1,100)
       self.updateScore()
@@ -343,21 +363,24 @@ class Player:
   bottom = 0
   left = 0
   right = 0
-  
-  def __init__(self, height, img, x=20):
+  @debugDecor
+  def __init__(self, img, x, yMin, yMax):
     center_image(img)
-    self.sprite = pyglet.sprite.Sprite(img, x = x, y = height // 2)
-    self.yMin = img.height // 2 - self.speed
-    self.yMax = height - img.height // 2 + self.speed
-    self.left = x // 2# - self.sprite.width // 2
-    self.right = x // 2# + self.sprite.width // 2
+    x = x + img.width//2
+    yMin = yMin + img.height // 2
+    yMax -= img.height // 2
+    self.sprite = pyglet.sprite.Sprite(img, x = x, y = yMin)
+    self.yMin = yMin
+    self.yMax = yMax
+    self.left = x 
+    self.right = x 
   
   def step(self):
     if self.isMove == direction.up:
-      if (self.sprite.y + self.speed) < self.yMax:
+      if (self.sprite.y ) < self.yMax:
         self.sprite.y += self.speed
     if self.isMove == direction.down:
-      if (self.sprite.y - self.speed) > self.yMin:
+      if (self.sprite.y ) > self.yMin:
         self.sprite.y -= self.speed
     
     self.top = self.sprite.y + self.sprite.height // 2
@@ -367,10 +390,11 @@ class Bot(Player):
   i = 0
   maxi = 4
   accur = 20
-  
-  def __init__(self, height, img, x):
-    super().__init__(height, img, x)
-    self.left = x
+  @debugDecor
+  def __init__(self, img, x, yMin, yMax):
+    x = x - img.width
+    super().__init__(img, x, yMin, yMax)
+    self.left = x + img.width
     self.right = x
     self.speed = 10
   
@@ -400,6 +424,7 @@ class Ball():
   wh = 0
   yMax = 0
   xMax = 0
+  yMin = 0
   midX = 0
   midY = 0
   left = 0
@@ -408,7 +433,7 @@ class Ball():
   bottom = 0
   maxspeed = 1000
   
-  def __init__(self, img, width, height):
+  def __init__(self, img, width, height, marginBottom):
     self.collided = list()
     center_image(img)
     self.midX = width // 2
@@ -417,6 +442,7 @@ class Ball():
     self.wh = img.width // 2
     self.yMax = height - self.wh
     self.xMax = width - self.wh
+    self.yMin = img.height // 2 + marginBottom 
 
   def step(self, dt):
     self.sprite.rotation += 100 * dt
@@ -429,19 +455,10 @@ class Ball():
     self.collisoins()
 
   def collisoins(self):
-    if self.sprite.y < self.wh:
+    if self.sprite.y < self.yMin:
       self.dy = - self.dy
     if self.sprite.y > self.yMax:
       self.dy = - self.dy
-      
-  def isOut(self):
-    if self.sprite.x < self.wh:
-      #self.ballReturn(1)
-      return -1
-    if self.sprite.x > self.xMax:
-      self.ballReturn(-1)
-      return 1
-    return 0
   
   def ballReturn(self, direct):
     self.sprite.x = self.midX
