@@ -139,6 +139,7 @@ class Game:
   gameWindowUp = 20
   gameWindowWidth = 0
   gameWindowHeigth = 0
+  enemyDeep = 80
   
   wall = None
   redParticles = None
@@ -162,14 +163,14 @@ class Game:
     self.window = pyglet.window.Window(width=800, height = 550)
     window = self.window
     self.gameWindowHeigth = window.height - 20
-    self.gameWindowWidth = window.width - 100
+    self.gameWindowWidth = window.width - 200
     
     self.background = pyglet.sprite.Sprite(pyglet.image.load('board1.png'), x=self.gameWindowLeft)
     self.addToDrawable(self.background)
     self.foreground = pyglet.sprite.Sprite(pyglet.image.load('foreground.png'))
     self.addToDrawable(self.foreground)
     
-    self.ball = Ball(pyglet.image.load('ball3.png'), self.gameWindowWidth, self.gameWindowHeigth, self.gameWindowLeft)
+    self.ball = Ball(pyglet.image.load('ball4.png'), self.gameWindowWidth, self.gameWindowHeigth, self.gameWindowLeft)
     
     self.player = Player(pyglet.image.load('player.png'), self.gameWindowLeft, self.gameWindowLeft , self.gameWindowHeigth - self.gameWindowLeft)
     self.bot = Bot(pyglet.image.load('player.png'), self.gameWindowWidth, self.gameWindowLeft, self.gameWindowHeigth - self.gameWindowLeft)
@@ -177,8 +178,8 @@ class Game:
     wallimg = pyglet.image.load('wall.png')
     self.wall = pyglet.sprite.Sprite(wallimg, self.gameWindowWidth // 2, - wallimg.height + self.gameWindowHeigth - 40)
         
-    self.score_label = pyglet.text.Label(text=self.getScore(), x=self.gameWindowWidth // 2, y=self.gameWindowHeigth - 30, anchor_x='center', anchor_y='center')
-    self.infoLabel = pyglet.text.Label(text=self.getInfo(), x=10, y=10)
+    self.score_label = pyglet.text.Label(text=self.getScore(), x=self.window.width - 90, y=self.gameWindowHeigth - 40, anchor_x='left', anchor_y='center')
+    self.infoLabel = pyglet.text.Label(text=self.getInfo(), x=self.window.width - 90, y=self.gameWindowHeigth - 20)
 
     self.addToDrawable(self.infoLabel)
     self.addToDrawable(self.score_label)
@@ -300,7 +301,7 @@ class Game:
         self.ball.dy += colis.isMove * colis.speed * 2
     
   def getScore(self):
-    return self.scoreText1 + ' ' + str(self.playerWins) + '   ' + self.scoreText2 + ' ' + str(self.botWins)
+    return 'EXP:' + ' ' + str(self.playerWins)
   
   def updateScore(self):
     self.score_label.text = self.getScore()
@@ -315,7 +316,7 @@ class Game:
     if self.ball.sprite.x < self.gameWindowUp:
       #self.ball.ballReturn(1)
       return -1
-    if self.ball.sprite.x > self.gameWindowWidth:
+    if self.ball.sprite.x > self.gameWindowWidth + self.enemyDeep:
       self.ball.ballReturn(-1)
       return 1
     return 0
