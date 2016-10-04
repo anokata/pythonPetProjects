@@ -72,6 +72,10 @@ class Game:
   redParticles = None
   blueParticles = None
   
+  state = 1
+  stateRun = 1
+  stateBallCapt = 2
+  
   def __init__(self):
     random.seed()
     self.window = pyglet.window.Window()
@@ -89,10 +93,11 @@ class Game:
     self.labels += [self.infoLabel]
     pyglet.gl.glClearColor(0.7,0.5,0.3, 1)
     #window.push_handlers(pyglet.window.event.WindowEventLogger())
-    pyglet.clock.schedule_interval(self.mechanic, 1.0/30)
+    pyglet.clock.schedule_interval(self.stateHandle, 1.0/30)
     
     self.redParticles = Particles(pyglet.image.load('redstar18.png'), 15, 14, 300, 100)
     self.blueParticles = Particles(pyglet.image.load('bluestar24.png'), 15, 18, 300, 100)
+    self.stateToBallCapt()
     
     @window.event
     def on_draw():
@@ -107,7 +112,6 @@ class Game:
       for x in self.labels:
         x.draw()
       
-
     @window.event
     def on_key_press(symbol, mod):
       if symbol == key.RIGHT:
@@ -118,21 +122,54 @@ class Game:
         g.player.isMove = direction.up
       if symbol == key.DOWN:
         g.player.isMove = direction.down
+      if symbol == key.SPACE:
+        self.stateToRun()
 
     @window.event
     def on_key_release(symbol, mod):
       if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
         g.player.isMove = False
 
-  def mechanic(self, dt):
+  def stateSet(self, s):
+    self.state = s
+  
+  def stateToRun(self):
+    if self.state == self.stateBallCapt:
+      self.ball.drop(self.player.speed * 10 * self.player.isMove)
+    self.stateSet(self.stateRun)
+    
+  def stateToBallCapt(self):
+    self.ball.sprite.x = self.player.sprite.x + self.player.sprite.width
+    self.stateSet(self.stateBallCapt)
+  
+  def stateHandle(self, dt):
+    d = {
+      self.stateBallCapt: self.mechanicCapt,
+      self.stateRun: self.mechanicRun
+    }
+    fun = d[self.state]
+    fun(dt)
+    
+  def mechanicStd(self, dt):
+    self.updateLabels()
+    self.blueParticles.step()
+    self.redParticles.step()
+    
+  def mechanicCapt(self, dt):
+    self.mechanicStd(dt)
+    self.player.step()
+    self.ballCaptureStep()
+
+  def mechanicRun(self, dt):
     self.ball.step(dt)
     self.player.step()
     self.bot.randStep(self.ball.sprite.y, self.ball.sprite.x > self.window.width // 2)
     self.checkBallOut()
     self.isCollision()
-    self.updateLabels()
-    self.blueParticles.step()
-    self.redParticles.step()
+    self.mechanicStd(dt)
+    
+  def ballCaptureStep(self):
+    self.ball.sprite.y = self.player.sprite.y
     
   def isCollision(self):
     colis = self.collisoinsDetect()
@@ -171,6 +208,7 @@ class Game:
       self.botWins += 1
       self.updateScore()
       self.blueParticles.restart(500,200)
+      self.stateToBallCapt()
   
   def collisoinsDetect(self):
     faces = [self.player, self.bot]
@@ -187,7 +225,7 @@ class Game:
 
 class direction:
   up = 1
-  down = 2
+  down = -1
 
 class Player:
   isMove = False
@@ -228,6 +266,7 @@ class Bot(Player):
     super().__init__(height, img, x)
     self.left = x
     self.right = x
+    #self.speed = 1
   
   def randStep(self, ballY, inBotArea):
     self.i += 1
@@ -250,7 +289,7 @@ class Ball():
   sprite = None
   dx = 200
   dy = 200
-  speed = 200
+  speed = 400
   collided = []
   wh = 0
   yMax = 0
@@ -264,6 +303,7 @@ class Ball():
   maxspeed = 1000
   
   def __init__(self, img, width, height):
+    self.collided = list()
     center_image(img)
     self.midX = width // 2
     self.midY = height // 2
@@ -302,6 +342,10 @@ class Ball():
     self.sprite.y = self.midY
     self.dx = self.speed * direct
     self.dy = 200
+  
+  def drop(self, dy):
+    self.dy = dy
+    self.dx = self.speed
 
 
 if __name__ == '__main__':
