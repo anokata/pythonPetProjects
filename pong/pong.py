@@ -2,7 +2,7 @@ import pyglet
 from pyglet.window import key
 import random
 import math
-#bug: старые числа показываются
+#bug: 0
 def debugDecor(fn):
   def wrap(*args): 
     print(args)
@@ -20,6 +20,14 @@ def distance(x, y, a, b):
   from math import sqrt
   return sqrt((x-a)*(x-a) + (y-b)*(y-b))
 
+class BaseBlock:
+  sprite = None
+  
+  def __init__(self, img, x, y):
+    center_image(img)
+    self.sprite = pyglet.sprite.Sprite(img, x = x, y = y)
+  
+  
 # make fabric?
 class ImgNumber:
   
@@ -357,7 +365,6 @@ class direction:
 
 class Player:
   isMove = False
-  speed = 20
   yMin = 0
   yMax = 0
   sprite = 0
@@ -365,6 +372,10 @@ class Player:
   bottom = 0
   left = 0
   right = 0
+  #Stats:
+  speed = 20
+  STR = 1
+  
   #@debugDecor
   def __init__(self, img, x, yMin, yMax):
     center_image(img)
