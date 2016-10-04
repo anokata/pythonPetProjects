@@ -19,14 +19,27 @@ def objDistance(s1, s2):
 def distance(x, y, a, b):
   from math import sqrt
   return sqrt((x-a)*(x-a) + (y-b)*(y-b))
+  
+  #sprite.scale:float
+
+class Level:
+  pass
 
 class BaseBlock:
   sprite = None
   
-  def __init__(self, img, x, y):
-    center_image(img)
-    self.sprite = pyglet.sprite.Sprite(img, x = x, y = y)
-  
+  def __init__(self, imgBaseName, framesCount, x, y):
+    frames = list()
+    for i in range(1, framesCount+1):
+      img = pyglet.image.load(imgBaseName + str(i) + '.png')
+      center_image(img)
+      frames += [pyglet.image.AnimationFrame(img, 0.2)]
+      
+    anim = pyglet.image.Animation(frames)
+    self.sprite = pyglet.sprite.Sprite(anim, x = x, y = y)
+    
+  def draw(self):
+    self.sprite.draw()
   
 # make fabric?
 class ImgNumber:
@@ -162,6 +175,7 @@ class Game:
   
   background = None
   foreground = None
+  blocks = []
   
   def __init__(self):
     random.seed()
@@ -207,6 +221,7 @@ class Game:
     self.addToDrawable(self.numberGenerator)
     self.addToStepping(self.numberGenerator)
     
+    self.addBlocks()
     
     self.stateToBallCapt()
     
@@ -240,6 +255,16 @@ class Game:
       if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
         g.player.isMove = False
 
+  def addBlocks(self):
+    self.blocks = list()
+    blockList = ['block3anim/emerald0', 'block1anim/ruby', 'block2anim/block2F']
+    # расставлять в соответствии с картой уровня или генерить
+    for name in blockList:
+      b = BaseBlock(name, 7, 100 + random.randint(100,200), 100) # find in path count of files
+      self.addToDrawable(b)
+      self.blocks += [b]
+    
+  
   def addParticles(self, x):
     self.addToDrawable(x)
     self.addToStepping(x)
