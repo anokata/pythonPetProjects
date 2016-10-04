@@ -3,6 +3,12 @@ from pyglet.window import key
 import random
 import math
 
+def debugDecor(fn):
+  def wrap(*args): 
+    print(args)
+    return fn(*args)
+  return wrap
+
 def center_image(image):
   image.anchor_x = image.width // 2
   image.anchor_y = image.height // 2
@@ -20,10 +26,11 @@ class Particles:
   lifeTime = 100
   initLifeTime = 0
   
-  def __init__(self, img, n, lifeTime, x, y):
+  def __init__(self, img, n, lifeTime, x=0, y=0, speed=2):
     self.sprites = list()  # Необходимо все неэлемнтарные типы так создавать
     self.lifeTime = 0
     self.initLifeTime = lifeTime
+    self.speed = speed
     for i in range(n):
       s = pyglet.sprite.Sprite(img, x=x,y=y)
       s.dx = math.cos(math.radians(360*i/n)) * self.speed
@@ -46,7 +53,7 @@ class Particles:
   
   def end(self):
     pass
-    
+  
   def restart(self, x, y):
     for i in self.sprites:
       i.x = x
@@ -71,6 +78,9 @@ class Game:
   wall = None
   redParticles = None
   blueParticles = None
+  whiteParticles = None
+  drawable = []
+  stepping = []
   
   state = 1
   stateRun = 1
@@ -78,6 +88,9 @@ class Game:
   
   def __init__(self):
     random.seed()
+    self.drawable = list()
+    self.stepping = list()
+    
     self.window = pyglet.window.Window()
     window = self.window
     
@@ -90,25 +103,33 @@ class Game:
         
     self.score_label = pyglet.text.Label(text=self.getScore(), x=window.width // 2, y=window.height - 30, anchor_x='center', anchor_y='center')
     self.infoLabel = pyglet.text.Label(text=self.getInfo(), x=10, y=10)
-    self.labels += [self.infoLabel]
+
+    self.addToDrawable(self.infoLabel)
+    self.addToDrawable(self.score_label)
     pyglet.gl.glClearColor(0.7,0.5,0.3, 1)
     #window.push_handlers(pyglet.window.event.WindowEventLogger())
     pyglet.clock.schedule_interval(self.stateHandle, 1.0/30)
     
+    
     self.redParticles = Particles(pyglet.image.load('redstar18.png'), 15, 14, 300, 100)
+    self.whiteParticles = Particles(pyglet.image.load('whitestar12.png'), 15, 10, speed = 1)
     self.blueParticles = Particles(pyglet.image.load('bluestar24.png'), 15, 18, 300, 100)
+    self.addParticles(self.redParticles)
+    self.addParticles(self.blueParticles)
+    self.addParticles(self.whiteParticles)
+    
+    
     self.stateToBallCapt()
     
     @window.event
     def on_draw():
       window.clear()
       self.wall.draw()
-      self.score_label.draw()
       self.ball.sprite.draw()
       self.player.sprite.draw()
       self.bot.sprite.draw()
-      self.blueParticles.draw()
-      self.redParticles.draw()
+      for x in self.drawable:
+        x.draw()
       for x in self.labels:
         x.draw()
       
@@ -129,6 +150,15 @@ class Game:
     def on_key_release(symbol, mod):
       if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
         g.player.isMove = False
+
+  def addParticles(self, x):
+    self.addToDrawable(x)
+    self.addToStepping(x)
+    
+  def addToDrawable(self, x):
+    self.drawable += [x]
+  def addToStepping(self, x):
+    self.stepping += [x]
 
   def stateSet(self, s):
     self.state = s
@@ -154,6 +184,8 @@ class Game:
     self.updateLabels()
     self.blueParticles.step()
     self.redParticles.step()
+    for x in self.stepping:
+      x.step()
     
   def mechanicCapt(self, dt):
     self.mechanicStd(dt)
@@ -178,10 +210,11 @@ class Game:
         self.ball.dx = abs(self.ball.dx) + self.difficult
       if type(colis) == Player:
         self.ball.dx = abs(self.ball.dx)
-        self.redParticles.restart(100,300)
+       # self.redParticles.restart(self.ball.left, colis.sprite.y)
+        self.whiteParticles.restart(self.ball.left, colis.sprite.y)
       else:
         self.ball.dx = - abs(self.ball.dx)
-        self.redParticles.restart(500,300)
+        #self.redParticles.restart(500,300)
       
       if colis.isMove:
         self.ball.dy += colis.isMove * colis.speed * 2
@@ -196,7 +229,7 @@ class Game:
     self.infoLabel.text = self.getInfo()
     
   def getInfo(self):
-    return "SPD: " + str(abs(self.ball.dx)) + ' | '
+    return "SPD: " + str(abs(self.ball.dx)) + '  '
     
   def checkBallOut(self):
     isout = self.ball.isOut()
@@ -215,7 +248,7 @@ class Game:
     for x in faces:
       hei = max(self.ball.top, x.top) - min(self.ball.bottom, x.bottom)
       allheight = self.ball.sprite.height + x.sprite.height
-      wid = max(self.ball.leftX, x.left) - min(self.ball.rightX, x.right)
+      wid = max(self.ball.left, x.left) - min(self.ball.right, x.right)
       allwid = self.ball.sprite.width + 0
       
       if hei <= allheight and wid <= allwid:
@@ -266,7 +299,7 @@ class Bot(Player):
     super().__init__(height, img, x)
     self.left = x
     self.right = x
-    #self.speed = 1
+    self.speed = 10
   
   def randStep(self, ballY, inBotArea):
     self.i += 1
@@ -296,8 +329,8 @@ class Ball():
   xMax = 0
   midX = 0
   midY = 0
-  leftX = 0
-  rightX = 0
+  left = 0
+  right = 0
   top = 0
   bottom = 0
   maxspeed = 1000
@@ -316,8 +349,8 @@ class Ball():
     self.sprite.rotation += 100 * dt
     self.sprite.x += self.dx * dt
     self.sprite.y += self.dy * dt
-    self.rightX = self.sprite.x + self.sprite.width // 2
-    self.leftX = self.sprite.x - self.sprite.width // 2
+    self.right = self.sprite.x + self.sprite.width // 2
+    self.left = self.sprite.x - self.sprite.width // 2
     self.top = self.sprite.y + self.sprite.height // 2
     self.bottom = self.sprite.y - self.sprite.height // 2
     self.collisoins()
