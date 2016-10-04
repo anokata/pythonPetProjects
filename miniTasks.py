@@ -63,3 +63,12 @@ b = A(2)
 a.a(3)
 b.a(4)
 print(a.n, a.k, b.n, b.k, a.k == b.k)
+
+a = [A(1),A(2),A(3)]
+print(a)
+for i in a:
+  if i.n[0] == 2:
+    print('del')
+print(a)
+a[:]=filter(lambda i: i.n[0] != 2, a)
+print(a)

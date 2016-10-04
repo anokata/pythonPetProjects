@@ -20,17 +20,69 @@ def distance(x, y, a, b):
   from math import sqrt
   return sqrt((x-a)*(x-a) + (y-b)*(y-b))
 
+# make fabric?
+class ImgNumber:
+  
+  class DrawableNumber:
+    number = []
+    lifeTime = 0
+    def __init__(self, n, life=0):
+      self.number = n
+      self.lifeTime = life
+    def draw(self):
+      for i in self.number:
+        i.draw()
+    def step(self):
+      self.lifeTime -= 1
+      if self.lifeTime != -1:
+        self.fadeout()
+      return self.lifeTime
+    def fadeout(self):
+      spd = 8
+      for x in self.number:
+        if x.opacity - spd >= 0:
+          x.opacity -= spd
+  
+  number = []
+  images = []
+  numbers = []
+  
+  def __init__(self):
+    self.images = list()
+    self.numbers = list()
+    for i in range(10):
+      self.images += [pyglet.image.load(str(i) + '.png')]
+  
+  def draw(self):
+    for i in self.numbers:
+      i.draw()
+  
+  def step(self):
+    self.numbers[:] = filter(lambda x: x.step() != 0, self.numbers)
+  
+  def makeNumber(self, n, x, y, lifeTime=-1): 
+    n = str(n)
+    for i in n:
+      num = pyglet.sprite.Sprite(self.images[int(i)])
+      num.y = y
+      num.x = x
+      x += num.width
+      self.number += [num]
+    self.numbers += [self.DrawableNumber(self.number, lifeTime)]
+      
 class Particles:
   sprites = []
   speed = 2
   lifeTime = 100
   initLifeTime = 0
+  speedDown = 0
   
-  def __init__(self, img, n, lifeTime, x=0, y=0, speed=2):
+  def __init__(self, img, n, lifeTime, x=0, y=0, speed=2, speedDown=0):
     self.sprites = list()  # Необходимо все неэлемнтарные типы так создавать
     self.lifeTime = 0
     self.initLifeTime = lifeTime
     self.speed = speed
+    self.speedDown = 1 if speedDown == 0 else (100 - speedDown)/100
     for i in range(n):
       s = pyglet.sprite.Sprite(img, x=x,y=y)
       s.dx = math.cos(math.radians(360*i/n)) * self.speed
@@ -50,6 +102,9 @@ class Particles:
     for x in self.sprites:
       x.x += x.dx
       x.y += x.dy
+      x.dx *= self.speedDown
+      x.dy *= self.speedDown
+      x.opacity -= 30
   
   def end(self):
     pass
@@ -58,8 +113,10 @@ class Particles:
     for i in self.sprites:
       i.x = x
       i.y = y
+      i.opacity = 255
     self.lifeTime = self.initLifeTime
 
+#singleton
 class Game:
   playerWins = 0
   botWins = 0
@@ -71,7 +128,7 @@ class Game:
   score_label = None
   infoLabel = None
   labels = []
-  scoreText1 = "Player: "
+  scoreText1 = "PlayerName Exp: "
   scoreText2 = "Bot: "
   difficult = 100
   
@@ -86,13 +143,18 @@ class Game:
   stateRun = 1
   stateBallCapt = 2
   
+  background = None
+  
   def __init__(self):
     random.seed()
     self.drawable = list()
     self.stepping = list()
     
-    self.window = pyglet.window.Window()
+    self.window = pyglet.window.Window(width=700)
     window = self.window
+    
+    self.background = pyglet.sprite.Sprite(pyglet.image.load('board1.png'))
+    self.addToDrawable(self.background)
     
     self.ball = Ball(pyglet.image.load('ball3.png'), window.width, window.height)
     self.player = Player(window.height, pyglet.image.load('player.png'))
@@ -113,10 +175,15 @@ class Game:
     
     self.redParticles = Particles(pyglet.image.load('redstar18.png'), 15, 14, 300, 100)
     self.whiteParticles = Particles(pyglet.image.load('whitestar12.png'), 15, 10, speed = 1)
-    self.blueParticles = Particles(pyglet.image.load('bluestar24.png'), 15, 18, 300, 100)
+    self.blueParticles = Particles(pyglet.image.load('bluestar24.png'), 15, 30, 300, 100, speedDown=5)
     self.addParticles(self.redParticles)
     self.addParticles(self.blueParticles)
     self.addParticles(self.whiteParticles)
+    
+    self.numberGenerator = ImgNumber()
+    self.numberGenerator.makeNumber(1230987, 100, 100, 30)
+    self.addToDrawable(self.numberGenerator)
+    self.addToStepping(self.numberGenerator)
     
     
     self.stateToBallCapt()
@@ -124,12 +191,12 @@ class Game:
     @window.event
     def on_draw():
       window.clear()
+      for x in self.drawable:
+        x.draw()      
       self.wall.draw()
       self.ball.sprite.draw()
       self.player.sprite.draw()
       self.bot.sprite.draw()
-      for x in self.drawable:
-        x.draw()
       for x in self.labels:
         x.draw()
       
@@ -237,11 +304,15 @@ class Game:
       self.playerWins += 1
       self.updateScore()
       self.blueParticles.restart(100,200)
-    if -1 == isout:
-      self.botWins += 1
-      self.updateScore()
-      self.blueParticles.restart(500,200)
       self.stateToBallCapt()
+    if -1 == isout:
+      self.lose()
+  
+  def lose(self):
+    self.botWins += 1
+    self.updateScore()
+    self.redParticles.restart(self.ball.sprite.x, self.ball.sprite.y)
+    self.stateToBallCapt()
   
   def collisoinsDetect(self):
     faces = [self.player, self.bot]
@@ -363,7 +434,7 @@ class Ball():
       
   def isOut(self):
     if self.sprite.x < self.wh:
-      self.ballReturn(1)
+      #self.ballReturn(1)
       return -1
     if self.sprite.x > self.xMax:
       self.ballReturn(-1)
