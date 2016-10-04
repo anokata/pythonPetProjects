@@ -1,14 +1,57 @@
 import pyglet
 from pyglet.window import key
 import random
+import math
 
 def center_image(image):
   image.anchor_x = image.width // 2
   image.anchor_y = image.height // 2
 
-#def distance(x, y, a, b):
-#  from math import sqrt
-# return sqrt(x*x)
+def objDistance(s1, s2):
+  return distance(s1.sprite.x, s1.sprite.y, s2.sprite.x, s2.sprite.y)
+
+def distance(x, y, a, b):
+  from math import sqrt
+  return sqrt((x-a)*(x-a) + (y-b)*(y-b))
+
+class Particles:
+  sprites = []
+  speed = 2
+  lifeTime = 100
+  initLifeTime = 0
+  
+  def __init__(self, img, n, lifeTime, x, y):
+    self.sprites = list()  # Необходимо все неэлемнтарные типы так создавать
+    self.lifeTime = 0
+    self.initLifeTime = lifeTime
+    for i in range(n):
+      s = pyglet.sprite.Sprite(img, x=x,y=y)
+      s.dx = math.cos(math.radians(360*i/n)) * self.speed
+      s.dy = math.sin(math.radians(360*i/n)) * self.speed
+      self.sprites += [s]
+  
+  def draw(self):
+    if 0 != self.lifeTime:
+      for x in self.sprites:
+        x.draw() 
+  
+  def step(self):
+    if 0 == self.lifeTime:
+      self.end()
+      return
+    self.lifeTime -= 1
+    for x in self.sprites:
+      x.x += x.dx
+      x.y += x.dy
+  
+  def end(self):
+    pass
+    
+  def restart(self, x, y):
+    for i in self.sprites:
+      i.x = x
+      i.y = y
+    self.lifeTime = self.initLifeTime
 
 class Game:
   playerWins = 0
@@ -26,6 +69,8 @@ class Game:
   difficult = 100
   
   wall = None
+  redParticles = None
+  blueParticles = None
   
   def __init__(self):
     random.seed()
@@ -46,6 +91,9 @@ class Game:
     #window.push_handlers(pyglet.window.event.WindowEventLogger())
     pyglet.clock.schedule_interval(self.mechanic, 1.0/30)
     
+    self.redParticles = Particles(pyglet.image.load('redstar18.png'), 15, 14, 300, 100)
+    self.blueParticles = Particles(pyglet.image.load('bluestar24.png'), 15, 18, 300, 100)
+    
     @window.event
     def on_draw():
       window.clear()
@@ -54,16 +102,18 @@ class Game:
       self.ball.sprite.draw()
       self.player.sprite.draw()
       self.bot.sprite.draw()
+      self.blueParticles.draw()
+      self.redParticles.draw()
       for x in self.labels:
         x.draw()
       
 
     @window.event
     def on_key_press(symbol, mod):
-      if symbol == key.A:
-        print('A')
+      if symbol == key.RIGHT:
+        g.player.isMove = direction.down
       if symbol == key.LEFT:
-        print('left')
+        g.player.isMove = direction.up
       if symbol == key.UP:
         g.player.isMove = direction.up
       if symbol == key.DOWN:
@@ -71,7 +121,7 @@ class Game:
 
     @window.event
     def on_key_release(symbol, mod):
-      if symbol == key.UP or symbol == key.DOWN:
+      if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
         g.player.isMove = False
 
   def mechanic(self, dt):
@@ -81,6 +131,8 @@ class Game:
     self.checkBallOut()
     self.isCollision()
     self.updateLabels()
+    self.blueParticles.step()
+    self.redParticles.step()
     
   def isCollision(self):
     colis = self.collisoinsDetect()
@@ -89,8 +141,10 @@ class Game:
         self.ball.dx = abs(self.ball.dx) + self.difficult
       if type(colis) == Player:
         self.ball.dx = abs(self.ball.dx)
+        self.redParticles.restart(100,300)
       else:
         self.ball.dx = - abs(self.ball.dx)
+        self.redParticles.restart(500,300)
       
       if colis.isMove:
         self.ball.dy += colis.isMove * colis.speed * 2
@@ -112,9 +166,11 @@ class Game:
     if 1 == isout:
       self.playerWins += 1
       self.updateScore()
+      self.blueParticles.restart(100,200)
     if -1 == isout:
       self.botWins += 1
       self.updateScore()
+      self.blueParticles.restart(500,200)
   
   def collisoinsDetect(self):
     faces = [self.player, self.bot]
