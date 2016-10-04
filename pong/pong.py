@@ -2,7 +2,7 @@ import pyglet
 from pyglet.window import key
 import random
 import math
-
+#bug: старые числа показываются
 def debugDecor(fn):
   def wrap(*args): 
     print(args)
@@ -39,13 +39,13 @@ class ImgNumber:
       if self.lifeTime != -1:
         self.fadeout()
       return self.lifeTime
+      
     def fadeout(self):
       spd = 8
       for x in self.number:
         if x.opacity - spd >= 0:
           x.opacity -= spd
   
-  number = []
   images = []
   numbers = []
   
@@ -64,13 +64,14 @@ class ImgNumber:
   
   def makeNumber(self, n, x, y, lifeTime=-1): 
     n = str(n)
+    number = list()
     for i in n:
       num = pyglet.sprite.Sprite(self.images[int(i)])
       num.y = y
       num.x = x
       x += num.width
-      self.number += [num]
-    self.numbers += [self.DrawableNumber(self.number, lifeTime)]
+      number += [num]
+    self.numbers += [self.DrawableNumber(number, lifeTime)]
       
 class Particles:
   sprites = []
@@ -205,7 +206,7 @@ class Game:
       window.clear()
       for x in self.drawable:
         x.draw()      
-      self.wall.draw()
+      #self.wall.draw()
       self.ball.sprite.draw()
       self.player.sprite.draw()
       self.bot.sprite.draw()
@@ -363,7 +364,7 @@ class Player:
   bottom = 0
   left = 0
   right = 0
-  @debugDecor
+  #@debugDecor
   def __init__(self, img, x, yMin, yMax):
     center_image(img)
     x = x + img.width//2
@@ -390,7 +391,7 @@ class Bot(Player):
   i = 0
   maxi = 4
   accur = 20
-  @debugDecor
+  #@debugDecor
   def __init__(self, img, x, yMin, yMax):
     x = x - img.width
     super().__init__(img, x, yMin, yMax)
