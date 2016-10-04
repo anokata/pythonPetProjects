@@ -33,6 +33,8 @@ class ImgNumber:
       for i in self.number:
         i.draw()
     def step(self):
+      for x in self.number:
+        x.y += 3
       self.lifeTime -= 1
       if self.lifeTime != -1:
         self.fadeout()
@@ -181,7 +183,6 @@ class Game:
     self.addParticles(self.whiteParticles)
     
     self.numberGenerator = ImgNumber()
-    self.numberGenerator.makeNumber(1230987, 100, 100, 30)
     self.addToDrawable(self.numberGenerator)
     self.addToStepping(self.numberGenerator)
     
@@ -301,9 +302,10 @@ class Game:
   def checkBallOut(self):
     isout = self.ball.isOut()
     if 1 == isout:
-      self.playerWins += 1
+      self.playerWins += random.randint(1,100)
       self.updateScore()
       self.blueParticles.restart(100,200)
+      self.numberGenerator.makeNumber(self.playerWins, 50, 10, 30)
       self.stateToBallCapt()
     if -1 == isout:
       self.lose()
