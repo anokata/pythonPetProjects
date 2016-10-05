@@ -69,6 +69,7 @@ class Map:
   levelsNames = ['lv0.lev']
   levels = []
   levelsCoords = []
+  levelsDone = []
   currentLevel = None
   blockWindowTopStart = 500
   blockWindowLeft = 500
@@ -80,6 +81,7 @@ class Map:
     self.blocksAnims = dict()
     self.levels = list()
     self.levelsCoords = list()
+    self.levelsDone = list() # Список пройденных уровней ! загружать
     self.loadMap(mapname)
     self.loadBlockImages()
     self.loadLevels()
@@ -92,12 +94,15 @@ class Map:
         l = l.split()
         self.levelsCoords += [(int(l[0]), int(l[1]))]
       print(self.background, levelDir, self.levelsCoords)
+    #load levels list
     self.levelsNames = list()
     from os import listdir
     from os.path import isfile, join
     self.levelsNames = [levelDir + f for f in listdir(levelDir) if isfile(join(levelDir, f))]
     self.levelsNames = list(filter(lambda x: x.find('.lev') > -1, self.levelsNames))
     self.levelsNames.sort()
+    #load bg
+    self.background = pyglet.sprite.Sprite(pyglet.image.load(self.background))
     
   def loadLevels(self):
     for name in self.levelsNames:
@@ -318,6 +323,7 @@ class Game:
   state = 1
   stateRun = 1
   stateBallCapt = 2
+  stateMap = 3
   blockAreaLeft = 0
   
   background = None
@@ -377,35 +383,13 @@ class Game:
     
     @window.event
     def on_draw():
-      window.clear()
-      for x in self.drawable:
-        x.draw()
-      for x in self.levelDrawable:
-        x.draw()
-      #self.wall.draw()
-      self.ball.sprite.draw()
-      self.player.sprite.draw()
-      self.bot.sprite.draw()
-      for x in self.labels:
-        x.draw()
-      
+      self.stateHandleDraw()
     @window.event
     def on_key_press(symbol, mod):
-      if symbol == key.RIGHT:
-        g.player.isMove = direction.down
-      if symbol == key.LEFT:
-        g.player.isMove = direction.up
-      if symbol == key.UP:
-        g.player.isMove = direction.up
-      if symbol == key.DOWN:
-        g.player.isMove = direction.down
-      if symbol == key.SPACE:
-        self.stateToRun()
-
+      self.stateHandleKeyPress(symbol, mod)
     @window.event
     def on_key_release(symbol, mod):
-      if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
-        g.player.isMove = False
+      self.stateHandleKeyRelease(symbol, mod)
   
   def addLabel(self, updateFun, initText, updateParam):
     self.labels += [pyglet.text.Label(text=initText, x=self.window.width - 90, y=self.gameWindowHeigth - 20 * len(self.labels) - 20)]
@@ -422,7 +406,7 @@ class Game:
     self.drawable += [x]
   def addToStepping(self, x):
     self.stepping += [x]
-
+  # States
   def stateSet(self, s):
     self.state = s
   
@@ -435,14 +419,87 @@ class Game:
     self.ball.x = self.player.x + self.player.width
     self.stateSet(self.stateBallCapt)
   
+  def stateToMap(self):
+    
+    self.stateSet(self.stateMap)
+  #Обработчики механики от состояния
   def stateHandle(self, dt):
     d = {
       self.stateBallCapt: self.mechanicCapt,
-      self.stateRun: self.mechanicRun
+      self.stateRun: self.mechanicRun,
+      self.stateMap: self.mechanicMap
     }
     fun = d[self.state]
     fun(dt)
+  #Обработчики отрисовки от состояния
+  def stateHandleDraw(self):
+    d = {
+      self.stateBallCapt: self.playDraw,
+      self.stateRun: self.playDraw,
+      self.stateMap: self.mapDraw
+    }
+    fun = d[self.state]
+    fun()
+  #Обработчики нажатия кнопки в зависимости от состояния
+  def stateHandleKeyPress(self, symbol, mod):
+    d = {
+      self.stateBallCapt: self.playKeyPress,
+      self.stateRun: self.playKeyPress,
+      self.stateMap: self.mapKeyPress
+    }
+    fun = d[self.state]
+    fun(symbol, mod)
+  
+  def stateHandleKeyRelease(self, symbol, mod):
+    d = {
+      self.stateBallCapt: self.playKeyRelease,
+      self.stateRun: self.playKeyRelease,
+      self.stateMap: self.mapKeyRelease
+    }
+    fun = d[self.state]
+    fun(symbol, mod)
     
+  def playDraw(self):
+    self.window.clear()
+    for x in self.drawable:
+      x.draw()
+    for x in self.levelDrawable:
+      x.draw()
+    self.ball.sprite.draw()
+    self.player.sprite.draw()
+    self.bot.sprite.draw()
+    for x in self.labels:
+      x.draw()
+    
+  def mapDraw(self):
+    pass
+    
+  def mapKeyPress(self, symbol, mod):
+    pass
+  
+  def mapKeyRelease(self, symbol, mod):
+    pass
+    
+  def playKeyPress(self, symbol, mod):
+    if symbol == key.RIGHT:
+      g.player.isMove = direction.down
+    if symbol == key.LEFT:
+      g.player.isMove = direction.up
+    if symbol == key.UP:
+      g.player.isMove = direction.up
+    if symbol == key.DOWN:
+      g.player.isMove = direction.down
+    if symbol == key.SPACE:
+      self.stateToRun()
+
+  def playKeyRelease(self, symbol, mod):
+    if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
+      g.player.isMove = False
+
+  # Mechanic
+  def mechanicMap(self):
+    pass
+  
   def mechanicStd(self, dt):
     self.updateLabels()
     self.blueParticles.step()
@@ -464,6 +521,7 @@ class Game:
     self.blockCollision()
     self.mechanicStd(dt)
     
+  # Physics
   def blockCollision(self):
     if self.ball.x + self.ball.speed  > self.blockAreaLeft:
       for b in self.world.currentLevel.blocks:
@@ -492,25 +550,17 @@ class Game:
         self.ball.dx = abs(self.ball.dx) + self.difficult
       if type(colis) == Player:
         self.ball.dx = abs(self.ball.dx)
-       # self.redParticles.restart(self.ball.left, colis.y)
         self.whiteParticles.restart(self.ball.left, colis.y)
       else:
         self.ball.dx = - abs(self.ball.dx)
-        #self.redParticles.restart(500,300)
       
       if colis.isMove:
         self.ball.dy += colis.isMove * colis.speed * 2
-    
-  def updateLabels(self):
-    for (fun, param), lab in zip(self.labelsFun, self.labels):
-      lab.text = fun(param)
-    
+  
   def isBallOut(self):
     if self.ball.x < self.gameWindowUp:
-      #self.ball.ballReturn(1)
       return -1
     if self.ball.x > self.gameWindowWidth + self.enemyDeep:
-      #self.ball.ballReturn(-1)
       return 1
     return 0
     
@@ -518,8 +568,6 @@ class Game:
     isout = self.isBallOut()
     if 1 == isout:
       self.updateLabels()
-      #self.blueParticles.restart(100,200)
-      #self.stateToBallCapt()
       self.ball.bounce()
     if -1 == isout:
       self.lose()
@@ -540,7 +588,11 @@ class Game:
       if hei <= allheight and wid <= allwid:
         return x
     return False
-
+  
+  def updateLabels(self):
+    for (fun, param), lab in zip(self.labelsFun, self.labels):
+      lab.text = fun(param)
+    
 
 class direction:
   up = 1
