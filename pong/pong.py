@@ -147,9 +147,9 @@ class BaseBlock(HasSprite):
     self.sprite = pyglet.sprite.Sprite(m.getBlockAnim(btype), x=x, y=y)
     self.btype = btype
     # stats(Heath, price)
-    baseStats = {BlockType.emerald: (2, 2), 
-      BlockType.ruby: (5, 15),
-      BlockType.pearl: (1, 1)}
+    baseStats = {BlockType.emerald: (2, 70), 
+      BlockType.ruby: (5, 150),
+      BlockType.pearl: (1, 50)}
     (self.Health, self.price) = baseStats[btype]
     
   def capture(self):
@@ -266,11 +266,8 @@ class Game:
   bot = None
   
   window = None
-  score_label = None
-  infoLabel = None
   labels = []
-  scoreText1 = "PlayerName Exp: "
-  scoreText2 = "Bot: "
+  labelsFun = []
   difficult = 100
   
   gameWindowLeft = 20
@@ -300,6 +297,8 @@ class Game:
     random.seed()
     self.drawable = list()
     self.stepping = list()
+    self.labels = list()
+    self.labelsFun = list()
     
     self.window = pyglet.window.Window(width=800, height = 550)
     window = self.window
@@ -319,12 +318,7 @@ class Game:
     
     wallimg = pyglet.image.load('wall.png')
     self.wall = pyglet.sprite.Sprite(wallimg, self.gameWindowWidth // 2, - wallimg.height + self.gameWindowHeigth - 40)
-        
-    self.score_label = pyglet.text.Label(text=self.getScore(), x=self.window.width - 90, y=self.gameWindowHeigth - 40, anchor_x='left', anchor_y='center')
-    self.infoLabel = pyglet.text.Label(text=self.getInfo(), x=self.window.width - 90, y=self.gameWindowHeigth - 20)
-
-    self.addToDrawable(self.infoLabel)
-    self.addToDrawable(self.score_label)
+    
     pyglet.gl.glClearColor(0.7,0.5,0.3, 1)
     #window.push_handlers(pyglet.window.event.WindowEventLogger())
     pyglet.clock.schedule_interval(self.stateHandle, 1.0/30)
@@ -345,6 +339,15 @@ class Game:
     self.addToLevelDrawable(self.world.getDrawables())
     
     self.stateToBallCapt()
+
+    self.addLabel(self.player.getStatText , 'Health: 0', PlayerStatIndex.Health)
+    self.addLabel(self.player.getStatText , '', PlayerStatIndex.Str)
+    self.addLabel(self.player.getStatText , 'Exp: 0', PlayerStatIndex.Lv)
+    self.addLabel(self.player.getStatText , 'Lv: 0', PlayerStatIndex.Exp)
+    self.addLabel(self.player.getStatText , '', PlayerStatIndex.statPoints)
+    self.addLabel(self.player.getStatText , '', PlayerStatIndex.Speed)
+    
+    self.updateLabels()
     
     @window.event
     def on_draw():
@@ -377,6 +380,10 @@ class Game:
     def on_key_release(symbol, mod):
       if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
         g.player.isMove = False
+  
+  def addLabel(self, updateFun, initText, updateParam):
+    self.labels += [pyglet.text.Label(text=initText, x=self.window.width - 90, y=self.gameWindowHeigth - 20 * len(self.labels) - 20)]
+    self.labelsFun += [(updateFun, updateParam)]
     
   def addToLevelDrawable(self, x):
     self.levelDrawable = x
@@ -447,6 +454,7 @@ class Game:
             self.player.capture(b)
             self.numberGenerator.makeNumber(b.price, b.x, b.y, 30)
             self.world.currentLevel.blockCapture(b)
+            self.updateLabels()
     
   def ballCaptureStep(self):
     self.ball.y = self.player.y
@@ -467,17 +475,9 @@ class Game:
       if colis.isMove:
         self.ball.dy += colis.isMove * colis.speed * 2
     
-  def getScore(self):
-    return 'EXP:' + ' ' + str(self.playerWins)
-  
-  def updateScore(self):
-    self.score_label.text = self.getScore()
-  
   def updateLabels(self):
-    self.infoLabel.text = self.getInfo()
-    
-  def getInfo(self):
-    return "SPD: " + str(abs(self.ball.dx)) + '  '
+    for (fun, param), lab in zip(self.labelsFun, self.labels):
+      lab.text = fun(param)
     
   def isBallOut(self):
     if self.ball.x < self.gameWindowUp:
@@ -492,7 +492,7 @@ class Game:
     isout = self.isBallOut()
     if 1 == isout:
       self.playerWins += random.randint(1,100)
-      self.updateScore()
+      self.updateLabels()
       self.blueParticles.restart(100,200)
       self.numberGenerator.makeNumber(self.playerWins, 50, 10, 30)
       #self.stateToBallCapt()
@@ -502,7 +502,7 @@ class Game:
   
   def lose(self):
     self.botWins += 1
-    self.updateScore()
+    self.updateLabels()
     self.redParticles.restart(self.ball.x, self.ball.y)
     self.stateToBallCapt()
   
@@ -523,6 +523,14 @@ class direction:
   up = 1
   down = -1
 
+class PlayerStatIndex:
+  Speed = 1
+  Str = 2
+  Health = 3
+  Exp = 4
+  Lv = 5
+  statPoints = 6
+
 class Player(HasSprite):
   isMove = False
   yMin = 0
@@ -536,6 +544,12 @@ class Player(HasSprite):
   STR = 1
   Health = 10
   Exp = 0
+  Lv = 0
+  statPoints = 0
+  
+  LevelExp = {
+    1: 100, 2: 300, 3: 1000 # сделать генератор?
+  }
   
   
   #@debugDecor
@@ -563,8 +577,26 @@ class Player(HasSprite):
     self.bottom = self.y - self.height // 2
     
   def capture(self, block):
-    self.Exp += block.price
+    self.expGain(block.price)
     block.capture()
+  
+  def expGain(self, n):
+    self.Exp += n
+    if self.Exp >= self.LevelExp[self.Lv + 1]:
+      self.Lv += 1
+      self.statPoints += 1
+    
+  def getStatText(self, stat):
+    stats = {
+      PlayerStatIndex.Exp: (self.Exp, 'Exp: '),
+      PlayerStatIndex.Lv: (self.Lv, 'Lv '),
+      PlayerStatIndex.Speed: (self.speed, 'Spd '),
+      PlayerStatIndex.Str: (self.STR, 'Str '),
+      PlayerStatIndex.statPoints: (self.statPoints, 'SP: '),
+      PlayerStatIndex.Health: (self.Health, 'HP= ')
+    }
+    val, name = stats[stat]
+    return name + str(val)
 
 class Bot(Player):
   i = 0
