@@ -14,19 +14,57 @@ def center_image(image):
   image.anchor_y = image.height // 2
 
 def objDistance(s1, s2):
-  return distance(s1.sprite.x, s1.sprite.y, s2.sprite.x, s2.sprite.y)
+  return distance(s1.x, s1.y, s2.x, s2.y)
 
 def distance(x, y, a, b):
   from math import sqrt
   return sqrt((x-a)*(x-a) + (y-b)*(y-b))
   
-  #sprite.scale:float
-
-class Level:
-  pass
-
-class BaseBlock:
+  
+class HasSprite():
   sprite = None
+  def x_get(self):
+    return self.sprite.x
+  def y_get(self):
+    return self.sprite.y
+  def x_set(self, x):
+    self.sprite.x = x
+  def y_set(self, y):
+    self.sprite.y = y
+  x = property(x_get, x_set)
+  y = property(y_get, y_set)
+  def width_get(self):
+    return self.sprite.width
+  def height_get(self):
+    return self.sprite.height
+  def width_set(self, w):
+    self.sprite.width = w
+  def height_set(self, h):
+    self.sprite.height = h
+  width = property(width_get, width_set)
+  height = property(height_get, height_set)
+#sprite.scale:float
+#[(blockType, x, y),...] in file: blockType x y
+class Level:
+  blocks = []
+  
+  def __init__(self):
+    blocks = list()
+    
+  def writeLevel(self):
+    with open('', 'wt') as fout:
+      for b in self.blocks:
+        fout.write(str(b.btype), str(b.x), str(b.y))
+  #dict( (x, y) : lev)
+
+class BlockType:
+  emerald = 1
+  ruby = 0
+  pearl = 2
+  
+class BaseBlock(HasSprite):
+  btype = None
+  files = {BlockType.ruby : ''}
   
   def __init__(self, imgBaseName, framesCount, x, y):
     frames = list()
@@ -40,6 +78,7 @@ class BaseBlock:
     
   def draw(self):
     self.sprite.draw()
+    
   
 # make fabric?
 class ImgNumber:
@@ -283,7 +322,7 @@ class Game:
     self.stateSet(self.stateRun)
     
   def stateToBallCapt(self):
-    self.ball.sprite.x = self.player.sprite.x + self.player.sprite.width
+    self.ball.x = self.player.x + self.player.width
     self.stateSet(self.stateBallCapt)
   
   def stateHandle(self, dt):
@@ -309,13 +348,13 @@ class Game:
   def mechanicRun(self, dt):
     self.ball.step(dt)
     self.player.step()
-    self.bot.randStep(self.ball.sprite.y, self.ball.sprite.x > self.gameWindowWidth // 2)
+    self.bot.randStep(self.ball.y, self.ball.x > self.gameWindowWidth // 2)
     self.checkBallOut()
     self.isCollision()
     self.mechanicStd(dt)
     
   def ballCaptureStep(self):
-    self.ball.sprite.y = self.player.sprite.y
+    self.ball.y = self.player.y
     
   def isCollision(self):
     colis = self.collisoinsDetect()
@@ -324,8 +363,8 @@ class Game:
         self.ball.dx = abs(self.ball.dx) + self.difficult
       if type(colis) == Player:
         self.ball.dx = abs(self.ball.dx)
-       # self.redParticles.restart(self.ball.left, colis.sprite.y)
-        self.whiteParticles.restart(self.ball.left, colis.sprite.y)
+       # self.redParticles.restart(self.ball.left, colis.y)
+        self.whiteParticles.restart(self.ball.left, colis.y)
       else:
         self.ball.dx = - abs(self.ball.dx)
         #self.redParticles.restart(500,300)
@@ -346,10 +385,10 @@ class Game:
     return "SPD: " + str(abs(self.ball.dx)) + '  '
     
   def isBallOut(self):
-    if self.ball.sprite.x < self.gameWindowUp:
+    if self.ball.x < self.gameWindowUp:
       #self.ball.ballReturn(1)
       return -1
-    if self.ball.sprite.x > self.gameWindowWidth + self.enemyDeep:
+    if self.ball.x > self.gameWindowWidth + self.enemyDeep:
       self.ball.ballReturn(-1)
       return 1
     return 0
@@ -368,16 +407,16 @@ class Game:
   def lose(self):
     self.botWins += 1
     self.updateScore()
-    self.redParticles.restart(self.ball.sprite.x, self.ball.sprite.y)
+    self.redParticles.restart(self.ball.x, self.ball.y)
     self.stateToBallCapt()
   
   def collisoinsDetect(self):
     faces = [self.player, self.bot]
     for x in faces:
       hei = max(self.ball.top, x.top) - min(self.ball.bottom, x.bottom)
-      allheight = self.ball.sprite.height + x.sprite.height
+      allheight = self.ball.height + x.height
       wid = max(self.ball.left, x.left) - min(self.ball.right, x.right)
-      allwid = self.ball.sprite.width + 0
+      allwid = self.ball.width + 0
       
       if hei <= allheight and wid <= allwid:
         return x
@@ -388,11 +427,10 @@ class direction:
   up = 1
   down = -1
 
-class Player:
+class Player(HasSprite):
   isMove = False
   yMin = 0
   yMax = 0
-  sprite = 0
   top = 0
   bottom = 0
   left = 0
@@ -412,17 +450,18 @@ class Player:
     self.yMax = yMax
     self.left = x 
     self.right = x 
+    
   
   def step(self):
     if self.isMove == direction.up:
-      if (self.sprite.y ) < self.yMax:
-        self.sprite.y += self.speed
+      if (self.y ) < self.yMax:
+        self.y += self.speed
     if self.isMove == direction.down:
-      if (self.sprite.y ) > self.yMin:
-        self.sprite.y -= self.speed
+      if (self.y ) > self.yMin:
+        self.y -= self.speed
     
-    self.top = self.sprite.y + self.sprite.height // 2
-    self.bottom = self.sprite.y - self.sprite.height // 2
+    self.top = self.y + self.height // 2
+    self.bottom = self.y - self.height // 2
 
 class Bot(Player):
   i = 0
@@ -441,8 +480,8 @@ class Bot(Player):
     if self.i > self.maxi:
       self.i = 0
       if inBotArea:
-        if abs(ballY - self.sprite.y) > self.accur:
-          if ballY > self.sprite.y:
+        if abs(ballY - self.y) > self.accur:
+          if ballY > self.y:
             self.isMove = direction.up
           else:
             self.isMove = direction.down
@@ -453,8 +492,7 @@ class Bot(Player):
         self.isMove = False
     self.step()
 
-class Ball():
-  sprite = None
+class Ball(HasSprite):
   dx = 200
   dy = 200
   speed = 400
@@ -484,23 +522,23 @@ class Ball():
 
   def step(self, dt):
     self.sprite.rotation += 100 * dt
-    self.sprite.x += self.dx * dt
-    self.sprite.y += self.dy * dt
-    self.right = self.sprite.x + self.sprite.width // 2
-    self.left = self.sprite.x - self.sprite.width // 2
-    self.top = self.sprite.y + self.sprite.height // 2
-    self.bottom = self.sprite.y - self.sprite.height // 2
+    self.x += self.dx * dt
+    self.y += self.dy * dt
+    self.right = self.x + self.width // 2
+    self.left = self.x - self.width // 2
+    self.top = self.y + self.height // 2
+    self.bottom = self.y - self.height // 2
     self.collisoins()
 
   def collisoins(self):
-    if self.sprite.y < self.yMin:
+    if self.y < self.yMin:
       self.dy = - self.dy
-    if self.sprite.y > self.yMax:
+    if self.y > self.yMax:
       self.dy = - self.dy
   
   def ballReturn(self, direct):
-    self.sprite.x = self.midX
-    self.sprite.y = self.midY
+    self.x = self.midX
+    self.y = self.midY
     self.dx = self.speed * direct
     self.dy = 200
   
