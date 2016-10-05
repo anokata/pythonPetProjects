@@ -19,8 +19,12 @@ def objDistance(s1, s2):
 def distance(x, y, a, b):
   from math import sqrt
   return sqrt((x-a)*(x-a) + (y-b)*(y-b))
-  
-  
+
+class BlockType:
+  emerald = 1
+  ruby = 0
+  pearl = 2
+
 class HasSprite():
   sprite = None
   def x_get(self):
@@ -43,43 +47,90 @@ class HasSprite():
     self.sprite.height = h
   width = property(width_get, width_set)
   height = property(height_get, height_set)
+  
+  def distanceFrom(self, obj):
+    return distance(self.x, self.y, obj.x, obj.y)
 #sprite.scale:float
 #[(blockType, x, y),...] in file: blockType x y
-class Level:
-  blocks = []
+  # map = dict( (x, y) : lev)
+class Map:
+  blocksAnims = {}
+  blockImgNames = {BlockType.ruby : ('block1anim/ruby', 7),
+           BlockType.pearl: ('block2anim/block2F', 7),
+           BlockType.emerald: ('block3anim/emerald0', 7)}
+  levelsNames = ['lv0.lev']
+  levels = []
+  currentLevel = None
   
   def __init__(self):
-    blocks = list()
+    self.blocksAnims = dict()
+    for (b, (imgBaseName, framesCount)) in self.blockImgNames.items():
+      frames = list()
+      for i in range(1, framesCount+1):
+        img = pyglet.image.load(imgBaseName + str(i) + '.png')
+        center_image(img)
+        frames += [pyglet.image.AnimationFrame(img, 0.2)]
+      anim = pyglet.image.Animation(frames)
+      self.blocksAnims[b] = anim
+    self.levels = list()
+    for name in self.levelsNames:
+      lev = Level(name)
+      self.levels += [lev]
+      lev.loadBlocks(self)
+      #lev.printLevel()
+    self.currentLevel = self.levels[0]
+
+  def getBlockAnim(self, btype):
+    return self.blocksAnims[btype]
+  
+  def getDrawables(self):
+    return self.currentLevel.getDrawables()
+
+class Level:
+  blocks = []
+  blocksSprites = []
+  name = 'lv0.lev'
+  
+  def __init__(self, name):
+    self.blocks = list()
+    self.blocksSprites = list()
+    self.readLevel(name)
+    
+  def addBlock(self, btype, x, y):
+    self.blocks += [(btype, x, y)]
+  
+  def loadBlocks(self, m):
+    for (b, x, y) in self.blocks:
+      self.blocksSprites += [pyglet.sprite.Sprite(m.getBlockAnim(b), x=x, y=y)]
     
   def writeLevel(self):
-    with open('', 'wt') as fout:
-      for b in self.blocks:
-        fout.write(str(b.btype), str(b.x), str(b.y))
-  #dict( (x, y) : lev)
-
-class BlockType:
-  emerald = 1
-  ruby = 0
-  pearl = 2
+    with open(self.name, 'wt') as fout:
+      for (b, x, y) in self.blocks:
+        fout.write(str(b) + ' ' + str(x) + ' ' + str(y) + '\n')
+  
+  def readLevel(self, name):
+    with open(name, 'rt') as fin:
+      for line in fin:
+        line = line.split()
+        self.addBlock(int(line[0]), int(line[1]), int(line[2]))    
+#Coords in Grid block to real coords
+# сетка координат для блоков:
+  def printLevel(self):
+    for (b, x, y) in self.blocks:
+      print(b, x, y)
+  
+  def getDrawables(self):
+    return self.blocksSprites
   
 class BaseBlock(HasSprite):
   btype = None
-  files = {BlockType.ruby : ''}
   
-  def __init__(self, imgBaseName, framesCount, x, y):
-    frames = list()
-    for i in range(1, framesCount+1):
-      img = pyglet.image.load(imgBaseName + str(i) + '.png')
-      center_image(img)
-      frames += [pyglet.image.AnimationFrame(img, 0.2)]
-      
-    anim = pyglet.image.Animation(frames)
+  def __init__(self, anim, x, y):
     self.sprite = pyglet.sprite.Sprite(anim, x = x, y = y)
     
   def draw(self):
     self.sprite.draw()
     
-  
 # make fabric?
 class ImgNumber:
   
@@ -207,6 +258,7 @@ class Game:
   whiteParticles = None
   drawable = []
   stepping = []
+  levelDrawable = []
   
   state = 1
   stateRun = 1
@@ -214,7 +266,6 @@ class Game:
   
   background = None
   foreground = None
-  blocks = []
   
   def __init__(self):
     random.seed()
@@ -268,7 +319,9 @@ class Game:
     def on_draw():
       window.clear()
       for x in self.drawable:
-        x.draw()      
+        x.draw()
+      for x in self.levelDrawable:
+        x.draw()
       #self.wall.draw()
       self.ball.sprite.draw()
       self.player.sprite.draw()
@@ -295,14 +348,11 @@ class Game:
         g.player.isMove = False
 
   def addBlocks(self):
-    self.blocks = list()
-    blockList = ['block3anim/emerald0', 'block1anim/ruby', 'block2anim/block2F']
-    # расставлять в соответствии с картой уровня или генерить
-    for name in blockList:
-      b = BaseBlock(name, 7, 100 + random.randint(100,200), 100) # find in path count of files
-      self.addToDrawable(b)
-      self.blocks += [b]
+    m = Map()
+    self.addToLevelDrawable(m.getDrawables())
     
+  def addToLevelDrawable(self, x):
+    self.levelDrawable = x
   
   def addParticles(self, x):
     self.addToDrawable(x)
