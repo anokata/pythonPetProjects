@@ -328,7 +328,8 @@ class Game:
   
   background = None
   foreground = None
-  world = None
+  mmap = None
+  mmap = None
   
   def __init__(self):
     random.seed()
@@ -368,8 +369,8 @@ class Game:
     self.addToDrawable(self.numberGenerator)
     self.addToStepping(self.numberGenerator)
     
-    self.world = Map(self.blockAreaLeft, self.gameWindowHeigth - 25, 'map1.map')
-    self.addToLevelDrawable(self.world.getDrawables())
+    self.mmap = Map(self.blockAreaLeft, self.gameWindowHeigth - 25, 'map1.map')
+    self.addToLevelDrawable(self.mmap.getDrawables())
     
     self.stateToBallCapt()
 
@@ -406,11 +407,13 @@ class Game:
     self.drawable += [x]
   def addToStepping(self, x):
     self.stepping += [x]
-  # States
+  # States конечный автомат состояний
   def stateSet(self, s):
+    """ Установка состояния. """
     self.state = s
   
   def stateToRun(self):
+    """ . """
     if self.state == self.stateBallCapt:
       self.ball.drop(self.player.speed * 10 * self.player.isMove)
     self.stateSet(self.stateRun)
@@ -472,10 +475,12 @@ class Game:
       x.draw()
     
   def mapDraw(self):
-    pass
+    self.window.clear()
+    self.mmap.background.draw()
     
   def mapKeyPress(self, symbol, mod):
-    pass
+    if symbol == key.ENTER:
+      self.stateToBallCapt()
   
   def mapKeyRelease(self, symbol, mod):
     pass
@@ -491,13 +496,15 @@ class Game:
       g.player.isMove = direction.down
     if symbol == key.SPACE:
       self.stateToRun()
+    if symbol == key._1:
+      self.stateToMap()
 
   def playKeyRelease(self, symbol, mod):
     if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
       g.player.isMove = False
 
   # Mechanic
-  def mechanicMap(self):
+  def mechanicMap(self, dt):
     pass
   
   def mechanicStd(self, dt):
@@ -524,7 +531,7 @@ class Game:
   # Physics
   def blockCollision(self):
     if self.ball.x + self.ball.speed  > self.blockAreaLeft:
-      for b in self.world.currentLevel.blocks:
+      for b in self.mmap.currentLevel.blocks:
         if self.ball.distanceFrom(b) < Level.blockWidth: #blockRadius
           self.ball.stepBack()
           self.numberGenerator.makeNumber(self.player.STR, b.x, b.y, 30)
@@ -537,7 +544,7 @@ class Game:
           if b.Health <= 0:
             self.player.capture(b)
             self.numberGenerator.makeNumber(b.price, b.x, b.y, 30)
-            self.world.currentLevel.blockCapture(b)
+            self.mmap.currentLevel.blockCapture(b)
             self.updateLabels()
     
   def ballCaptureStep(self):
