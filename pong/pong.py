@@ -207,6 +207,9 @@ class Level:
   def blockCapture(self, block):
     """ При захвате(уничтожение) блока игроком. """
     self.blocks = list(filter(lambda x: x != block, self.blocks))
+    
+  def isComplete(self):
+    return len(list(filter(lambda x: x.btype == 0, self.blocks))) == 0
   
 class BaseBlock(HasSprite):
   btype = None
@@ -218,7 +221,7 @@ class BaseBlock(HasSprite):
     self.btype = btype
     # stats(Heath, price)
     baseStats = {BlockType.emerald: (2, 30), 
-      BlockType.ruby: (5, 150),
+      BlockType.ruby: (3, 150),
       BlockType.pearl: (1, 10)}
     (self.Health, self.price) = baseStats[btype]
     
@@ -580,6 +583,8 @@ class Game:
     self.redParticles.step()
     for x in self.stepping:
       x.step()
+    if self.mmap.currentLevel.isComplete():
+      self.stateToMap()
     
   def mechanicCapt(self, dt):
     """ Механика при захваченном мяче. """

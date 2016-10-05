@@ -1,0 +1,26 @@
+                                       ::::::::ddddдлоддлолдодо
+             dfimport random
+             from PIL. import Image, ImageDraw
+
+             img = 'ts.jpg' image = Image.open(img) draw = ImageDraw.Draw(image) w
+             size[0] h = image.size[1] pix = image.load() dep = 20
+
+nnnnn             for i in range(w):
+               for j         in range(h):
+     ,.            r =   
+             pix[i, j][0] g = pix[i, j][1] b = pix[i, j][2] s = (r + g + b) // 3
+        (         r =
+                     :
+
+
+
+            r
+
+              = 
+                 if 
+                   b
+    
+
+             image.save("out"+img, "JPEG")
+             del draw
+             [01;32mksi[01;00m@[01;34m17:50[01;00m~/python$ 
