@@ -28,7 +28,6 @@ def geomRange(start, count, coeff):
     c += 1
     yield int(x)
 
-
 class BlockType:
   emerald = 1
   ruby = 0
@@ -69,14 +68,45 @@ class Map:
            BlockType.emerald: ('block3anim/emerald0', 7)}
   levelsNames = ['lv0.lev']
   levels = []
+  levelsCoords = []
   currentLevel = None
   blockWindowTopStart = 500
   blockWindowLeft = 500
+  background = None
   
-  def __init__(self, width, height):
+  def __init__(self, width, height, mapname):
     self.blockWindowTopStart = height
     self.blockWindowLeft = width
     self.blocksAnims = dict()
+    self.levels = list()
+    self.levelsCoords = list()
+    self.loadMap(mapname)
+    self.loadBlockImages()
+    self.loadLevels()
+    
+  def loadMap(self, mapname):
+    with open(mapname, 'rt') as fin:
+      self.background = fin.readline()[:-1] #without \n
+      levelDir = fin.readline()[:-1]
+      for l in fin:
+        l = l.split()
+        self.levelsCoords += [(int(l[0]), int(l[1]))]
+      print(self.background, levelDir, self.levelsCoords)
+    self.levelsNames = list()
+    from os import listdir
+    from os.path import isfile, join
+    self.levelsNames = [levelDir + f for f in listdir(levelDir) if isfile(join(levelDir, f))]
+    self.levelsNames = list(filter(lambda x: x.find('.lev') > -1, self.levelsNames))
+    self.levelsNames.sort()
+    
+  def loadLevels(self):
+    for name in self.levelsNames:
+      lev = Level(name, self.blockWindowLeft, self.blockWindowTopStart)
+      self.levels += [lev]
+      lev.loadBlocks(self)
+    self.currentLevel = self.levels[0]
+  
+  def loadBlockImages(self):
     for (b, (imgBaseName, framesCount)) in self.blockImgNames.items():
       frames = list()
       for i in range(1, framesCount+1):
@@ -86,12 +116,6 @@ class Map:
       anim = pyglet.image.Animation(frames)
       self.blocksAnims[b] = anim
     self.levels = list()
-    for name in self.levelsNames:
-      lev = Level(name, self.blockWindowLeft, self.blockWindowTopStart)
-      self.levels += [lev]
-      lev.loadBlocks(self)
-      #lev.printLevel()
-    self.currentLevel = self.levels[0]
 
   def getBlockAnim(self, btype):
     return self.blocksAnims[btype]
@@ -268,8 +292,6 @@ class Particles:
 
 #singleton
 class Game:
-  playerWins = 0
-  botWins = 0
   ball = None
   player = None
   bot = None
@@ -325,14 +347,10 @@ class Game:
     self.player = Player(pyglet.image.load('player.png'), self.gameWindowLeft, self.gameWindowLeft , self.gameWindowHeigth - self.gameWindowLeft)
     self.bot = Bot(pyglet.image.load('player.png'), self.gameWindowWidth - Level.blockWidth * 3, self.gameWindowLeft, self.gameWindowHeigth - self.gameWindowLeft)
     
-    wallimg = pyglet.image.load('wall.png')
-    self.wall = pyglet.sprite.Sprite(wallimg, self.gameWindowWidth // 2, - wallimg.height + self.gameWindowHeigth - 40)
-    
     pyglet.gl.glClearColor(0.7,0.5,0.3, 1)
     #window.push_handlers(pyglet.window.event.WindowEventLogger())
     pyglet.clock.schedule_interval(self.stateHandle, 1.0/30)
-    
-    
+
     self.redParticles = Particles(pyglet.image.load('redstar18.png'), 15, 14, 300, 100)
     self.whiteParticles = Particles(pyglet.image.load('whitestar12.png'), 15, 10, speed = 1)
     self.blueParticles = Particles(pyglet.image.load('bluestar24.png'), 15, 30, 300, 100, speedDown=5)
@@ -344,7 +362,7 @@ class Game:
     self.addToDrawable(self.numberGenerator)
     self.addToStepping(self.numberGenerator)
     
-    self.world = Map(self.blockAreaLeft, self.gameWindowHeigth - 25)
+    self.world = Map(self.blockAreaLeft, self.gameWindowHeigth - 25, 'map1.map')
     self.addToLevelDrawable(self.world.getDrawables())
     
     self.stateToBallCapt()
@@ -355,7 +373,6 @@ class Game:
     self.addLabel(self.player.getStatText , 'Lv: 0', PlayerStatIndex.Exp)
     self.addLabel(self.player.getStatText , '', PlayerStatIndex.statPoints)
     self.addLabel(self.player.getStatText , '', PlayerStatIndex.Speed)
-    
     self.updateLabels()
     
     @window.event
@@ -500,17 +517,14 @@ class Game:
   def checkBallOut(self):
     isout = self.isBallOut()
     if 1 == isout:
-      #self.playerWins += random.randint(1,100)
       self.updateLabels()
       #self.blueParticles.restart(100,200)
-      #self.numberGenerator.makeNumber(self.playerWins, 50, 10, 30)
       #self.stateToBallCapt()
       self.ball.bounce()
     if -1 == isout:
       self.lose()
   
   def lose(self):
-    self.botWins += 1
     self.updateLabels()
     self.redParticles.restart(self.ball.x, self.ball.y)
     self.stateToBallCapt()
