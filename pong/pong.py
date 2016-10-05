@@ -91,8 +91,8 @@ class Map:
     return self.currentLevel.getDrawables()
 
 class Level:
-  blocks = [] #(btype, gridx, gridy)
-  blocksSprites = []
+  blocksGrid = [] #(btype, gridx, gridy)
+  blocks= []
   name = 'lv0.lev'
   blockWidth = 32
   blockHeight = 32
@@ -101,21 +101,21 @@ class Level:
   blockWindowTopStart = 500
   
   def __init__(self, name, left, top):
+    self.blocksGrid = list()
     self.blocks = list()
-    self.blocksSprites = list()
     self.readLevel(name)
     self.blockLeft = left# - 2.5 * self.blockWidth
     self.blockWindowTopStart = top
     
   def addBlock(self, btype, x, y):
-    self.blocks += [(btype, x, y)]
+    self.blocksGrid += [(btype, x, y)]
   
   def loadBlocks(self, m):
-    for (b, x, y) in self.blocks:
+    for (b, x, y) in self.blocksGrid:
       # тут преобразуем координаты в реальные
       x = x * self.blockWidth + self.blockLeft
       y = self.blockWindowTopStart - y * self.blockHeight + self.blockTop
-      self.blocksSprites += [pyglet.sprite.Sprite(m.getBlockAnim(b), x=x, y=y)]
+      self.blocks += [BaseBlock(m, x, y, b)]
     
   def writeLevel(self):
     with open(self.name, 'wt') as fout:
@@ -129,17 +129,18 @@ class Level:
         self.addBlock(int(line[0]), int(line[1]), int(line[2]))  # тут координаты сетки  
 
   def printLevel(self):
-    for (b, x, y) in self.blocks:
+    for (b, x, y) in self.blocksGrid:
       print(b, x, y)
   
   def getDrawables(self):
-    return self.blocksSprites
+    return self.blocks
   
 class BaseBlock(HasSprite):
   btype = None
   
-  def __init__(self, anim, x, y):
-    self.sprite = pyglet.sprite.Sprite(anim, x = x, y = y)
+  def __init__(self, m, x, y, btype):
+    self.sprite = pyglet.sprite.Sprite(m.getBlockAnim(btype), x=x, y=y)
+    self.btype = btype
     
   def draw(self):
     self.sprite.draw()
@@ -419,7 +420,7 @@ class Game:
     
   def blockCollision(self):
     if self.ball.x + self.ball.speed  > self.blockAreaLeft:
-      for b in self.world.currentLevel.blocksSprites:
+      for b in self.world.currentLevel.blocks:
         if self.ball.distanceFrom(b) < Level.blockWidth: #blockRadius
           self.ball.stepBack()
           self.numberGenerator.makeNumber(self.player.STR, b.x, b.y, 30)
@@ -514,6 +515,8 @@ class Player(HasSprite):
   #Stats:
   speed = 20
   STR = 1
+  Health = 10
+  
   
   #@debugDecor
   def __init__(self, img, x, yMin, yMax):
