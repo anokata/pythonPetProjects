@@ -61,8 +61,12 @@ class Map:
   levelsNames = ['lv0.lev']
   levels = []
   currentLevel = None
+  blockWindowTopStart = 500
+  blockWindowLeft = 500
   
-  def __init__(self):
+  def __init__(self, width, height):
+    self.blockWindowTopStart = height
+    self.blockWindowLeft = width
     self.blocksAnims = dict()
     for (b, (imgBaseName, framesCount)) in self.blockImgNames.items():
       frames = list()
@@ -74,7 +78,7 @@ class Map:
       self.blocksAnims[b] = anim
     self.levels = list()
     for name in self.levelsNames:
-      lev = Level(name)
+      lev = Level(name, self.blockWindowLeft, self.blockWindowTopStart)
       self.levels += [lev]
       lev.loadBlocks(self)
       #lev.printLevel()
@@ -87,20 +91,30 @@ class Map:
     return self.currentLevel.getDrawables()
 
 class Level:
-  blocks = []
+  blocks = [] #(btype, gridx, gridy)
   blocksSprites = []
   name = 'lv0.lev'
+  blockWidth = 32
+  blockHeight = 32
+  blockLeft = 500
+  blockTop = 5
+  blockWindowTopStart = 500
   
-  def __init__(self, name):
+  def __init__(self, name, left, top):
     self.blocks = list()
     self.blocksSprites = list()
     self.readLevel(name)
+    self.blockLeft = left# - 2.5 * self.blockWidth
+    self.blockWindowTopStart = top
     
   def addBlock(self, btype, x, y):
     self.blocks += [(btype, x, y)]
   
   def loadBlocks(self, m):
     for (b, x, y) in self.blocks:
+      # тут преобразуем координаты в реальные
+      x = x * self.blockWidth + self.blockLeft
+      y = self.blockWindowTopStart - y * self.blockHeight + self.blockTop
       self.blocksSprites += [pyglet.sprite.Sprite(m.getBlockAnim(b), x=x, y=y)]
     
   def writeLevel(self):
@@ -112,9 +126,8 @@ class Level:
     with open(name, 'rt') as fin:
       for line in fin:
         line = line.split()
-        self.addBlock(int(line[0]), int(line[1]), int(line[2]))    
-#Coords in Grid block to real coords
-# сетка координат для блоков:
+        self.addBlock(int(line[0]), int(line[1]), int(line[2]))  # тут координаты сетки  
+
   def printLevel(self):
     for (b, x, y) in self.blocks:
       print(b, x, y)
@@ -263,9 +276,11 @@ class Game:
   state = 1
   stateRun = 1
   stateBallCapt = 2
+  blockAreaLeft = 0
   
   background = None
   foreground = None
+  world = None
   
   def __init__(self):
     random.seed()
@@ -276,6 +291,7 @@ class Game:
     window = self.window
     self.gameWindowHeigth = window.height - 20
     self.gameWindowWidth = window.width - 200
+    self.blockAreaLeft = self.gameWindowWidth - 2.5 * Level.blockWidth
     
     self.background = pyglet.sprite.Sprite(pyglet.image.load('board1.png'), x=self.gameWindowLeft)
     self.addToDrawable(self.background)
@@ -285,7 +301,7 @@ class Game:
     self.ball = Ball(pyglet.image.load('ball4.png'), self.gameWindowWidth, self.gameWindowHeigth, self.gameWindowLeft)
     
     self.player = Player(pyglet.image.load('player.png'), self.gameWindowLeft, self.gameWindowLeft , self.gameWindowHeigth - self.gameWindowLeft)
-    self.bot = Bot(pyglet.image.load('player.png'), self.gameWindowWidth, self.gameWindowLeft, self.gameWindowHeigth - self.gameWindowLeft)
+    self.bot = Bot(pyglet.image.load('player.png'), self.gameWindowWidth - Level.blockWidth * 3, self.gameWindowLeft, self.gameWindowHeigth - self.gameWindowLeft)
     
     wallimg = pyglet.image.load('wall.png')
     self.wall = pyglet.sprite.Sprite(wallimg, self.gameWindowWidth // 2, - wallimg.height + self.gameWindowHeigth - 40)
@@ -311,7 +327,8 @@ class Game:
     self.addToDrawable(self.numberGenerator)
     self.addToStepping(self.numberGenerator)
     
-    self.addBlocks()
+    self.world = Map(self.blockAreaLeft, self.gameWindowHeigth - 25)
+    self.addToLevelDrawable(self.world.getDrawables())
     
     self.stateToBallCapt()
     
@@ -346,10 +363,6 @@ class Game:
     def on_key_release(symbol, mod):
       if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
         g.player.isMove = False
-
-  def addBlocks(self):
-    m = Map()
-    self.addToLevelDrawable(m.getDrawables())
     
   def addToLevelDrawable(self, x):
     self.levelDrawable = x
@@ -401,7 +414,19 @@ class Game:
     self.bot.randStep(self.ball.y, self.ball.x > self.gameWindowWidth // 2)
     self.checkBallOut()
     self.isCollision()
+    self.blockCollision()
     self.mechanicStd(dt)
+    
+  def blockCollision(self):
+    if self.ball.x + self.ball.speed  > self.blockAreaLeft:
+      for b in self.world.currentLevel.blocksSprites:
+        if self.ball.distanceFrom(b) < Level.blockWidth: #blockRadius
+          self.ball.stepBack()
+          self.numberGenerator.makeNumber(self.player.STR, b.x, b.y, 30)
+          self.ball.dx = - (self.ball.dx)
+          # up down collision?
+          if self.ball.top < b.y or self.ball.bottom > b.y:
+            self.ball.dy = -(self.ball.dy)
     
   def ballCaptureStep(self):
     self.ball.y = self.player.y
@@ -439,7 +464,7 @@ class Game:
       #self.ball.ballReturn(1)
       return -1
     if self.ball.x > self.gameWindowWidth + self.enemyDeep:
-      self.ball.ballReturn(-1)
+      #self.ball.ballReturn(-1)
       return 1
     return 0
     
@@ -450,7 +475,8 @@ class Game:
       self.updateScore()
       self.blueParticles.restart(100,200)
       self.numberGenerator.makeNumber(self.playerWins, 50, 10, 30)
-      self.stateToBallCapt()
+      #self.stateToBallCapt()
+      self.ball.bounce()
     if -1 == isout:
       self.lose()
   
@@ -523,7 +549,7 @@ class Bot(Player):
     super().__init__(img, x, yMin, yMax)
     self.left = x + img.width
     self.right = x
-    self.speed = 10
+    self.speed = 1 # difficult
   
   def randStep(self, ballY, inBotArea):
     self.i += 1
@@ -574,11 +600,24 @@ class Ball(HasSprite):
     self.sprite.rotation += 100 * dt
     self.x += self.dx * dt
     self.y += self.dy * dt
+    self.lastdt = dt
+    self.recalcCoords()
+    self.collisoins()
+  
+  def recalcCoords(self):
     self.right = self.x + self.width // 2
     self.left = self.x - self.width // 2
     self.top = self.y + self.height // 2
     self.bottom = self.y - self.height // 2
-    self.collisoins()
+  
+  def stepBack(self):
+    self.x -= self.dx * self.lastdt
+    self.y -= self.dy * self.lastdt
+    self.recalcCoords()
+  
+  def bounce(self):
+    self.stepBack()
+    self.dx = -self.dx
 
   def collisoins(self):
     if self.y < self.yMin:
