@@ -134,14 +134,27 @@ class Level:
   
   def getDrawables(self):
     return self.blocks
+    
+  def blockCapture(self, block):
+    self.blocks = list(filter(lambda x: x != block, self.blocks))
   
 class BaseBlock(HasSprite):
   btype = None
+  Health = 0
+  price = 0
   
   def __init__(self, m, x, y, btype):
     self.sprite = pyglet.sprite.Sprite(m.getBlockAnim(btype), x=x, y=y)
     self.btype = btype
+    # stats(Heath, price)
+    baseStats = {BlockType.emerald: (2, 2), 
+      BlockType.ruby: (5, 15),
+      BlockType.pearl: (1, 1)}
+    (self.Health, self.price) = baseStats[btype]
     
+  def capture(self):
+    self.sprite.visible = False
+  
   def draw(self):
     self.sprite.draw()
     
@@ -428,6 +441,12 @@ class Game:
           # up down collision?
           if self.ball.top < b.y or self.ball.bottom > b.y:
             self.ball.dy = -(self.ball.dy)
+          # strike block
+          b.Health -= self.player.STR
+          if b.Health <= 0:
+            self.player.capture(b)
+            self.numberGenerator.makeNumber(b.price, b.x, b.y, 30)
+            self.world.currentLevel.blockCapture(b)
     
   def ballCaptureStep(self):
     self.ball.y = self.player.y
@@ -516,6 +535,7 @@ class Player(HasSprite):
   speed = 20
   STR = 1
   Health = 10
+  Exp = 0
   
   
   #@debugDecor
@@ -541,6 +561,10 @@ class Player(HasSprite):
     
     self.top = self.y + self.height // 2
     self.bottom = self.y - self.height // 2
+    
+  def capture(self, block):
+    self.Exp += block.price
+    block.capture()
 
 class Bot(Player):
   i = 0
@@ -635,7 +659,7 @@ class Ball(HasSprite):
     self.dy = 200
   
   def drop(self, dy):
-    self.dy = dy
+    self.dy = dy if dy != 0 else random.randint(-50,50)
     self.dx = self.speed
 
 
