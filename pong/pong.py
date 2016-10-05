@@ -20,6 +20,15 @@ def distance(x, y, a, b):
   from math import sqrt
   return sqrt((x-a)*(x-a) + (y-b)*(y-b))
 
+def geomRange(start, count, coeff):
+  x = start
+  c = 0
+  while c < count:
+    x = x * coeff
+    c += 1
+    yield int(x)
+
+
 class BlockType:
   emerald = 1
   ruby = 0
@@ -147,9 +156,9 @@ class BaseBlock(HasSprite):
     self.sprite = pyglet.sprite.Sprite(m.getBlockAnim(btype), x=x, y=y)
     self.btype = btype
     # stats(Heath, price)
-    baseStats = {BlockType.emerald: (2, 70), 
+    baseStats = {BlockType.emerald: (2, 30), 
       BlockType.ruby: (5, 150),
-      BlockType.pearl: (1, 50)}
+      BlockType.pearl: (1, 10)}
     (self.Health, self.price) = baseStats[btype]
     
   def capture(self):
@@ -491,10 +500,10 @@ class Game:
   def checkBallOut(self):
     isout = self.isBallOut()
     if 1 == isout:
-      self.playerWins += random.randint(1,100)
+      #self.playerWins += random.randint(1,100)
       self.updateLabels()
-      self.blueParticles.restart(100,200)
-      self.numberGenerator.makeNumber(self.playerWins, 50, 10, 30)
+      #self.blueParticles.restart(100,200)
+      #self.numberGenerator.makeNumber(self.playerWins, 50, 10, 30)
       #self.stateToBallCapt()
       self.ball.bounce()
     if -1 == isout:
@@ -563,7 +572,8 @@ class Player(HasSprite):
     self.yMax = yMax
     self.left = x 
     self.right = x 
-    
+    self.LevelExp = dict(enumerate(geomRange(10, 51, 1.2)))
+    #print(self.LevelExp)
   
   def step(self):
     if self.isMove == direction.up:
@@ -581,10 +591,15 @@ class Player(HasSprite):
     block.capture()
   
   def expGain(self, n):
-    self.Exp += n
-    if self.Exp >= self.LevelExp[self.Lv + 1]:
-      self.Lv += 1
-      self.statPoints += 1
+    # смотрим сколько до след уровня
+    tonext = self.LevelExp[self.Lv +1] - self.Exp
+    if tonext > n: # если недостаточно то просто добавляем и выходим
+      self.Exp += n
+      return
+    self.Exp += tonext # иначе добавляем сколько надо а остаток добавляем рекурсивно
+    self.Lv += 1
+    self.statPoints += 1
+    self.expGain(n - tonext)
     
   def getStatText(self, stat):
     stats = {
