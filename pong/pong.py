@@ -4,23 +4,28 @@ import random
 import math
 #bug: 0
 def debugDecor(fn):
+  """ Декоратор отладки. """
   def wrap(*args): 
     print(args)
     return fn(*args)
   return wrap
 
 def center_image(image):
+  """ Центрирование якорной точки изображения. """
   image.anchor_x = image.width // 2
   image.anchor_y = image.height // 2
 
 def objDistance(s1, s2):
+  """ расстояние между объектами. """
   return distance(s1.x, s1.y, s2.x, s2.y)
 
 def distance(x, y, a, b):
+  """ Вычисление расстояния между двумя точками. """
   from math import sqrt
   return sqrt((x-a)*(x-a) + (y-b)*(y-b))
 
 def geomRange(start, count, coeff):
+  """ Генератор геометрической прогрессии. """
   x = start
   c = 0
   while c < count:
@@ -29,11 +34,14 @@ def geomRange(start, count, coeff):
     yield int(x)
 
 class BlockType:
+  """ Типы блоков. """
   emerald = 1
   ruby = 0
   pearl = 2
 
 class HasSprite():
+  """ Базовый класс для имеющих спрайт.
+  Реализует простой доступ к некоторым полям через проперти """
   sprite = None
   def x_get(self):
     return self.sprite.x
@@ -59,21 +67,24 @@ class HasSprite():
   def distanceFrom(self, obj):
     return distance(self.x, self.y, obj.x, obj.y)
 #sprite.scale:float
-#[(blockType, x, y),...] in file: blockType x y
-  # map = dict( (x, y) : lev)
+#Форамт файла Уровня: [(blockType, x, y),...] in file: blockType x y
+#Формат файла карты map = БГ, Папка уровней, dict( (x, y) : lev)
 class Map:
-  blocksAnims = {}
+  blocksAnims = {} # Анимация блоков для получения спрайтов
+  # @@ Имена блоков по типам. (вынести куда-то?)
   blockImgNames = {BlockType.ruby : ('block1anim/ruby', 7),
            BlockType.pearl: ('block2anim/block2F', 7),
            BlockType.emerald: ('block3anim/emerald0', 7)}
-  levelsNames = ['lv0.lev']
-  levels = []
-  levelsCoords = []
-  levelsDone = []
+  levelsNames = ['lv0.lev']  # имена уровней
+  levels = [] # сам уровень формата [(blockType, x, y),...] 
+  levelsCoords = []  # координаты иконок уровней на карте
+  levelsCaps = [] # спрайты иконок уровней на карте
+  levelsDone = [] # пройденные уровни
   currentLevel = None
   blockWindowTopStart = 500
   blockWindowLeft = 500
   background = None
+  capRadius = 30
   
   def __init__(self, width, height, mapname):
     self.blockWindowTopStart = height
@@ -81,6 +92,7 @@ class Map:
     self.blocksAnims = dict()
     self.levels = list()
     self.levelsCoords = list()
+    self.levelsCaps = list()
     self.levelsDone = list() # Список пройденных уровней ! загружать
     self.loadMap(mapname)
     self.loadBlockImages()
@@ -90,9 +102,15 @@ class Map:
     with open(mapname, 'rt') as fin:
       self.background = fin.readline()[:-1] #without \n
       levelDir = fin.readline()[:-1]
+      levelCap = pyglet.image.load('levelCap.png')
+      center_image(levelCap)
+      #Load Levels Coords
       for l in fin:
         l = l.split()
-        self.levelsCoords += [(int(l[0]), int(l[1]))]
+        x = int(l[0])
+        y = int(l[1])
+        self.levelsCoords += [(x, y)]
+        self.levelsCaps += [pyglet.sprite.Sprite(levelCap, x=x, y=y)]
       print(self.background, levelDir, self.levelsCoords)
     #load levels list
     self.levelsNames = list()
@@ -105,6 +123,7 @@ class Map:
     self.background = pyglet.sprite.Sprite(pyglet.image.load(self.background))
     
   def loadLevels(self):
+    """ Загрузка всех уровней карты. """
     for name in self.levelsNames:
       lev = Level(name, self.blockWindowLeft, self.blockWindowTopStart)
       self.levels += [lev]
@@ -112,6 +131,7 @@ class Map:
     self.currentLevel = self.levels[0]
   
   def loadBlockImages(self):
+    """ загрузка изображений блоков. """
     for (b, (imgBaseName, framesCount)) in self.blockImgNames.items():
       frames = list()
       for i in range(1, framesCount+1):
@@ -127,6 +147,15 @@ class Map:
   
   def getDrawables(self):
     return self.currentLevel.getDrawables()
+  
+  def draw(self):
+    self.background.draw()
+    for x in self.levelsCaps:
+      x.draw()
+  
+  def loadLevel(self, n):
+    print(n)
+    self.currentLevel = self.levels[n]
 
 class Level:
   blocksGrid = [] #(btype, gridx, gridy)
@@ -149,6 +178,7 @@ class Level:
     self.blocksGrid += [(btype, x, y)]
   
   def loadBlocks(self, m):
+    """ Загрузка блока. """
     for (b, x, y) in self.blocksGrid:
       # тут преобразуем координаты в реальные
       x = x * self.blockWidth + self.blockLeft
@@ -156,6 +186,7 @@ class Level:
       self.blocks += [BaseBlock(m, x, y, b)]
     
   def writeLevel(self):
+    """ Сохранение уровня. """
     with open(self.name, 'wt') as fout:
       for (b, x, y) in self.blocks:
         fout.write(str(b) + ' ' + str(x) + ' ' + str(y) + '\n')
@@ -174,6 +205,7 @@ class Level:
     return self.blocks
     
   def blockCapture(self, block):
+    """ При захвате(уничтожение) блока игроком. """
     self.blocks = list(filter(lambda x: x != block, self.blocks))
   
 class BaseBlock(HasSprite):
@@ -198,8 +230,9 @@ class BaseBlock(HasSprite):
     
 # make fabric?
 class ImgNumber:
-  
+  """ Генератор цифр числа из изображений. С анимацией. """
   class DrawableNumber:
+    """ Механика одного числа. """
     number = []
     lifeTime = 0
     def __init__(self, n, life=0):
@@ -217,6 +250,7 @@ class ImgNumber:
       return self.lifeTime
       
     def fadeout(self):
+      """ Исчезание. """
       spd = 8
       for x in self.number:
         if x.opacity - spd >= 0:
@@ -239,6 +273,7 @@ class ImgNumber:
     self.numbers[:] = filter(lambda x: x.step() != 0, self.numbers)
   
   def makeNumber(self, n, x, y, lifeTime=-1): 
+    """ Фабрика создающая число. """
     n = str(n)
     number = list()
     for i in n:
@@ -250,6 +285,7 @@ class ImgNumber:
     self.numbers += [self.DrawableNumber(number, lifeTime)]
       
 class Particles:
+  """ Система частиц. """
   sprites = []
   speed = 2
   lifeTime = 100
@@ -297,6 +333,7 @@ class Particles:
 
 #singleton
 class Game:
+  """ Главный класс игры. """
   ball = None
   player = None
   bot = None
@@ -370,7 +407,7 @@ class Game:
     self.addToStepping(self.numberGenerator)
     
     self.mmap = Map(self.blockAreaLeft, self.gameWindowHeigth - 25, 'map1.map')
-    self.addToLevelDrawable(self.mmap.getDrawables())
+    self.setLevelDrawable(self.mmap.getDrawables())
     
     self.stateToBallCapt()
 
@@ -391,12 +428,16 @@ class Game:
     @window.event
     def on_key_release(symbol, mod):
       self.stateHandleKeyRelease(symbol, mod)
+    @window.event
+    def on_mouse_press(x, y, button, mod):
+      self.stateHanderMousePress(x, y, button, mod)
   
   def addLabel(self, updateFun, initText, updateParam):
     self.labels += [pyglet.text.Label(text=initText, x=self.window.width - 90, y=self.gameWindowHeigth - 20 * len(self.labels) - 20)]
     self.labelsFun += [(updateFun, updateParam)]
     
-  def addToLevelDrawable(self, x):
+  def setLevelDrawable(self, x):
+    """ Установка отрисовывающегося на уровне. """
     self.levelDrawable = x
   
   def addParticles(self, x):
@@ -413,17 +454,18 @@ class Game:
     self.state = s
   
   def stateToRun(self):
-    """ . """
+    """ Переход в состояние игры полёта мяча. """
     if self.state == self.stateBallCapt:
       self.ball.drop(self.player.speed * 10 * self.player.isMove)
     self.stateSet(self.stateRun)
     
   def stateToBallCapt(self):
+    """ К захвату мяча. """
     self.ball.x = self.player.x + self.player.width
     self.stateSet(self.stateBallCapt)
   
   def stateToMap(self):
-    
+    """ Переход на карту. """
     self.stateSet(self.stateMap)
   #Обработчики механики от состояния
   def stateHandle(self, dt):
@@ -462,6 +504,16 @@ class Game:
     fun = d[self.state]
     fun(symbol, mod)
     
+  def stateHanderMousePress(self, x, y, button, mod):
+    d = {
+      self.stateBallCapt: False,
+      self.stateRun: False,
+      self.stateMap: self.mapMousePress
+    }
+    fun = d[self.state]
+    if fun:
+      fun(x, y, button, mod)
+  # Draw
   def playDraw(self):
     self.window.clear()
     for x in self.drawable:
@@ -476,8 +528,9 @@ class Game:
     
   def mapDraw(self):
     self.window.clear()
-    self.mmap.background.draw()
+    self.mmap.draw()
     
+  # Key events
   def mapKeyPress(self, symbol, mod):
     if symbol == key.ENTER:
       self.stateToBallCapt()
@@ -503,11 +556,25 @@ class Game:
     if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
       g.player.isMove = False
 
+  def mapMousePress(self, x, y, b, m):
+    """ Проверяем попал ли игрок на иконку уровня. 
+        И если да, то загружаем и запускаем его.
+    """
+    print(x, y)
+    for (a, b) in self.mmap.levelsCoords:
+      if distance(x, y, a, b) < self.mmap.capRadius:
+        self.mmap.loadLevel(self.mmap.levelsCoords.index((a,b)))
+        self.stateToBallCapt()
+        
+        self.setLevelDrawable(self.mmap.getDrawables())
+        return
+    
   # Mechanic
   def mechanicMap(self, dt):
     pass
   
   def mechanicStd(self, dt):
+    """ Общая механика игры. """
     self.updateLabels()
     self.blueParticles.step()
     self.redParticles.step()
@@ -515,11 +582,13 @@ class Game:
       x.step()
     
   def mechanicCapt(self, dt):
+    """ Механика при захваченном мяче. """
     self.mechanicStd(dt)
     self.player.step()
     self.ballCaptureStep()
 
   def mechanicRun(self, dt):
+    """ Механика при летящем мяче. """
     self.ball.step(dt)
     self.player.step()
     self.bot.randStep(self.ball.y, self.ball.x > self.gameWindowWidth // 2)
@@ -530,6 +599,7 @@ class Game:
     
   # Physics
   def blockCollision(self):
+    """ Пересечения с блоками мяча. """
     if self.ball.x + self.ball.speed  > self.blockAreaLeft:
       for b in self.mmap.currentLevel.blocks:
         if self.ball.distanceFrom(b) < Level.blockWidth: #blockRadius
@@ -551,6 +621,7 @@ class Game:
     self.ball.y = self.player.y
     
   def isCollision(self):
+    """ Обработка пересечения игроков с мячом. """
     colis = self.collisoinsDetect()
     if colis:
       if abs(self.ball.dx) < self.ball.maxspeed:
@@ -563,8 +634,9 @@ class Game:
       
       if colis.isMove:
         self.ball.dy += colis.isMove * colis.speed * 2
-  
+  # 2down Refactor
   def isBallOut(self):
+    """ Проверка на вылет из поля. """
     if self.ball.x < self.gameWindowUp:
       return -1
     if self.ball.x > self.gameWindowWidth + self.enemyDeep:
@@ -580,11 +652,14 @@ class Game:
       self.lose()
   
   def lose(self):
+    """ Проигрыш при неотбивании. """
     self.updateLabels()
     self.redParticles.restart(self.ball.x, self.ball.y)
     self.stateToBallCapt()
+    #TODO: health down
   
   def collisoinsDetect(self):
+    """ Проверка на пересечения игроков с мячом. """
     faces = [self.player, self.bot]
     for x in faces:
       hei = max(self.ball.top, x.top) - min(self.ball.bottom, x.bottom)
@@ -602,10 +677,12 @@ class Game:
     
 
 class direction:
+  """ Направления движения игрока\бота. """
   up = 1
   down = -1
 
 class PlayerStatIndex:
+  """ Коды для статов игрока. """
   Speed = 1
   Str = 2
   Health = 3
@@ -621,7 +698,7 @@ class Player(HasSprite):
   bottom = 0
   left = 0
   right = 0
-  #Stats:
+  #Stats: Статы
   speed = 20
   STR = 1
   Health = 10
@@ -630,7 +707,7 @@ class Player(HasSprite):
   statPoints = 0
   
   LevelExp = {
-    1: 100, 2: 300, 3: 1000 # сделать генератор?
+    1: 100, 2: 300, 3: 1000 # есть генератор
   }
   
   
@@ -660,10 +737,12 @@ class Player(HasSprite):
     self.bottom = self.y - self.height // 2
     
   def capture(self, block):
+    """ Получение блока и опыта. """
     self.expGain(block.price)
     block.capture()
   
   def expGain(self, n):
+    """ Получение опыта. """
     # смотрим сколько до след уровня
     tonext = self.LevelExp[self.Lv +1] - self.Exp
     if tonext > n: # если недостаточно то просто добавляем и выходим
@@ -675,6 +754,7 @@ class Player(HasSprite):
     self.expGain(n - tonext)
     
   def getStatText(self, stat):
+    """ Получение описания и значения стата. """
     stats = {
       PlayerStatIndex.Exp: (self.Exp, 'Exp: '),
       PlayerStatIndex.Lv: (self.Lv, 'Lv '),
@@ -699,6 +779,7 @@ class Bot(Player):
     self.speed = 1 # difficult
   
   def randStep(self, ballY, inBotArea):
+    """ Поведение бота. """
     self.i += 1
     if self.i > self.maxi:
       self.i = 0
@@ -752,12 +833,14 @@ class Ball(HasSprite):
     self.collisoins()
   
   def recalcCoords(self):
+    """ Пересчёт крайних координат. """
     self.right = self.x + self.width // 2
     self.left = self.x - self.width // 2
     self.top = self.y + self.height // 2
     self.bottom = self.y - self.height // 2
   
   def stepBack(self):
+    """ Шаг назад. """
     self.x -= self.dx * self.lastdt
     self.y -= self.dy * self.lastdt
     self.recalcCoords()
@@ -767,18 +850,21 @@ class Ball(HasSprite):
     self.dx = -self.dx
 
   def collisoins(self):
+    """ Проверка на пересечение и инверт вектора. """
     if self.y < self.yMin:
       self.dy = - self.dy
     if self.y > self.yMax:
       self.dy = - self.dy
   
   def ballReturn(self, direct):
+    """ Возврат. """
     self.x = self.midX
     self.y = self.midY
     self.dx = self.speed * direct
     self.dy = 200
   
   def drop(self, dy):
+    """ Выброс мяча от игрока. """
     self.dy = dy if dy != 0 else random.randint(-50,50)
     self.dx = self.speed
 
