@@ -12,10 +12,15 @@ def avgArray(l):
   from functools import reduce
   return reduce(int.__add__, l) / len(l)
 #1.2  написать функцию lenString вычисляющую длинну переданной строки.
-
+def lenString(l):
+  return 0 if [] == l else 1 + lenString(l[1:])
 #2.0  Написать функцию max2 возвращающую большее из двух чисел.
+def max2(a, b):
+  return a if a > b else b 
+  #return (a+b) - abs(a-b) # как без условий?
 #2.1  Написать функцию max3 принимающую 3 числа и возвращающую максимальное.
 #2.2  Написать функцию sortArray принимающую массив чисел и сортирующую его с помощью функции max2
+
 #2.3  Написать функцию maxArray принимающую массив целых чисел и находящую максимальное значение.
 #2.4  Написать функцию is_member проверяющая встречается ли строка в массиве строк.
 #2.5  Написать функцию overlapping принимающую два массива и возвращую True если у массивов есть хотя бы один общий элемент. можно использовать is_member.
@@ -45,30 +50,36 @@ def alltest():
   l1 = [2,8,4,9,23,3, 1]
   print(sumArray(l1))
   print(avgArray(l1))
+  print(lenString(l1))
+  print(max2(23,13),max2(13,22))
+
+def myexperiments():
+  class A():
+    n = []
+    k = []
+    def __init__(self, x):
+      self.n = list()
+      self.k = list()
+      self.n += [x]
+    def a(self, x):
+      print(self)
+      self.k += [x]
+
+  a = A(1)
+  b = A(2)
+  a.a(3)
+  b.a(4)
+  print(a.n, a.k, b.n, b.k, a.k == b.k)
+
+  a = [A(1),A(2),A(3)]
+  print(a)
+  for i in a:
+    if i.n[0] == 2:
+      print('del')
+  print(a)
+  a[:]=filter(lambda i: i.n[0] != 2, a)
+  print(a)
+
+
+myexperiments()
 alltest()
-
-class A():
-  n = []
-  k = []
-  def __init__(self, x):
-    self.n = list()
-    self.k = list()
-    self.n += [x]
-  def a(self, x):
-    print(self)
-    self.k += [x]
-
-a = A(1)
-b = A(2)
-a.a(3)
-b.a(4)
-print(a.n, a.k, b.n, b.k, a.k == b.k)
-
-a = [A(1),A(2),A(3)]
-print(a)
-for i in a:
-  if i.n[0] == 2:
-    print('del')
-print(a)
-a[:]=filter(lambda i: i.n[0] != 2, a)
-print(a)
