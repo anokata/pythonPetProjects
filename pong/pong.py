@@ -223,7 +223,7 @@ class BaseBlock(HasSprite):
     self.btype = btype
     # stats(Heath, price)
     baseStats = {BlockType.emerald: (2, 30),
-      BlockType.ruby: (3, 150),
+      BlockType.ruby: (2, 150),
       BlockType.pearl: (1, 10)}
     (self.Health, self.price) = baseStats[btype]
 
@@ -288,6 +288,9 @@ class ImgNumber:
       x += num.width
       number += [num]
     self.numbers += [self.DrawableNumber(number, lifeTime)]
+
+  def stopAll(self):
+    self.numbers = list()
 
 class Particles:
   """ Система частиц. """
@@ -424,6 +427,8 @@ class Game:
     self.addLabel(self.player.getStatText , '', PlayerStatIndex.statPoints)
     self.addLabel(self.player.getStatText , '', PlayerStatIndex.Speed)
     self.updateLabels()
+    self.winLabel = self.makeLabel('WIN!', self.gameWindowWidth//2, self.gameWindowHeigth//2, 40)
+    self.failLabel = self.makeLabel('FAIL!', self.gameWindowWidth//2, self.gameWindowHeigth//2, 40)
 
     @window.event
     def on_draw():
@@ -438,8 +443,8 @@ class Game:
     def on_mouse_press(x, y, button, mod):
       self.stateHanderMousePress(x, y, button, mod)
 
-  def makeLabel(self, text, x, y):
-    return pyglet.text.Label(text=text, x=x, y=y)
+  def makeLabel(self, text, x, y, size = 18):
+    return pyglet.text.Label(text=text, x=x, y=y, font_size=size)
 
   def addLabel(self, updateFun, initText, updateParam):
     self.labels += [pyglet.text.Label(text=initText, x=self.window.width - 90, y=self.gameWindowHeigth - 20 * len(self.labels) - 20)]
@@ -481,11 +486,15 @@ class Game:
     self.stateSet(self.stateMap)
 
   def stateToWin(self):
+    self.stateIntervalToMap()
+    self.numberGenerator.stopAll()
+    self.bot.reinit()
+    self.player.reinit()
     self.stateSet(self.stateWin)
 
   def stateIntervalToMap(self):
     #from pyglet import clock
-    pyglet.clock.schedule_once(self.stateToMap, 2)
+    pyglet.clock.schedule_once(self.stateToMap, 3)
 
   #Обработчики механики от состояния
   def stateHandle(self, dt):
@@ -544,7 +553,7 @@ class Game:
   # Draw
   def winDraw(self):
     self.playDraw()
-    #self.winLabel.draw()
+    self.winLabel.draw()
 
   def playDraw(self):
     self.window.clear()
@@ -614,7 +623,7 @@ class Game:
     for x in self.stepping:
       x.step()
     if self.mmap.currentLevel.isComplete():
-      self.stateToMap()
+      self.stateToWin()
 
   def mechanicCapt(self, dt):
     """ Механика при захваченном мяче. """
@@ -638,7 +647,7 @@ class Game:
     if self.ball.x + self.ball.speed  > self.blockAreaLeft:
       for b in self.mmap.currentLevel.blocks:
         if self.ball.distanceFrom(b) < Level.blockWidth: #blockRadius
-          self.ball.stepBack()
+          self.ball.stepBack(b.x, b.y)
           self.numberGenerator.makeNumber(self.player.STR, b.x, b.y, 30)
           self.ball.dx = - (self.ball.dx)
           # up down collision?
@@ -693,6 +702,7 @@ class Game:
     self.stateToBallCapt()
     self.player.Health -= 2
     if self.player.Health < 1:
+      self.player.lose()
       self.stateIntervalToMap()
 
   def collisoinsDetect(self):
@@ -738,7 +748,8 @@ class Player(HasSprite):
   #Stats: Статы
   speed = 20
   STR = 1
-  Health = 10
+  Health = 20
+  maxHealth = 22
   Exp = 0
   Lv = 0
   statPoints = 0
@@ -761,6 +772,9 @@ class Player(HasSprite):
     self.right = x
     self.LevelExp = dict(enumerate(geomRange(10, 51, 1.2)))
     #print(self.LevelExp)
+
+  def reinit(self):
+    self.y = self.yMin
 
   def step(self):
     if self.isMove == direction.up:
@@ -788,7 +802,11 @@ class Player(HasSprite):
     self.Exp += tonext # иначе добавляем сколько надо а остаток добавляем рекурсивно
     self.Lv += 1
     self.statPoints += 1
+    self.Health = self.maxHealth
     self.expGain(n - tonext)
+
+  def lose(self):
+    self.Health = self.maxHealth
 
   def getStatText(self, stat):
     """ Получение описания и значения стата. """
@@ -876,14 +894,18 @@ class Ball(HasSprite):
     self.top = self.y + self.height // 2
     self.bottom = self.y - self.height // 2
 
-  def stepBack(self):
-    """ Шаг назад. """
+  def stepBack(self, dx, dy):
+    """ Шаг назад. (неполный)"""
+    dx = (dx-self.x) - self.width
+    dy = (dy-self.y) - self.width
     self.x -= self.dx * self.lastdt
     self.y -= self.dy * self.lastdt
+    #self.x -= dx * (self.dx/self.dx)
+    #self.y -= dy * (self.dy/self.dy)
     self.recalcCoords()
 
   def bounce(self):
-    self.stepBack()
+    #self.stepBack()
     self.dx = -self.dx
 
   def collisoins(self):
