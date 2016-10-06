@@ -76,8 +76,8 @@ class Map:
   blocksAnims = {} # Анимация блоков для получения спрайтов
   # @@ Имена блоков по типам. (вынести куда-то?)
   blockImgNames = {BlockType.ruby : ('block1anim/ruby', 7),
-           BlockType.pearl: ('block2anim/block2F', 7),
-           BlockType.emerald: ('block3anim/emerald0', 7)}
+           BlockType.pearl: ('block6anim/pearl', 7),
+           BlockType.emerald: ('block5anim/emerald', 7)}
   levelsNames = ['lv0.lev']  # имена уровней
   levels = [] # сам уровень формата [(blockType, x, y),...]
   levelsCoords = []  # координаты иконок уровней на карте
@@ -366,6 +366,7 @@ class Game:
   stateRun = 1
   stateBallCapt = 2
   stateMap = 3
+  stateWin = 4
   blockAreaLeft = 0
 
   background = None
@@ -386,7 +387,7 @@ class Game:
     self.gameWindowWidth = window.width - 200
     self.blockAreaLeft = self.gameWindowWidth - 2.5 * Level.blockWidth
 
-    self.background = pyglet.sprite.Sprite(pyglet.image.load('board1.png'), x=self.gameWindowLeft)
+    self.background = pyglet.sprite.Sprite(pyglet.image.load('board2.png'), x=self.gameWindowLeft)
     self.addToDrawable(self.background)
     self.foreground = pyglet.sprite.Sprite(pyglet.image.load('foreground.png'))
     self.addToDrawable(self.foreground)
@@ -437,6 +438,9 @@ class Game:
     def on_mouse_press(x, y, button, mod):
       self.stateHanderMousePress(x, y, button, mod)
 
+  def makeLabel(self, text, x, y):
+    return pyglet.text.Label(text=text, x=x, y=y)
+
   def addLabel(self, updateFun, initText, updateParam):
     self.labels += [pyglet.text.Label(text=initText, x=self.window.width - 90, y=self.gameWindowHeigth - 20 * len(self.labels) - 20)]
     self.labelsFun += [(updateFun, updateParam)]
@@ -476,6 +480,9 @@ class Game:
     self.ball.y = cap.y
     self.stateSet(self.stateMap)
 
+  def stateToWin(self):
+    self.stateSet(self.stateWin)
+
   def stateIntervalToMap(self):
     #from pyglet import clock
     pyglet.clock.schedule_once(self.stateToMap, 2)
@@ -485,16 +492,19 @@ class Game:
     d = {
       self.stateBallCapt: self.mechanicCapt,
       self.stateRun: self.mechanicRun,
-      self.stateMap: self.mechanicMap
+      self.stateMap: self.mechanicMap,
+      self.stateWin: False
     }
     fun = d[self.state]
-    fun(dt)
+    if fun:
+      fun(dt)
   #Обработчики отрисовки от состояния
   def stateHandleDraw(self):
     d = {
       self.stateBallCapt: self.playDraw,
       self.stateRun: self.playDraw,
-      self.stateMap: self.mapDraw
+      self.stateMap: self.mapDraw,
+      self.stateWin: self.winDraw
     }
     fun = d[self.state]
     fun()
@@ -503,30 +513,39 @@ class Game:
     d = {
       self.stateBallCapt: self.playKeyPress,
       self.stateRun: self.playKeyPress,
-      self.stateMap: self.mapKeyPress
+      self.stateMap: self.mapKeyPress,
+      self.stateWin: False
     }
     fun = d[self.state]
-    fun(symbol, mod)
+    if fun:
+      fun(symbol, mod)
 
   def stateHandleKeyRelease(self, symbol, mod):
     d = {
       self.stateBallCapt: self.playKeyRelease,
       self.stateRun: self.playKeyRelease,
-      self.stateMap: self.mapKeyRelease
+      self.stateMap: self.mapKeyRelease,
+      self.stateWin: False
     }
     fun = d[self.state]
-    fun(symbol, mod)
+    if fun:
+      fun(symbol, mod)
 
   def stateHanderMousePress(self, x, y, button, mod):
     d = {
       self.stateBallCapt: False,
       self.stateRun: False,
-      self.stateMap: self.mapMousePress
+      self.stateMap: self.mapMousePress,
+      self.stateWin: False
     }
     fun = d[self.state]
     if fun:
       fun(x, y, button, mod)
   # Draw
+  def winDraw(self):
+    self.playDraw()
+    #self.winLabel.draw()
+
   def playDraw(self):
     self.window.clear()
     for x in self.drawable:
@@ -564,7 +583,7 @@ class Game:
     if symbol == key.SPACE:
       self.stateToRun()
     if symbol == key._1:
-      self.stateToMap()
+      self.stateToMap(0)
 
   def playKeyRelease(self, symbol, mod):
     if symbol == key.UP or symbol == key.DOWN or symbol == key.LEFT or symbol == key.RIGHT:
