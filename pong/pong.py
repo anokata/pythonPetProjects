@@ -3,7 +3,7 @@ import pyglet
 from pyglet.window import key
 import random
 import math
-#bug: 0
+#TODO: Выделить модули для использования в др проекте.
 #ctrlAlt-F F3 F4 CA-t A-o A-w
 Sprite = pyglet.sprite.Sprite
 def debugDecor(fn):

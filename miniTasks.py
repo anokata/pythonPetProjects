@@ -65,6 +65,7 @@ def alltest():
   print(max2(23,13),max2(13,22))
   print(sortArray(l1))
   print(maxArray(l1))
+  #сделать задачи из книги
 
 def myexperiments():
   class A():
