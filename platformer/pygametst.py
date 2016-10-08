@@ -1,10 +1,20 @@
 import pygame
 import sys
-sys.path += ["../modules"]
+sys.path += ["../modules",'./']
 from stateSystem import *
+import pyganim
+
 Sprite = pygame.sprite.Sprite
 entities = 0
 # делать игрока сначала базового не зависящего от движка.
+
+AnimDelay = 0.1 # скорость смены кадров
+AnimGoRight = ['catr1.png' ,'catr2.png']
+AnimGoLeft = ['catl1.png','catl2.png']
+AnimJumpLeft = ['catjl.png', 'catjl2.png']
+AnimJumpRight = ['catjr.png','catjr2.png']
+AnimJump = ['catjr.png']
+AnimStand = ['cat3.png']
 
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
@@ -32,6 +42,7 @@ class Player():
     spdj = 5.0
     moving = 0
     isStand = False
+    onWall = False
     dy = 0
     dx = 0.0
     jumped = False
@@ -43,29 +54,76 @@ class Player():
 class pgPlayer(Player, pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('cat1.png')
+        self.standimg = pygame.image.load('cat2.png')
+        self.standRightImg = pygame.image.load('cat2.png')
+        self.standLeftImg = pygame.image.load('cat2L.png')
+        self.image = self.standimg
+        self.wallimg = pygame.image.load('catwall.png')
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
-    def jump(self, j):
-        self.jumped = True
+        from itertools import repeat
+        Anim = list(zip(AnimGoRight, list(repeat(AnimDelay, len(AnimGoRight)))))
+        self.AnimRight = pyganim.PygAnimation(Anim)
+        self.AnimRight.play()
 
+        Anim = list(zip(AnimGoLeft, list(repeat(AnimDelay, len(AnimGoLeft)))))
+        self.AnimLeft = pyganim.PygAnimation(Anim)
+        self.AnimLeft.play()
+
+        Anim = list(zip(AnimJumpLeft, list(repeat(AnimDelay, len(AnimJumpLeft)))))
+        self.AnimJumpLeft = pyganim.PygAnimation(Anim)
+        self.AnimJumpLeft.play()
+
+        Anim = list(zip(AnimJumpRight, list(repeat(AnimDelay, len(AnimJumpRight)))))
+        self.AnimJumpRight = pyganim.PygAnimation(Anim)
+        self.AnimJumpRight.play()
+
+        Anim = list(zip(AnimStand, list(repeat(AnimDelay, len(AnimStand)))))
+        self.AnimStand = pyganim.PygAnimation(Anim)
+        self.AnimStand.play()
+        self.changeAnim(self.AnimStand)
+
+    def jump(self, j):
+        if not self.jumped:# and self.isStand:
+            self.jumped = True
+
+    def changeAnim(self, a):
+        self.image.fill(pygame.Color('#000000'))
+        a.blit(self.image, (0, 0))
 
     def moveSide(self, dt, platforms):
         #self.x -= self.dx * dt * self.moving
+
+        if self.dx < 0:
+            self.changeAnim(self.AnimLeft)
+        elif self.dx > 0:
+            self.changeAnim(self.AnimRight)
+        if self.onWall and self.dx < 0:
+            self.changeAnim(self.AnimJumpLeft)
+        elif self.onWall and self.dx >= 0:
+            self.changeAnim(self.AnimJumpRight)
+
         if not self.isStand:
             self.dy += gravity
 
-        if self.isStand and self.jumped:
+        if (self.isStand or self.onWall) and self.jumped:
             self.dy = -self.spdj
             self.isStand = False
+            self.onWall = False
             self.jumped = False
+            self.dx = self.moving * self.spd
 
         self.isStand = False
+
         #self.y += dt * self.dy
         self.dx = - self.moving * self.spd
 
-        self.rect.y += self.dy
+        if self.onWall:
+            self.rect.y += self.dy* 0.2
+            self.onWall = False
+        else:
+            self.rect.y += self.dy
         self.collide(0, self.dy, platforms)
         self.rect.x += self.dx
         self.collide(self.dx, 0, platforms)
@@ -75,20 +133,24 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
                 if dx > 0:                      # если движется вправо
                     self.rect.right = p.rect.left # то не движется вправо
+                    self.onWall = True
                 if dx < 0:                      # если движется влево
                     self.rect.left = p.rect.right # то не движется влево
+                    self.onWall = True
 
                 if dy > 0:                      # если падает вниз
-                    self.rect.bottom = p.rect.top # то не падает вниз
+                    self.rect.bottom = p.rect.top  # то не падает вниз
                     self.isStand = True          # и становится на что-то твердое
                     self.dy = 0                 # и энергия падения пропадает
+                    if self.dx == 0.0:
+                        self.changeAnim(self.AnimStand)
 
                 if dy < 0:                      # если движется вверх
                     self.rect.top = p.rect.bottom # то не движется вверх
                     self.dy = 0                 # и энергия прыжка пропадает
 
     def draw(self):
-        screen.blit(self.image, (self.rect.x,self.rect.y))
+        screen.blit(self.image, (self.rect.x ,self.rect.y + 3))
 
 class Block(pygame.sprite.Sprite): # base class for sprites?
     def __init__(self, x, y, imgname=''):
@@ -136,8 +198,8 @@ def main():
 
     global mainDrawnings, collided
     mp = list()
-    for x in range(140):
-        mp += [(x,2)]
+    for x in range(30):
+        mp += [(x,15)]
     m = Tiled('ground1.png', mp)
     mainDrawnings += [m]
 
