@@ -1,3 +1,18 @@
+"""
+Как пользоваться:
+на события вызываем handleEvent('имя события', symbol, ...)
+
+    addState('mainRun') добавляем события
+    changeState('mainRun') меняем состояние
+    setEventHandler('mainRun', 'draw', drawMain) вешаем обработчик на событие
+    setEventHandler('mainRun', 'keyPress', keyDown) вешаем обработчик на событие
+    #setEventHandler('mainRun', 'mechanic', lambda: print(1))
+    #addState('tst')
+    #setChangeHandler('tst','mainRun',lambda: print('tm'))
+    #setChangeHandler('mainRun','tst',lambda: print('mt'))
+    #changeState('tst')
+    #changeState('mainRun')
+"""
 # Моя State System.
 # должна быть таблица состояний = состояниеБыло состояние стало = функцияПерехода
 # + состояние сейчас + собите = обработчик

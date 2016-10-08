@@ -49,22 +49,32 @@ def updateLabels():
 
 #pyglet.clock.schedule_once(self.stateToMap, 3)
 
+images = dict()
+
 def center_image(image):
     """ Центрирование якорной точки изображения. """
     image.anchor_x = image.width // 2
     image.anchor_y = image.height // 2
 
 def makeSprite(imgname, x=0,y=0, center=False):
-    img = pyglet.image.load(imgname)
+    img = getImage(imgname)
+    print(img)
     if center:
             center_image(img)
     s = Sprite(img, x=x, y=y)
     return s
 
 def makeSpriteXY(imgname, x=0,y=0):
+    img = getImage(imgname)
     """ Устанавливает спрайт в позицию относительно сетки из его размеров. """
-    img = pyglet.image.load(imgname)
     x = x * img.width
     y = y * img.height
     s = Sprite(img, x=x, y=y)
     return s
+
+def getImage(iname):
+    global images
+    if iname not in images:
+        images[iname] = pyglet.image.load(iname)
+    print(images)
+    return images[iname]

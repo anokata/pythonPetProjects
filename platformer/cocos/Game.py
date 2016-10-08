@@ -1,7 +1,7 @@
 """ Main class module. """
 import cocos
 import sys
-sys.path += ["../modules"]
+sys.path += ["../modules", "../"]
 from makeAnimation import makeAnimObj
 #http://python.cocos2d.org/doc/programming_guide/quickstart.html
 # пока как то не впечатляет. сложно.
