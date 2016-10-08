@@ -35,7 +35,7 @@ class ImgNumber:
         self.images = list()
         self.numbers = list()
         for i in range(10):
-            self.images += [pyglet.image.load(str(i) + '.png')]
+            self.images += [pyglet.image.load('nums0/'+str(i) + '.png')]
 
     def draw(self):
         for i in self.numbers:

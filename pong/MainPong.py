@@ -114,6 +114,8 @@ class Game:
         self.updateLabels()
         self.winLabel = self.makeLabel('WIN!', self.gameWindowWidth//2, self.gameWindowHeigth//2, 40)
         self.failLabel = self.makeLabel('FAIL!', self.gameWindowWidth//2, self.gameWindowHeigth//2, 40)
+        fps_display = pyglet.clock.ClockDisplay()
+        self.addToDrawable(fps_display)
 
         @window.event
         def on_draw():

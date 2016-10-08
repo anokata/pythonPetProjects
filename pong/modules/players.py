@@ -2,6 +2,7 @@ from pygletUtil import *
 from util import *
 import pyglet
 from gameTypes import *
+import random
 
 class Player(HasSprite):
     isMove = False
