@@ -1,5 +1,8 @@
 """ Main class module. """
 import cocos
+import sys
+sys.path += ["../modules"]
+from makeAnimation import makeAnimObj
 #http://python.cocos2d.org/doc/programming_guide/quickstart.html
 # пока как то не впечатляет. сложно.
 # Есть сцены(состояния почти не нужны) + слои. Есть система событий.
@@ -23,6 +26,9 @@ class Game(cocos.layer.Layer):
         cat.y = 200
         cat.scale = 3
         self.add(cat, z=1)
+
+        #self.a = makeAnimObj('../pong/block6anim/pearl', 100, 100, 8, 0.1)
+        #self.add(self.a)
 
     def on_key_press (self, key, modifiers):
         self.cat.x += 10
