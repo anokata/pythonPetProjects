@@ -5,7 +5,9 @@ from stateSystem import *
 import pyganim
 
 Sprite = pygame.sprite.Sprite
-entities = 0
+entities = None
+layerBg = None
+layerFg = None
 # делать игрока сначала базового не зависящего от движка.
 
 AnimDelay = 0.1 # скорость смены кадров
@@ -16,11 +18,37 @@ AnimJumpRight = ['catjr.png','catjr2.png']
 AnimJump = ['catjr.png']
 AnimStand = ['cat3.png']
 
+#Камера. у неё есть свои размеры и положение. она не даёт выйти за пределы игроку - меняет положение, следит. Она преобразует данные в неё координаты объекта так чтобы они отображались на экране( вычесть координаты камеры)
+class Camera():
+
+    def __init__(self, w, h):
+        self.rect = pygame.Rect(0, 0, w, h)
+
+    def stalkAt(self, p):
+        """ Следить за """
+        self.rect.left = min(self.rect.left, p.rect.left)
+        self.rect.right = max(self.rect.right, p.rect.right)
+        self.rect.top = min(self.rect.top, p.rect.top)
+        self.rect.bottom = max(self.rect.bottom, p.rect.bottom)
+
+    def calc(self, o):
+        """ пересчитать координаты объекта на экран """
+        r = pygame.Rect(0, 0, 0, 0)
+        r.left = o.rect.left - self.rect.left
+        r.top = o.rect.top - self.rect.top
+        #r.left = o.rect.left - self.rect.left
+        #r.left = o.rect.left - self.rect.left
+        return r
+
+
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
     s.image = img = pygame.image.load(imgname)
-    s.x = x * img.get_rect().size[0]
-    s.y = y * img.get_rect().size[1]
+    s.rect = img.get_rect()
+    w = s.rect.w
+    h = s.rect.h
+    s.rect.left = x * w
+    s.rect.top = y * h
     return s
 
 class Tiled():
@@ -52,6 +80,8 @@ class Player():
         pass
 
 class pgPlayer(Player, pygame.sprite.Sprite):
+    rect = pygame.Rect(0,0,0,0)
+
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.standimg = pygame.image.load('cat2.png')
@@ -149,10 +179,11 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                     self.rect.top = p.rect.bottom # то не движется вверх
                     self.dy = 0                 # и энергия прыжка пропадает
 
-    def draw(self):
-        screen.blit(self.image, (self.rect.x ,self.rect.y + 3))
+    #def draw(self):
+        #screen.blit(self.image, (self.rect.x ,self.rect.y + 3))
 
 class Block(pygame.sprite.Sprite): # base class for sprites?
+    rect = 0
     def __init__(self, x, y, imgname=''):
         Sprite.__init__(self)
         self.image = pygame.image.load('block0.png')
@@ -161,8 +192,8 @@ class Block(pygame.sprite.Sprite): # base class for sprites?
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
-    def draw(self):
-        screen.blit(self.image, (self.rect.x, self.rect.y))
+    #def draw(self):
+        #screen.blit(self.image, (self.rect.x, self.rect.y))
 
 def mechanic(dt):
     handleEvent('mechanic', dt)
@@ -174,10 +205,11 @@ bgColor = "#004400"
 player = pgPlayer(32, 32)
 bgSurface = None
 screen = 0
-mainDrawnings = list()
 collided = list()
 gravity = 0.2
+cam = Camera(200, 200)
 #http://www.pygame.org/docs/ref/key.html
+
 def main():
     pygame.init()
     global screen
@@ -196,25 +228,24 @@ def main():
     setEventHandler('mainRun', 'keyUp', keyUp)
     setEventHandler('mainRun', 'mechanic', player.moveSide)
 
-    global mainDrawnings, collided
+    global collided, cam, entities, layerBg, layerFg
     mp = list()
+    entities = pygame.sprite.Group()
+    layerBg = pygame.sprite.Group()
+    layerFg = pygame.sprite.Group()
+
     for x in range(30):
         mp += [(x,15)]
     m = Tiled('ground1.png', mp)
-    mainDrawnings += [m]
+    for x in m.tiles:
+        layerBg.add(x)
 
     mp = list()
     for x in range(140):
         mp += [(x,1)]
     m = Tiled('sky0.png', mp)
-    mainDrawnings += [m]
-
-    entities = pygame.sprite.Group()
-    for x in range(10):
-        b = Block(x*32, 300)
-        #mainDrawnings += [b]
-        #collided += [b]
-        #entities.add(b)
+    for x in m.tiles:
+        layerBg.add(x)
 
     lev= ["xxxxxxxxxxxxxxxxxxxxxxxxx",
           "x-----x-x-xx-------x----x",
@@ -238,11 +269,11 @@ def main():
         for y in range(len(lev[0])):
             if lev[x][y] == 'x':
                 b = Block(y*32, x*32,)
-                mainDrawnings += [b]
                 collided += [b]
                 entities.add(b)
 
-    entities.add(player)
+    layerFg.add(player)
+    #cam = Camera(200, 200)
 
     isExit = False
     while not isExit:
@@ -278,12 +309,15 @@ def keyUp(k, d):
 
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
-    for x in mainDrawnings:
-        x.draw()
-    player.draw()
-    #global entities
-    #if entities:
-    #    entities.draw(screen)
+    #player.draw(screen)
+    #player.draw()
+    global entities, layerBg, layerFg
+    if layerBg != None:
+        layerBg.draw(screen)
+    if entities != None:
+        entities.draw(screen)
+    if layerFg != None:
+        layerFg.draw(screen)
     pygame.display.update()
 
 if __name__ == "__main__":
