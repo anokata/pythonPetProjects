@@ -26,16 +26,16 @@ class Camera():
 
     def stalkAt(self, p):
         """ Следить за """
-        self.rect.left = min(self.rect.left, p.rect.left)
+        self.rect.left = min(self.rect.left, p.rect.left - WindowW//2) 
+        self.rect.top = min(self.rect.top, p.rect.top - WindowH//2)
         self.rect.right = max(self.rect.right, p.rect.right)
-        self.rect.top = min(self.rect.top, p.rect.top)
         self.rect.bottom = max(self.rect.bottom, p.rect.bottom)
 
     def calc(self, o):
         """ пересчитать координаты объекта на экран """
         r = pygame.Rect(0, 0, 0, 0)
-        r.left = o.rect.left - self.rect.left
-        r.top = o.rect.top - self.rect.top
+        r.left = o.rect.left - self.rect.left #- WindowH//2
+        r.top = o.rect.top - self.rect.top #+ WindowW//2
         #r.left = o.rect.left - self.rect.left
         #r.left = o.rect.left - self.rect.left
         return r
@@ -207,7 +207,7 @@ bgSurface = None
 screen = 0
 collided = list()
 gravity = 0.2
-cam = Camera(200, 200)
+cam = Camera(400, 300)
 #http://www.pygame.org/docs/ref/key.html
 
 def main():
@@ -309,15 +309,20 @@ def keyUp(k, d):
 
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
-    #player.draw(screen)
-    #player.draw()
-    global entities, layerBg, layerFg
-    if layerBg != None:
-        layerBg.draw(screen)
-    if entities != None:
-        entities.draw(screen)
-    if layerFg != None:
-        layerFg.draw(screen)
+    global entities, layerBg, layerFg, cam, player
+    cam.stalkAt(player)
+    #if layerBg != None:
+        #layerBg.draw(screen)
+    for e in layerBg:
+        screen.blit(e.image, cam.calc(e))
+    for e in entities:
+        screen.blit(e.image, cam.calc(e))
+    for e in layerFg:
+        screen.blit(e.image, cam.calc(e))
+    #if entities != None:
+    #    entities.draw(screen)
+    #if layerFg != None:
+    #    layerFg.draw(screen)
     pygame.display.update()
 
 if __name__ == "__main__":
