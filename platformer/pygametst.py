@@ -3,6 +3,7 @@ import sys
 sys.path += ["../modules",'./']
 from stateSystem import *
 import pyganim
+import roomGenerator as rg
 
 Sprite = pygame.sprite.Sprite
 entities = None
@@ -27,6 +28,7 @@ class Camera():
     def stalkAt(self, p):
         """ Следить за """
         self.rect.left = min(self.rect.left, p.rect.left - WindowW//2) 
+        self.rect.right = max(self.rect.right, p.rect.right)
         self.rect.top = min(self.rect.top, p.rect.top - WindowH//2)
         self.rect.right = max(self.rect.right, p.rect.right)
         self.rect.bottom = max(self.rect.bottom, p.rect.bottom)
