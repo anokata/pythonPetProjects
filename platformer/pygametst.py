@@ -45,7 +45,7 @@ class Camera():
 
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
-    s.image = img = pygame.image.load(imgname)
+    s.image = img = pygame.image.load(imgname).convert()
     s.rect = img.get_rect()
     w = s.rect.w
     h = s.rect.h
@@ -86,11 +86,11 @@ class pgPlayer(Player, pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.standimg = pygame.image.load('cat2.png')
-        self.standRightImg = pygame.image.load('cat2.png')
-        self.standLeftImg = pygame.image.load('cat2L.png')
+        self.standimg = pygame.image.load('cat2.png').convert()
+        self.standRightImg = pygame.image.load('cat2.png').convert()
+        self.standLeftImg = pygame.image.load('cat2L.png').convert()
         self.image = self.standimg
-        self.wallimg = pygame.image.load('catwall.png')
+        self.wallimg = pygame.image.load('catwall.png').convert()
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
@@ -188,7 +188,7 @@ class Block(pygame.sprite.Sprite): # base class for sprites?
     rect = 0
     def __init__(self, x, y, imgname=''):
         Sprite.__init__(self)
-        self.image = pygame.image.load('block0.png')
+        self.image = pygame.image.load('block0.png').convert()
         #self.x = x
         #self.y = y
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
@@ -204,7 +204,7 @@ WindowH = 550
 WindowW = 800
 Display = (WindowW, WindowH)
 bgColor = "#004400"
-player = pgPlayer(32, 32)
+player = None
 bgSurface = None
 screen = 0
 collided = list()
@@ -221,8 +221,11 @@ def main():
     #bgSurface = pygame.Surface((WindowW, WindowH))
     bgSurface = pygame.sprite.Sprite()
     #bgSurface.fill(pygame.Color(bgColor))
-    bgSurface.image = pygame.image.load('nightSky0.png')
+    bgSurface.image = pygame.image.load('nightSky0.png').convert()
 
+
+    global collided, cam, entities, layerBg, layerFg, player
+    player = pgPlayer(32, 32)
     addState('mainRun')
     changeState('mainRun')
     setEventHandler('mainRun', 'draw', drawMain)
@@ -230,7 +233,6 @@ def main():
     setEventHandler('mainRun', 'keyUp', keyUp)
     setEventHandler('mainRun', 'mechanic', player.moveSide)
 
-    global collided, cam, entities, layerBg, layerFg
     mp = list()
     entities = pygame.sprite.Group()
     layerBg = pygame.sprite.Group()
@@ -277,7 +279,9 @@ def main():
     layerFg.add(player)
     #cam = Camera(200, 200)
 
+    clock = pygame.time.Clock()
     isExit = False
+    pygame.time.set_timer(pygame.USEREVENT + 1, int(1000/60))
     while not isExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -288,8 +292,14 @@ def main():
                 handleEvent('keyDown', event.key, event)
             if event.type == pygame.KEYUP:
                 handleEvent('keyUp', event.key, event)
+            if event.type == pygame.USEREVENT + 1:
+                handleEvent('mechanic', 1, collided)
+        #clock.tick(50)
+        clock.tick()
+        pygame.display.set_caption("fps: " + str(clock.get_fps()))
         handleEvent('draw')
-        handleEvent('mechanic', 1, collided)
+        #handleEvent('mechanic', 1, collided)
+
 
 def keyDown(k, d):
     global player
@@ -325,7 +335,8 @@ def drawMain():
     #    entities.draw(screen)
     #if layerFg != None:
     #    layerFg.draw(screen)
-    pygame.display.update()
+    #pygame.display.update()
+    pygame.display.flip()
 
 if __name__ == "__main__":
     main()
