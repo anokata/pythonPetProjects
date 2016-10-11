@@ -92,8 +92,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.standimg = pygame.image.load('cat2.png').convert()
-        self.standRightImg = pygame.image.load('cat2.png').convert()
+        self.standimg = pygame.image.load('cat3.png').convert()
+        self.standRightImg = pygame.image.load('cat3.png').convert()
         self.standLeftImg = pygame.image.load('cat2L.png').convert()
         self.image = self.standimg
         self.wallimg = pygame.image.load('catwall.png').convert()
@@ -170,7 +170,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def collideEnemies(self, enemies):
         for e in enemies:
             if pygame.sprite.collide_rect(self, e):
-                print('ouch!')
+                self.dx = -self.dx
 
     def collide(self, dx, dy, platforms):
         for p in platforms:
@@ -326,6 +326,23 @@ def mainInit():
 
     layerFg.add(player)
     createEnemies(layerFg)
+    randomClouds(layerBg)
+
+def randomClouds(layer):
+    count = 10
+    w = 30
+    width = 32
+    points = list()
+    for i in range(count):
+        x = random.randint(1, w)
+        y = random.randint(1, w)
+        points.append((x,y))
+    obj = Tiled('cloud0.png', points)
+    print(points)
+    for x in obj.tiles:
+        layer.add(x)
+
+
 
 def createEnemies(layer):
     count = 10
