@@ -4,6 +4,7 @@ sys.path += ["../modules",'./']
 from stateSystem import *
 import pyganim
 import roomGenerator as rg
+import random
 
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
@@ -14,6 +15,15 @@ def makeSpriteXY(imgname, x, y):
     s.rect.left = x * w
     s.rect.top = y * h
     return s
+
+class Enemy(pygame.sprite.Sprite):
+    rect = pygame.Rect(0,0,0,0)
+
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load('cucumber.png').convert()
+        self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
+                         self.image.get_rect().size[1])
 
 
 # делать игрока сначала базового не зависящего от движка.
@@ -120,7 +130,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.image.fill(pygame.Color('#000000'))
         a.blit(self.image, (0, 0))
 
-    def moveSide(self, dt, platforms):
+    def moveSide(self, dt, platforms, enemies):
         #self.x -= self.dx * dt * self.moving
 
         if self.dx < 0:
@@ -155,6 +165,12 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.collide(0, self.dy, platforms)
         self.rect.x += self.dx
         self.collide(self.dx, 0, platforms)
+        self.collideEnemies(enemies)
+
+    def collideEnemies(self, enemies):
+        for e in enemies:
+            if pygame.sprite.collide_rect(self, e):
+                print('ouch!')
 
     def collide(self, dx, dy, platforms):
         for p in platforms:
@@ -196,6 +212,7 @@ player = None
 bgSurface = None
 screen = 0
 collided = list()
+enemies = list()
 gravity = 0.2
 cam = Camera(400, 300)
 #http://www.pygame.org/docs/ref/key.html
@@ -245,7 +262,7 @@ def main():
 
 def mainInit():
     global screen
-    global collided, cam, entities, layerBg, layerFg, player
+    global collided, cam, entities, layerBg, layerFg, player, enemies
     global bgSurface
     screen = pygame.display.set_mode(Display)
     pygame.display.set_caption("/TXS/")
@@ -281,7 +298,7 @@ def mainInit():
     lev= ["xxxxxxxxxxxxxxxxxxxxxxxxx",
           "x-----x-x-xx-------x----x",
           "x-----------x------x----x",
-          "x-----------------------x",
+          "x---c---c-------c-------x",
           "xxxxx---xxxx---xxxxx----x",
           "x-----------------------x",
           "x----------xxx----------x",
@@ -302,8 +319,24 @@ def mainInit():
                 b = Block(y*32, x*32,)
                 collided += [b]
                 entities.add(b)
+            if lev[x][y] == 'c':
+                e = Enemy(y*32, x*32+32//2)
+                entities.add(e)
+                enemies.append(e)
 
     layerFg.add(player)
+    createEnemies(layerFg)
+
+def createEnemies(layer):
+    count = 10
+    w = 30
+    width = 32
+    for i in range(count):
+        x = random.randint(1, w) * width
+        y = random.randint(1, w) * width
+        enemy = Enemy(x, y)
+        layer.add(enemy)
+
 
 def mainLoop():
     clock = pygame.time.Clock()
@@ -320,7 +353,7 @@ def mainLoop():
             if event.type == pygame.KEYUP:
                 handleEvent('keyUp', event.key, event)
             if event.type == pygame.USEREVENT + 1:
-                handleEvent('mechanic', 1, collided)
+                handleEvent('mechanic', 1, collided, enemies)
         clock.tick()
         pygame.display.set_caption("fps: " + str(int(clock.get_fps())))
         handleEvent('draw')
