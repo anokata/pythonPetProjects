@@ -5,20 +5,18 @@ from stateSystem import *
 import pyganim
 import roomGenerator as rg
 
-Sprite = pygame.sprite.Sprite
-entities = None
-layerBg = None
-layerFg = None
+def makeSpriteXY(imgname, x, y):
+    s = pygame.sprite.Sprite()
+    s.image = img = pygame.image.load(imgname).convert()
+    s.rect = img.get_rect()
+    w = s.rect.w
+    h = s.rect.h
+    s.rect.left = x * w
+    s.rect.top = y * h
+    return s
+
+
 # делать игрока сначала базового не зависящего от движка.
-
-AnimDelay = 0.1 # скорость смены кадров
-AnimGoRight = ['catr1.png' ,'catr2.png']
-AnimGoLeft = ['catl1.png','catl2.png']
-AnimJumpLeft = ['catjl.png', 'catjl2.png']
-AnimJumpRight = ['catjr.png','catjr2.png']
-AnimJump = ['catjr.png']
-AnimStand = ['cat3.png']
-
 #Камера. у неё есть свои размеры и положение. она не даёт выйти за пределы игроку - меняет положение, следит. Она преобразует данные в неё координаты объекта так чтобы они отображались на экране( вычесть координаты камеры)
 class Camera():
 
@@ -42,16 +40,6 @@ class Camera():
         #r.left = o.rect.left - self.rect.left
         return r
 
-
-def makeSpriteXY(imgname, x, y):
-    s = pygame.sprite.Sprite()
-    s.image = img = pygame.image.load(imgname).convert()
-    s.rect = img.get_rect()
-    w = s.rect.w
-    h = s.rect.h
-    s.rect.left = x * w
-    s.rect.top = y * h
-    return s
 
 class Tiled():
     tiles = []
@@ -78,8 +66,16 @@ class Player():
     jumped = False
 
     def __init__(self):
-        #surf
         pass
+
+# Player anim
+AnimDelay = 0.1 # скорость смены кадров
+AnimGoRight = ['catr1.png' ,'catr2.png']
+AnimGoLeft = ['catl1.png','catl2.png']
+AnimJumpLeft = ['catjl.png', 'catjl2.png']
+AnimJumpRight = ['catjr.png','catjr2.png']
+AnimJump = ['catjr.png']
+AnimStand = ['cat3.png']
 
 class pgPlayer(Player, pygame.sprite.Sprite):
     rect = pygame.Rect(0,0,0,0)
@@ -181,25 +177,17 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                     self.rect.top = p.rect.bottom # то не движется вверх
                     self.dy = 0                 # и энергия прыжка пропадает
 
-    #def draw(self):
-        #screen.blit(self.image, (self.rect.x ,self.rect.y + 3))
-
 class Block(pygame.sprite.Sprite): # base class for sprites?
     rect = 0
     def __init__(self, x, y, imgname=''):
         Sprite.__init__(self)
         self.image = pygame.image.load('block0.png').convert()
-        #self.x = x
-        #self.y = y
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
-    #def draw(self):
-        #screen.blit(self.image, (self.rect.x, self.rect.y))
 
-def mechanic(dt):
-    handleEvent('mechanic', dt)
 
+# Globals
 WindowH = 550
 WindowW = 800
 Display = (WindowW, WindowH)
@@ -211,20 +199,59 @@ collided = list()
 gravity = 0.2
 cam = Camera(400, 300)
 #http://www.pygame.org/docs/ref/key.html
+Sprite = pygame.sprite.Sprite
+entities = None
+layerBg = None
+layerFg = None
+
+def mechanic(dt):
+    handleEvent('mechanic', dt)
+
+def keyDown(k, d):
+    global player
+    if k == pygame.K_RIGHT:
+        player.moving += -1
+    if k == pygame.K_LEFT:
+        player.moving += 1
+    if k == pygame.K_SPACE:
+        player.jump(True)
+
+def keyUp(k, d):
+    global player
+    if k == pygame.K_RIGHT:
+        player.moving += 1
+    elif k == pygame.K_LEFT:
+        player.moving += -1
+    if k == pygame.K_SPACE:
+        pass#player.jump(False)
+
+def drawMain():
+    screen.blit(bgSurface.image, (0, 0))
+    global entities, layerBg, layerFg, cam, player
+    cam.stalkAt(player)
+    for e in layerBg:
+        screen.blit(e.image, cam.calc(e))
+    for e in entities:
+        screen.blit(e.image, cam.calc(e))
+    for e in layerFg:
+        screen.blit(e.image, cam.calc(e))
+    #pygame.display.update()
+    pygame.display.flip()
 
 def main():
     pygame.init()
+    mainInit()
+    mainLoop()
+
+def mainInit():
     global screen
+    global collided, cam, entities, layerBg, layerFg, player
+    global bgSurface
     screen = pygame.display.set_mode(Display)
     pygame.display.set_caption("/TXS/")
-    global bgSurface
-    #bgSurface = pygame.Surface((WindowW, WindowH))
+
     bgSurface = pygame.sprite.Sprite()
-    #bgSurface.fill(pygame.Color(bgColor))
     bgSurface.image = pygame.image.load('nightSky0.png').convert()
-
-
-    global collided, cam, entities, layerBg, layerFg, player
     player = pgPlayer(32, 32)
     addState('mainRun')
     changeState('mainRun')
@@ -277,11 +304,11 @@ def main():
                 entities.add(b)
 
     layerFg.add(player)
-    #cam = Camera(200, 200)
 
+def mainLoop():
     clock = pygame.time.Clock()
     isExit = False
-    pygame.time.set_timer(pygame.USEREVENT + 1, int(1000/60))
+    pygame.time.set_timer(pygame.USEREVENT + 1, int(1000/90))
     while not isExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -294,49 +321,9 @@ def main():
                 handleEvent('keyUp', event.key, event)
             if event.type == pygame.USEREVENT + 1:
                 handleEvent('mechanic', 1, collided)
-        #clock.tick(50)
         clock.tick()
-        pygame.display.set_caption("fps: " + str(clock.get_fps()))
+        pygame.display.set_caption("fps: " + str(int(clock.get_fps())))
         handleEvent('draw')
-        #handleEvent('mechanic', 1, collided)
-
-
-def keyDown(k, d):
-    global player
-    if k == pygame.K_RIGHT:
-        player.moving += -1
-    if k == pygame.K_LEFT:
-        player.moving += 1
-    if k == pygame.K_SPACE:
-        player.jump(True)
-
-def keyUp(k, d):
-    global player
-    if k == pygame.K_RIGHT:
-        player.moving += 1
-    elif k == pygame.K_LEFT:
-        player.moving += -1
-    if k == pygame.K_SPACE:
-        pass#player.jump(False)
-
-def drawMain():
-    screen.blit(bgSurface.image, (0, 0))
-    global entities, layerBg, layerFg, cam, player
-    cam.stalkAt(player)
-    #if layerBg != None:
-        #layerBg.draw(screen)
-    for e in layerBg:
-        screen.blit(e.image, cam.calc(e))
-    for e in entities:
-        screen.blit(e.image, cam.calc(e))
-    for e in layerFg:
-        screen.blit(e.image, cam.calc(e))
-    #if entities != None:
-    #    entities.draw(screen)
-    #if layerFg != None:
-    #    layerFg.draw(screen)
-    #pygame.display.update()
-    pygame.display.flip()
 
 if __name__ == "__main__":
     main()
