@@ -1,3 +1,4 @@
+import random
 import tkinter as tk
 import requests as rq
 gethistUrl = 'http://localhost:7000/chat'
@@ -28,7 +29,8 @@ main.bind('<Escape>', exit)
 
 def sendmsg():
     try:
-        res = rq.get(putmsgUrl + e.get())
+        msg = usernameEntry.get() + '|- ' + e.get()
+        res = rq.get(putmsgUrl + msg) 
     except:
         pass
     chatUpd()
@@ -38,7 +40,10 @@ def chatUpd():
 
 e = tk.Entry(main)
 e.insert(0, "defval")
-#e.get()
+
+random.seed()
+usernameEntry = tk.Entry(main)
+usernameEntry.insert(0, 'userN' + str(random.randint(500, 1000)))
 b = tk.Button(main, text='Отправить...', width = 20, command=sendmsg)
 
 exitButton = tk.Button(main, text='Выйти', width = 20, command=exit)
@@ -50,6 +55,7 @@ regetButton.pack()
 clearBut.pack()
 
 e.pack()
+usernameEntry.pack()
 l = tk.Label(main, text='chat...->', width = 100, height = 300)
 l['text'] = getHist()
 
