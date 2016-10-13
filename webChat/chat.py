@@ -2,6 +2,7 @@ from bottle import run, route
 
 chatFile = 'chat.txt'
 br = '<br>'
+br = '\n'
 @route('/chat')
 def home():
     return getHist()

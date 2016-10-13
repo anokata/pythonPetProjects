@@ -5,3 +5,7 @@ msgN5
 newline hello
 weryyyyy loooooongggggm esssssssssssssssssssssssaaaaaaaaaaaaaaaaaaagggggggggggggggggeeeeeeeeeeeeee!!!!!!!!!!!!!!!!
 newline hello
+defval
+Hello from tk client!
+Привет из клиента!
+Я > Хай!
