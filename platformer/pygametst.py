@@ -142,8 +142,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         elif self.onWall and self.dx >= 0:
             self.changeAnim(self.AnimJumpRight)
 
-        if not self.isStand:
-            self.dy += gravity
+        #if not self.isStand:
+        #    self.dy += gravity
 
         if (self.isStand or self.onWall) and self.jumped:
             self.dy = -self.spdj

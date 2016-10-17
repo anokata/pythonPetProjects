@@ -1,9 +1,10 @@
 import random
 import tkinter as tk
 import requests as rq
-gethistUrl = 'http://localhost:7000/chat'
-putmsgUrl = 'http://localhost:7000/chat/'
-clearUrl =  'http://localhost:7000/chatclear'
+host = 'http://anokata.pythonanywhere.com/'
+gethistUrl = host + 'chat'
+putmsgUrl = host + 'chat/'
+clearUrl =  host + 'chatclear'
 
 def req(url):
     h = None
