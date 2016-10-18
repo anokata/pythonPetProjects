@@ -228,6 +228,15 @@ def drawMain():
     for e in layerFg:
         screen.blit(e.image, cam.calc(e))
     #pygame.display.update()
+    
+    font = pygame.font.Font(None, 32)
+    text1 = font.render("PAUSED", 1, (10, 10, 10))
+    text1pos = text1.get_rect()
+    text1pos.centerx = screen.get_rect().centerx
+    text1pos.centery = screen.get_rect().centery
+
+    screen.blit(text1, text1pos)
+
     pygame.display.flip()
 
 def main():
@@ -302,8 +311,8 @@ def mainInit():
 
     layerFg.add(player)
     createEnemies(layerFg)
-    randomClouds(layerBg)
-
+    #randomClouds(layerBg)
+    
 def randomClouds(layer):
     count = 10
     w = 30
