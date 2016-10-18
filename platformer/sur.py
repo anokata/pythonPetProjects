@@ -191,8 +191,12 @@ textLayer = None
 menu = None
 
 def menuKeyDown(k, d):
+    if k == pygame.K_DOWN:
+        menu.next()
     if k == pygame.K_UP:
-        pass
+        menu.pred()
+    if k == pygame.K_SPACE:
+        changeState('mainRun')
 
 def mechanic(dt):
     handleEvent('mechanic', dt)
@@ -272,12 +276,17 @@ class MenuList():
         self.items.append(text)
         self.rend()
 
+    def pred(self):
+        self.selected -= 1
+        if self.selected < 0:
+            self.selected = len(self.items) - 1
+        self.rend()
+
     def next(self):
-        self.index += 1
-        if self.index >= len(self.items):
-            self.index = 0
-        if self.index < 0:
-            self.index = len(self.items) - 1
+        self.selected += 1
+        if self.selected >= len(self.items):
+            self.selected = 0
+        self.rend()
 
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
@@ -320,6 +329,7 @@ def mainInit():
     setEventHandler('mainRun', 'keyUp', keyUp)
     setEventHandler('mainRun', 'mechanic', player.moveSide)
     setEventHandler('menu1', 'keyDown', menuKeyDown)
+    setEventHandler('menu1', 'draw', drawMain)
 
     mp = list()
     Layers = list()
