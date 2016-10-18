@@ -187,6 +187,7 @@ Sprite = pygame.sprite.Sprite
 entities = None
 layerBg = None
 layerFg = None
+textLayer = None
 
 def mechanic(dt):
     handleEvent('mechanic', dt)
@@ -217,21 +218,63 @@ def keyUp(k, d):
     if k == pygame.K_DOWN:
         player.movingud = 0
 
+class Font():
+    def __init__(self, size, color):
+        self.h = h = size
+        self.color = (255, 255, 255)
+        self.font = pygame.font.Font(None, h)
+
+    def render(self, t):
+        return self.font.render(t, 1, self.color)
+
+    def get_rect(self):
+        return self.font.get_rect()
+
+class MenuList():
+    items = []
+
+    def __init__(self, layer, font, id, x=20, y=10):
+        self.layer = layer
+        self.items = list()
+        self.id = id
+        self.rect = pygame.Rect(0,0,0,0)
+        self.font = font
+        self.x = x
+        self.y = y
+
+    def getText(self, text):
+        return self.font.render(text)
+
+    def rend(self):
+        self.layer[self.id] = list()
+        y = self.y
+        for x in self.items:
+            t = self.getText(x)
+            self.rect = t.get_rect()
+            self.rect.top = y
+            self.rect.left = self.x
+            y += self.font.h // 1.5
+            self.layer[self.id].append((t, self.rect))
+
+    def addItem(self, text):
+        self.items.append(text)
+        self.rend()
+
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
-    global cam, player, Layers
+    global cam, player, Layers, textLayer
     cam.stalkAt(player)
     
     for l in Layers:
         for e in l:
             screen.blit(e.image, cam.calc(e))
     
-    font = pygame.font.Font(None, 32)
-    text1 = font.render("PAUSED", 1, (10, 10, 10))
-    text1pos = text1.get_rect()
-    text1pos.centerx = screen.get_rect().centerx
-    text1pos.centery = screen.get_rect().centery
-    screen.blit(text1, text1pos)
+    for x in textLayer.values():
+        for (e, r) in x:
+            screen.blit(e, r)
+
+    #text1pos.centerx = screen.get_rect().centerx
+    #text1pos.centery = screen.get_rect().centery
 
     pygame.display.flip()
 
@@ -242,7 +285,7 @@ def main():
 
 def mainInit():
     global screen
-    global collided, cam, player, enemies, Layers
+    global collided, cam, player, enemies, Layers, textLayer 
     global bgSurface
     screen = pygame.display.set_mode(Display)
     pygame.display.set_caption("/TXS/")
@@ -266,6 +309,11 @@ def mainInit():
     layerBg = Layers[0]
     layerFg = Layers[2]
     entities = Layers[1]
+    textLayer = {'menu1': list()}
+
+    menu = MenuList(textLayer, Font(32, (255, 255, 0)), 'menu1')
+    menu.addItem('aloha!')
+    menu.addItem('end?')
 
     for x in range(30):
         mp += [(x,15)]
