@@ -208,7 +208,7 @@ def keyDown(k, d):
     if k == pygame.K_LEFT:
         player.moving += 1
     if k == pygame.K_SPACE:
-        changeState('menu1')
+        runMenu('men1')
     if k == pygame.K_UP:
         player.movingud = 1
     if k == pygame.K_DOWN:
@@ -288,6 +288,27 @@ class MenuList():
             self.selected = 0
         self.rend()
 
+def createMenu(id, lst): # add обработчик выбора, обработчик 
+    addState(id)
+    setEventHandler(id, 'keyDown', menuKeyDown)
+    setEventHandler(id, 'draw', drawMenu)
+    menu = MenuList(textLayer,  id)
+    for x in lst:
+        menu.addItem(x)
+    return menu
+
+def runMenu(id):
+    changeState(id)
+    return
+
+def drawMenu():
+    screen.blit(bgSurface.image, (0, 0))
+    global textLayer
+    for x in textLayer.values():
+        for (e, r) in x:
+            screen.blit(e, r)
+    pygame.display.flip()
+
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
     global cam, player, Layers, textLayer
@@ -297,12 +318,9 @@ def drawMain():
         for e in l:
             screen.blit(e.image, cam.calc(e))
     
-    for x in textLayer.values():
-        for (e, r) in x:
-            screen.blit(e, r)
-
-    #text1pos.centerx = screen.get_rect().centerx
-    #text1pos.centery = screen.get_rect().centery
+    #for x in textLayer.values():
+    #    for (e, r) in x:
+    #        screen.blit(e, r)
 
     pygame.display.flip()
 
@@ -322,14 +340,11 @@ def mainInit():
     bgSurface.image = pygame.image.load('nightSky0.png').convert()
     player = pgPlayer(44, 44)
     addState('mainRun')
-    addState('menu1')
     changeState('mainRun')
     setEventHandler('mainRun', 'draw', drawMain)
     setEventHandler('mainRun', 'keyDown', keyDown)
     setEventHandler('mainRun', 'keyUp', keyUp)
     setEventHandler('mainRun', 'mechanic', player.moveSide)
-    setEventHandler('menu1', 'keyDown', menuKeyDown)
-    setEventHandler('menu1', 'draw', drawMain)
 
     mp = list()
     Layers = list()
@@ -344,11 +359,7 @@ def mainInit():
 
     # menu
     global menu
-    menu = MenuList(textLayer,  'menu1')
-    menu.addItem('aloha!')
-    menu.addItem('item!')
-    menu.addItem('attme!')
-    menu.addItem('end?')
+    menu = createMenu('men1', ['it0','it2','end'])
 
     for x in range(30):
         mp += [(x,15)]
