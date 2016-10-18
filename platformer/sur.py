@@ -188,6 +188,11 @@ entities = None
 layerBg = None
 layerFg = None
 textLayer = None
+menu = None
+
+def menuKeyDown(k, d):
+    if k == pygame.K_UP:
+        pass
 
 def mechanic(dt):
     handleEvent('mechanic', dt)
@@ -199,7 +204,7 @@ def keyDown(k, d):
     if k == pygame.K_LEFT:
         player.moving += 1
     if k == pygame.K_SPACE:
-        pass
+        changeState('menu1')
     if k == pygame.K_UP:
         player.movingud = 1
     if k == pygame.K_DOWN:
@@ -219,37 +224,44 @@ def keyUp(k, d):
         player.movingud = 0
 
 class Font():
-    def __init__(self, size, color):
+    def __init__(self, size, color = (255, 255, 255), bgcolor=False):
         self.h = h = size
-        self.color = (255, 255, 255)
+        self.color = color
+        self.bg = bgcolor
         self.font = pygame.font.Font(None, h)
 
     def render(self, t):
-        return self.font.render(t, 1, self.color)
+        if self.bg:
+            return self.font.render(t, 1, self.color, self.bg)
+        else:
+            return self.font.render(t, 1, self.color)
 
     def get_rect(self):
         return self.font.get_rect()
 
 class MenuList():
     items = []
+    selected = 0
 
-    def __init__(self, layer, font, id, x=20, y=10):
+    def __init__(self, layer, id, x=20, y=10):
         self.layer = layer
         self.items = list()
         self.id = id
         self.rect = pygame.Rect(0,0,0,0)
-        self.font = font
+        #self.font = Font(32, (100, 0, 250))
+        self.font = Font(32, (100, 0, 250), (100, 100, 100))
+        self.selfont = Font(32, (80, 100, 230), (180, 180, 180))
         self.x = x
         self.y = y
-
-    def getText(self, text):
-        return self.font.render(text)
 
     def rend(self):
         self.layer[self.id] = list()
         y = self.y
         for x in self.items:
-            t = self.getText(x)
+            if self.items.index(x) == self.selected:
+                t = self.selfont.render(x)
+            else:
+                t = self.font.render(x)
             self.rect = t.get_rect()
             self.rect.top = y
             self.rect.left = self.x
@@ -259,6 +271,13 @@ class MenuList():
     def addItem(self, text):
         self.items.append(text)
         self.rend()
+
+    def next(self):
+        self.index += 1
+        if self.index >= len(self.items):
+            self.index = 0
+        if self.index < 0:
+            self.index = len(self.items) - 1
 
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
@@ -294,11 +313,13 @@ def mainInit():
     bgSurface.image = pygame.image.load('nightSky0.png').convert()
     player = pgPlayer(44, 44)
     addState('mainRun')
+    addState('menu1')
     changeState('mainRun')
     setEventHandler('mainRun', 'draw', drawMain)
     setEventHandler('mainRun', 'keyDown', keyDown)
     setEventHandler('mainRun', 'keyUp', keyUp)
     setEventHandler('mainRun', 'mechanic', player.moveSide)
+    setEventHandler('menu1', 'keyDown', menuKeyDown)
 
     mp = list()
     Layers = list()
@@ -311,8 +332,12 @@ def mainInit():
     entities = Layers[1]
     textLayer = {'menu1': list()}
 
-    menu = MenuList(textLayer, Font(32, (255, 255, 0)), 'menu1')
+    # menu
+    global menu
+    menu = MenuList(textLayer,  'menu1')
     menu.addItem('aloha!')
+    menu.addItem('item!')
+    menu.addItem('attme!')
     menu.addItem('end?')
 
     for x in range(30):
