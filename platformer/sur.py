@@ -69,22 +69,20 @@ class Player():
     spd = 3.0
     spdj = 5.0
     moving = 0
-    isStand = False
-    onWall = False
+    movingud = 0
     dy = 0
     dx = 0.0
-    jumped = False
 
     def __init__(self):
         pass
 
 # Player anim
 AnimDelay = 0.1 # скорость смены кадров
-AnimGoRight = ['catr1.png' ,'catr2.png']
-AnimGoLeft = ['catl1.png','catl2.png']
-AnimJumpLeft = ['catjl.png', 'catjl2.png']
-AnimJumpRight = ['catjr.png','catjr2.png']
-AnimJump = ['catjr.png']
+AnimGoRight = ['wiz0.png' ,'wiz0.png']
+AnimGoLeft = ['wiz0.png','wiz0.png']
+AnimJumpLeft = ['wiz0.png', 'wiz0.png']
+AnimJumpRight = ['wiz0.png','wiz0.png']
+AnimJump = ['wiz0.png']
 AnimStand = ['wiz0.png']
 
 class pgPlayer(Player, pygame.sprite.Sprite):
@@ -122,49 +120,26 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.AnimStand.play()
         self.changeAnim(self.AnimStand)
 
-    def jump(self, j):
-        if not self.jumped:# and self.isStand:
-            self.jumped = True
-
     def changeAnim(self, a):
         self.image.fill(pygame.Color('#000000'))
         a.blit(self.image, (0, 0))
 
     def moveSide(self, dt, platforms, enemies):
-        #self.x -= self.dx * dt * self.moving
-
         if self.dx < 0:
             self.changeAnim(self.AnimLeft)
         elif self.dx > 0:
             self.changeAnim(self.AnimRight)
-        if self.onWall and self.dx < 0:
-            self.changeAnim(self.AnimJumpLeft)
-        elif self.onWall and self.dx >= 0:
-            self.changeAnim(self.AnimJumpRight)
-
-        if not self.isStand:
-            self.dy += gravity
-
-        if (self.isStand or self.onWall) and self.jumped:
-            self.dy = -self.spdj
-            self.isStand = False
-            self.onWall = False
-            self.jumped = False
-            self.dx = self.moving * self.spd
-
-        self.isStand = False
-
-        #self.y += dt * self.dy
+        
         self.dx = - self.moving * self.spd
+        self.dy = - self.movingud * self.spd
 
-        if self.onWall:
-            self.rect.y += self.dy* 0.2
-            self.onWall = False
-        else:
-            self.rect.y += self.dy
-        self.collide(0, self.dy, platforms)
+        
         self.rect.x += self.dx
         self.collide(self.dx, 0, platforms)
+
+        self.rect.y += self.dy
+        self.collide(0, self.dy, platforms)
+
         self.collideEnemies(enemies)
 
     def collideEnemies(self, enemies):
@@ -177,30 +152,22 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
                 if dx > 0:                      # если движется вправо
                     self.rect.right = p.rect.left # то не движется вправо
-                    self.onWall = True
                 if dx < 0:                      # если движется влево
                     self.rect.left = p.rect.right # то не движется влево
-                    self.onWall = True
 
-                if dy > 0:                      # если падает вниз
-                    self.rect.bottom = p.rect.top  # то не падает вниз
-                    self.isStand = True          # и становится на что-то твердое
-                    self.dy = 0                 # и энергия падения пропадает
-                    if self.dx == 0.0:
-                        self.changeAnim(self.AnimStand)
+                if dy > 0:                    
+                    self.rect.bottom = p.rect.top  
 
-                if dy < 0:                      # если движется вверх
-                    self.rect.top = p.rect.bottom # то не движется вверх
-                    self.dy = 0                 # и энергия прыжка пропадает
+                if dy < 0:                   
+                    self.rect.top = p.rect.bottom 
 
 class Block(pygame.sprite.Sprite): # base class for sprites?
     rect = 0
     def __init__(self, x, y, imgname=''):
         Sprite.__init__(self)
-        self.image = pygame.image.load('block0.png').convert()
+        self.image = pygame.image.load('block1.png').convert()
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
-
 
 
 # Globals
@@ -231,7 +198,11 @@ def keyDown(k, d):
     if k == pygame.K_LEFT:
         player.moving += 1
     if k == pygame.K_SPACE:
-        player.jump(True)
+        pass
+    if k == pygame.K_UP:
+        player.movingud = 1
+    if k == pygame.K_DOWN:
+        player.movingud = -1
 
 def keyUp(k, d):
     global player
@@ -240,7 +211,11 @@ def keyUp(k, d):
     elif k == pygame.K_LEFT:
         player.moving += -1
     if k == pygame.K_SPACE:
-        pass#player.jump(False)
+        pass
+    if k == pygame.K_UP:
+        player.movingud = 0
+    if k == pygame.K_DOWN:
+        player.movingud = 0
 
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
@@ -269,7 +244,7 @@ def mainInit():
 
     bgSurface = pygame.sprite.Sprite()
     bgSurface.image = pygame.image.load('nightSky0.png').convert()
-    player = pgPlayer(32, 32)
+    player = pgPlayer(44, 44)
     addState('mainRun')
     changeState('mainRun')
     setEventHandler('mainRun', 'draw', drawMain)
@@ -313,14 +288,15 @@ def mainInit():
           "x-----------------------x",
           "xxxxxxxxxxxxxxxxxxxxxxxxx",
              ]
+    blockwh = pygame.image.load('block1.png').get_rect().size[0]
     for x in range(len(lev)):
         for y in range(len(lev[0])):
             if lev[x][y] == 'x':
-                b = Block(y*32, x*32,)
+                b = Block(y*blockwh, x*blockwh,)
                 collided += [b]
                 entities.add(b)
             if lev[x][y] == 'c':
-                e = Enemy(y*32, x*32+32//2)
+                e = Enemy(y*blockwh, x*blockwh+blockwh//2)
                 entities.add(e)
                 enemies.append(e)
 
