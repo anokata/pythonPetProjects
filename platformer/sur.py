@@ -219,22 +219,18 @@ def keyUp(k, d):
 
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
-    global entities, layerBg, layerFg, cam, player
+    global cam, player, Layers
     cam.stalkAt(player)
-    for e in layerBg:
-        screen.blit(e.image, cam.calc(e))
-    for e in entities:
-        screen.blit(e.image, cam.calc(e))
-    for e in layerFg:
-        screen.blit(e.image, cam.calc(e))
-    #pygame.display.update()
+    
+    for l in Layers:
+        for e in l:
+            screen.blit(e.image, cam.calc(e))
     
     font = pygame.font.Font(None, 32)
     text1 = font.render("PAUSED", 1, (10, 10, 10))
     text1pos = text1.get_rect()
     text1pos.centerx = screen.get_rect().centerx
     text1pos.centery = screen.get_rect().centery
-
     screen.blit(text1, text1pos)
 
     pygame.display.flip()
@@ -246,7 +242,7 @@ def main():
 
 def mainInit():
     global screen
-    global collided, cam, entities, layerBg, layerFg, player, enemies
+    global collided, cam, player, enemies, Layers
     global bgSurface
     screen = pygame.display.set_mode(Display)
     pygame.display.set_caption("/TXS/")
@@ -262,9 +258,14 @@ def mainInit():
     setEventHandler('mainRun', 'mechanic', player.moveSide)
 
     mp = list()
-    entities = pygame.sprite.Group()
-    layerBg = pygame.sprite.Group()
-    layerFg = pygame.sprite.Group()
+    Layers = list()
+    Layers.append(pygame.sprite.Group())
+    Layers.append(pygame.sprite.Group())
+    Layers.append(pygame.sprite.Group())
+
+    layerBg = Layers[0]
+    layerFg = Layers[2]
+    entities = Layers[1]
 
     for x in range(30):
         mp += [(x,15)]
