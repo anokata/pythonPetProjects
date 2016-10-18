@@ -66,7 +66,7 @@ class Tiled():
 
 class Player():
     health = 100
-    spd = 3.0
+    spd = 4.0
     spdj = 5.0
     moving = 0
     movingud = 0
@@ -204,10 +204,12 @@ def mechanic(dt):
 def keyDown(k, d):
     global player
     if k == pygame.K_RIGHT:
-        player.moving += -1
+        player.moving = -1
     if k == pygame.K_LEFT:
-        player.moving += 1
+        player.moving = 1
     if k == pygame.K_SPACE:
+        player.moving = 0
+        player.movingud = 0
         runMenu('men1')
     if k == pygame.K_UP:
         player.movingud = 1
@@ -217,9 +219,9 @@ def keyDown(k, d):
 def keyUp(k, d):
     global player
     if k == pygame.K_RIGHT:
-        player.moving += 1
+        player.moving = 0
     elif k == pygame.K_LEFT:
-        player.moving += -1
+        player.moving = 0
     if k == pygame.K_SPACE:
         pass
     if k == pygame.K_UP:
