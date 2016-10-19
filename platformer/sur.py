@@ -50,6 +50,23 @@ class Camera():
         #r.left = o.rect.left - self.rect.left
         return r
 
+class EnergySystem():
+    map = {}
+
+    def __init__(self):
+        from collections import defaultdict
+        self.map = defaultdict(list)
+
+    def registr(self, obj, x, y):
+        map[(x, y)].append(obj)
+
+    def emit(self, x, y, energyAmount):
+        pass
+
+class Obj():
+    energy = 0.0
+
+
 
 class Tiled():
     tiles = []
@@ -57,11 +74,17 @@ class Tiled():
     def __init__(self, imgname, mp):
         tiles = list()
         for x,y in mp:
-            self.tiles += [makeSpriteXY(imgname, x, y)]
+            obj = Obj()
+            #EnergySystem.registr
+            self.tiles += [(makeSpriteXY(imgname, x, y), obj)]
 
     def draw(self):
-        for x in self.tiles:
+        for (x, o) in self.tiles:
             screen.blit(x.image, (x.x, x.y))
+
+    def addToLayer(self, l):
+        for (x, o) in self.tiles:
+            l.add(x)
 
 
 class Player():
@@ -403,15 +426,20 @@ def mainInit():
     for x in range(30):
         mp += [(x,15)]
     m = Tiled('ground1.png', mp)
-    for x in m.tiles:
-        layerBg.add(x)
+    m.addToLayer(layerBg)
+
+    mp = list()
+    for x in range(30):
+        for y in range(30):
+            mp.append((x,y))
+    m = Tiled('objects/ground0.png', mp)
+    m.addToLayer(layerBg)
 
     mp = list()
     for x in range(140):
         mp += [(x,1)]
     m = Tiled('sky0.png', mp)
-    for x in m.tiles:
-        layerBg.add(x)
+    m.addToLayer(layerBg)
 
     lev= ["xxxxxxxxxxxxxxxxxxxxxxxxx",
           "x-----x-x-xx-------x----x",
@@ -458,9 +486,7 @@ def randomClouds(layer):
         points.append((x,y))
     obj = Tiled('objects/F0.png', points)
     print(points)
-    for x in obj.tiles:
-        layer.add(x)
-
+    obj.addToLayer(layer)
 
 
 def createEnemies(layer):
