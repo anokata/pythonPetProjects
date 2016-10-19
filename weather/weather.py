@@ -9,6 +9,8 @@ day = int(exc('date +%d'))
 import requests as req
 url = 'http://www.yr.no/place/Russia/Yaroslavl/Rybinsk/forecast_hour_by_hour.xml'
 # Берём данные xml.  weatherdata.forecast.tabular
-req.get(url)
-frc = req.xml()
+res = req.get(url)
+import xml.etree.ElementTree as ET
+frc = ET.fromstring(res.text)
+
 
