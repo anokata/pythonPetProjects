@@ -19,7 +19,7 @@ class MenuList():
 
     def select(self):
         (key, text, fun, args) = self.items[self.selected]
-        fun()
+        return fun(args)
 
     def next(self):
         self.selected += 1
@@ -45,25 +45,24 @@ class MenuListCurses(MenuList):
         y = 0
         for (k, t, _, _) in self.items:
             y += 1
-            if y - 0 == self.selected:
+            if y - 1 == self.selected:
                 win.addstr(y, x, '(' + k + ') ' + t, curses.color_pair(3) )
             else:
                 win.addstr(y, x, '(' + k + ') ' + t)
 
     def handler(self):
-            notEnd = True
-#        while notEnd:
-            key = self.win.getch()
-            if key == ord('q') or key == 27:
-                notEnd = False
-            if key == ord('j'):
-                self.next()
-            if key == ord('k'):
-                self.pred()
-
-#            self.display()
-            return notEnd
-            #self.win.refresh()
+        notEnd = True
+        key = self.win.getch()
+        if key == ord('q') or key == 27:
+            notEnd = False
+        if key == ord('j'):
+            self.next()
+        if key == ord('k'):
+            self.pred()
+        if key == ord(' '):
+            return self.select()
+        self.win.addstr(0,0,str(key))
+        return notEnd
 
 class Wincon():
     mainwin = None
@@ -82,11 +81,14 @@ class Wincon():
         scr.border()
         scr.bkgd(curses.color_pair(1))
 
+        def t(a):
+            print(a)
+            return True
         menu = MenuListCurses()
-        menu.add('someOne', print, '123test')
-        menu.add('someTwo', print, 'afa fa fa a!fA!')
-        menu.add('Thor', print, 'Thow')
-        menu.add('someOne', print, '123test')
+        menu.add('someOne', t, 'some 0')
+        menu.add('someTwo', t, 'afa fa fa a!fA!')
+        menu.add('Thor', t, ' three')
+        menu.add('someOne', t, 'four')
         self.menu = menu
 
     def addWin(self):
@@ -98,7 +100,7 @@ class Wincon():
             w.refresh()
         self.menu.display()
 
-        self.mainwin.addstr(0,0,str(self.menu.selected)+self.menu.items[self.menu.selected][1])
+        #self.mainwin.addstr(0,0,str(self.menu.selected)+self.menu.items[self.menu.selected][1])
 
     def work(self):
         notEnd = True
@@ -111,6 +113,9 @@ def main(scr):
     scr.addstr(curses.LINES-1, 2, "[k:up j:down q:exit ]")
     w.refresh()
     w.work()
+    w.refresh()
+    k = scr.getch()
+    print(k)
 
 
 wrapper(main)

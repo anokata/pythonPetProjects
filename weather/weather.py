@@ -25,6 +25,7 @@ def getWeather():
             perc += float(x.find('precipitation').get('value'))
             wind += float(x.find('windSpeed').get('mps'))
     # из данных temperature value вычисляем среднее
+    if periods == 0: return (0,0,0)
     avgTemp = avgTemp / periods
     wind /= periods
     return (avgTemp, perc, wind)
