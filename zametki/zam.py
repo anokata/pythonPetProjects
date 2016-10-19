@@ -34,12 +34,13 @@ class MenuList():
 
 class MenuListCurses(MenuList):
 
-    def __init__(self, win):
-        self.win = win
+    def __init__(self):
+        self.win = curses.newwin(20, 20, 3, 3)
+        self.win.border()
+        self.win.bkgd(curses.color_pair(2))
 
-    def display(self, win=False):
-        if not win:
-            win = self.win
+    def display(self):
+        win = self.win
         x = 1
         y = 0
         for (k, t, _, _) in self.items:
@@ -63,17 +64,36 @@ class MenuListCurses(MenuList):
             self.display()
             self.win.refresh()
 
-def main(scr):
-    scr.clear()
-    curses.curs_set(False)
-    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
-    curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK )
-    scr.border()
-    scr.bkgd(curses.color_pair(1))
+class Wincon():
+    mainwin = None
+    wins = []
 
-    win0 = curses.newwin(20, 20, 3, 3)
-    menu = MenuListCurses(win0)
+    def __init__(self, scr):
+        self.mainwin = scr
+        scr.clear()
+        self.wins = list()
+        curses.curs_set(False)
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK )
+        scr.border()
+        scr.bkgd(curses.color_pair(1))
+
+    def addWin(self):
+        pass
+
+    def refresh(self):
+        self.mainwin.refresh()
+        for w in self.wins:
+            w.refresh()
+
+    def work(self):
+        pass
+
+def main(scr):
+    w = Wincon(scr)
+
+    menu = MenuListCurses()
     menu.add('someOne', print, '123test')
     menu.add('someTwo', print, 'afa fa fa a!fA!')
     menu.add('Thor', print, 'Thow')
@@ -81,16 +101,12 @@ def main(scr):
     menu.next()
     menu.select()
 
-    scr.addstr(1,2, "heloha!")
-    win0.border()
-    win0.addstr(3,3, "win0")
-    win0.bkgd(curses.color_pair(2))
+    scr.addstr(curses.LINES-1, 2, "[k:up j:down q:exit ]")
     
-    menu.display(win0)
+    menu.display()
     menu.handler()
 
     scr.refresh()
-    win0.refresh()
     scr.getkey()
 
 wrapper(main)
