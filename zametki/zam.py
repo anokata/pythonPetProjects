@@ -35,7 +35,7 @@ class MenuList():
 class MenuListCurses(MenuList):
 
     def __init__(self):
-        self.win = curses.newwin(20, 20, 3, 3)
+        self.win = curses.newwin(curses.LINES-3, 20, 1, 1)
         self.win.border()
         self.win.bkgd(curses.color_pair(2))
 
