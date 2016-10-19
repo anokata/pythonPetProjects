@@ -45,28 +45,31 @@ class MenuListCurses(MenuList):
         y = 0
         for (k, t, _, _) in self.items:
             y += 1
-            if y - 1 == self.selected:
+            if y - 0 == self.selected:
                 win.addstr(y, x, '(' + k + ') ' + t, curses.color_pair(3) )
             else:
                 win.addstr(y, x, '(' + k + ') ' + t)
 
     def handler(self):
-        notEnd = True
-        while notEnd:
+            notEnd = True
+#        while notEnd:
             key = self.win.getch()
             if key == ord('q') or key == 27:
                 notEnd = False
             if key == ord('j'):
-                self.pred()
-            if key == ord('k'):
                 self.next()
+            if key == ord('k'):
+                self.pred()
 
-            self.display()
-            self.win.refresh()
+#            self.display()
+            return notEnd
+            #self.win.refresh()
 
 class Wincon():
     mainwin = None
     wins = []
+    menu = None
+    debugwin = None
 
     def __init__(self, scr):
         self.mainwin = scr
@@ -79,6 +82,13 @@ class Wincon():
         scr.border()
         scr.bkgd(curses.color_pair(1))
 
+        menu = MenuListCurses()
+        menu.add('someOne', print, '123test')
+        menu.add('someTwo', print, 'afa fa fa a!fA!')
+        menu.add('Thor', print, 'Thow')
+        menu.add('someOne', print, '123test')
+        self.menu = menu
+
     def addWin(self):
         pass
 
@@ -86,27 +96,21 @@ class Wincon():
         self.mainwin.refresh()
         for w in self.wins:
             w.refresh()
+        self.menu.display()
+
+        self.mainwin.addstr(0,0,str(self.menu.selected)+self.menu.items[self.menu.selected][1])
 
     def work(self):
-        pass
+        notEnd = True
+        while notEnd:
+            notEnd = self.menu.handler()
+            self.refresh()
 
 def main(scr):
     w = Wincon(scr)
-
-    menu = MenuListCurses()
-    menu.add('someOne', print, '123test')
-    menu.add('someTwo', print, 'afa fa fa a!fA!')
-    menu.add('Thor', print, 'Thow')
-    menu.next()
-    menu.next()
-    menu.select()
-
     scr.addstr(curses.LINES-1, 2, "[k:up j:down q:exit ]")
-    
-    menu.display()
-    menu.handler()
+    w.refresh()
+    w.work()
 
-    scr.refresh()
-    scr.getkey()
 
 wrapper(main)
