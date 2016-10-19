@@ -72,9 +72,13 @@ class Player():
     movingud = 0
     dy = 0
     dx = 0.0
+    energy = 100.0
 
     def __init__(self):
         pass
+    
+    def step(self):
+        self.energy -= 0.01
 
 # Player anim
 AnimDelay = 0.1 # скорость смены кадров
@@ -125,6 +129,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         a.blit(self.image, (0, 0))
 
     def moveSide(self, dt, platforms, enemies):
+        self.step()
         if self.dx < 0:
             self.changeAnim(self.AnimLeft)
         elif self.dx > 0:
@@ -189,6 +194,7 @@ layerBg = None
 layerFg = None
 textLayer = None
 menu = None
+hud = None
 
 def menuKeyDown(k, d):
     if k == pygame.K_DOWN:
@@ -245,6 +251,33 @@ class Font():
     def get_rect(self):
         return self.font.get_rect()
 
+class Hud():
+    items = []
+    enrg = 'Energy: %.2f'
+
+    def __init__(self, layer, x=0, y=10):
+        self.layer = layer
+        i = self.items = list()
+        self.id = 'hud'
+        self.rect = pygame.Rect(0,0,0,0)
+        self.font = Font(24, (230, 50, 50))
+        self.x = x
+        self.y = y
+        i.append(self.enrg)
+        self.refresh()
+
+    def refresh(self):
+        self.layer[self.id] = list()
+        y = self.y
+        for x in self.items:
+            t = self.font.render(x % player.energy)
+            self.rect = t.get_rect()
+            self.rect.top = y
+            self.rect.left = self.x
+            y += self.font.h // 1.5
+            self.layer[self.id].append((t, self.rect))
+
+
 class MenuList():
     items = []
     selected = 0
@@ -254,7 +287,6 @@ class MenuList():
         self.items = list()
         self.id = id
         self.rect = pygame.Rect(0,0,0,0)
-        #self.font = Font(32, (100, 0, 250))
         self.font = Font(32, (100, 0, 250), (100, 100, 100))
         self.selfont = Font(32, (80, 100, 230), (180, 180, 180))
         self.x = x
@@ -320,11 +352,14 @@ def drawMain():
         for e in l:
             screen.blit(e.image, cam.calc(e))
     
-    #for x in textLayer.values():
-    #    for (e, r) in x:
-    #        screen.blit(e, r)
+    for (e, r) in textLayer['hud']:
+        screen.blit(e, r)
 
     pygame.display.flip()
+
+def mainMechanic(d, p, e):
+    player.moveSide(d, p, e)
+    hud.refresh()
 
 def main():
     pygame.init()
@@ -346,7 +381,7 @@ def mainInit():
     setEventHandler('mainRun', 'draw', drawMain)
     setEventHandler('mainRun', 'keyDown', keyDown)
     setEventHandler('mainRun', 'keyUp', keyUp)
-    setEventHandler('mainRun', 'mechanic', player.moveSide)
+    setEventHandler('mainRun', 'mechanic', mainMechanic)
 
     mp = list()
     Layers = list()
@@ -360,8 +395,10 @@ def mainInit():
     textLayer = {'menu1': list()}
 
     # menu
-    global menu
+    global menu, hud
     menu = createMenu('men1', ['it0','it2','end'])
+
+    hud = Hud(textLayer, WindowW-150, WindowH-30)
 
     for x in range(30):
         mp += [(x,15)]
@@ -408,7 +445,7 @@ def mainInit():
 
     layerFg.add(player)
     createEnemies(layerFg)
-    #randomClouds(layerBg)
+    randomClouds(layerBg)
     
 def randomClouds(layer):
     count = 10
@@ -419,7 +456,7 @@ def randomClouds(layer):
         x = random.randint(1, w)
         y = random.randint(1, w)
         points.append((x,y))
-    obj = Tiled('cloud0.png', points)
+    obj = Tiled('objects/F0.png', points)
     print(points)
     for x in obj.tiles:
         layer.add(x)
