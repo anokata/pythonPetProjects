@@ -1,3 +1,7 @@
+import random
+import math
+random.seed()
+
 def makeHole(r, x, y):
     return list(filter(lambda a: a != (x, y), r))
 
@@ -64,8 +68,97 @@ def lab2StrLst(l):
         r = setXY(r, x, y, w+1, '#')
     return r
 
+def makeRecLab():
+    fieldW = 90
+    fieldH = 25
+    minwh = 5
+    maxwh = 10
+    dens = 3
+    roomcount = 10
+    rs = list()
+
+    x = fieldW // 2
+    y = fieldH // 2
+
+    def r(x, y, rooms, count):
+        if count == 0:
+            return
+        w = random.randint(minwh, maxwh)
+        h = random.randint(minwh, maxwh)
+        rooms += makeRoom(x, y, w, h)
+
+        exits = random.randint(1, 4)
+        for i in range(exits):
+            updownleftright = random.randint(1, 4)
+            if updownleftright == 1: # up
+                y -= h//2 + dens + maxwh//2
+            if updownleftright == 2: # down
+                y += h//2 + dens + maxwh//2
+            if updownleftright == 3: # left
+                x -= w//2 + dens + maxwh//2
+            if updownleftright == 4: # right
+                x += w//2 + dens + maxwh//2
+            room = r(x, y, rooms, count - 1)
+            if room:
+                rooms += room
+        return rooms
+
+    rs = r(x, y, rs, roomcount)
+
+    return rs
+
+
+def makeLabirint():
+    # сделаем комнаты по другому- комната это точка центра и ширина и высота.
+    roomcount = 8
+    fieldW = 90
+    fieldH = 25
+    minwh = 5
+    centers = list()
+    rooms = list()
+    rms = list()
+    labirint = list()
+    # Сгенерируем на площади рандомно множество точек - центров
+    for i in range(roomcount):
+        x = random.randint(0, fieldW)
+        y = random.randint(0, fieldH)
+        centers.append((x, y))
+    # вычислим ширину и высоту комнат от этих центров так чтобы они не пересекались
+    # натий от каждой точки ближайшие, дистанцию
+    for x,y in centers:
+        distances = [math.sqrt((x-a)*(x-a)+(y-b)*(y-b)) for a,b in centers]
+        distances.sort()
+        minDistance = (math.floor(distances[1]))
+        if minDistance < minwh + 1:
+            continue
+        rooms.append((x, y, minDistance))
+
+    for x,y,d in rooms:
+        w = random.randint(minwh, d-1)
+        h = random.randint(minwh, d-1)
+        labirint.append((x, y, w, h))
+        rms += makeRoom(x, y, w, h)
+        
+    return rms
+
+
 def makeSuccsessiveRooms(n):
-    pass
+    minwh = 2
+    maxwh = 10
+    lastX = 0
+    lastY = 0
+    density = 8
+    rooms = list()
+    for i in range(n):
+        w = random.randint(minwh, maxwh)
+        h = random.randint(minwh, maxwh)
+        x = lastX + random.randint(1, density)
+        y = lastY + random.randint(1, density)
+        room = makeRoom(x, y, w, h)
+        lastX = x + w
+        lastY = y + h
+        rooms += room
+    return rooms
 
 if __name__ == '__main__':
     # test
@@ -79,3 +172,10 @@ if __name__ == '__main__':
     print(r)
     print(lab2StrLst(r))
     print(setXY('aaaaaaaaa', 1, 1, 3, 'z'))
+    r = (makeSuccsessiveRooms(3))
+    print(lab2StrLst(r))
+    r = makeLabirint()
+    print(lab2StrLst(r))
+    r = makeRecLab()
+    print(lab2StrLst(r))
+

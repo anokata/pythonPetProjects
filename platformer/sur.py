@@ -398,6 +398,8 @@ def mainInit():
 
     bgSurface = pygame.sprite.Sprite()
     bgSurface.image = pygame.image.load('nightSky0.png').convert()
+    bgSurface.image = pygame.Surface([800,1000])
+    bgSurface.image.fill((0,0,0))
     player = pgPlayer(44, 44)
     addState('mainRun')
     changeState('mainRun')
@@ -519,6 +521,7 @@ def mainLoop():
         clock.tick()
         pygame.display.set_caption("fps: " + str(int(clock.get_fps())))
         handleEvent('draw')
+    exit()
 
 if __name__ == "__main__":
     main()
