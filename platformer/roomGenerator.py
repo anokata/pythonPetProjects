@@ -91,7 +91,7 @@ def makeLabirintRand(n):
     minwh = 5
     maxwh = 10
     rooms = list()
-    rooms = makeRoom(0,0, 3,3)
+    rooms = makeRoom(0,0, maxwh//2, maxwh//2)
     for i in range(n):
         done = False
         while not done:
@@ -104,14 +104,13 @@ def makeLabirintRand(n):
             done = isVoid(x, y, rooms) and isVoid(right, y, rooms) and\
                     isVoid(x, bottom, rooms) and isVoid(right, bottom, rooms) and\
                     isVoid(x + w // 2, y + h // 2, rooms)
-            #print('try', x, y, w, h, done, '[',getXY(x,y,rooms),']', right, bottom)
-            rooms.append((x, y, '+'))
-            rooms.append((right, bottom, '*'))
-            rooms.append((right, y, '>'))
-            rooms.append((x, bottom, '<'))
-            print(lab2StrLst(rooms))
-            import time
-            time.sleep(0.5)
+            #rooms.append((x, y, '+'))
+            #rooms.append((right, bottom, '*'))
+            #rooms.append((right, y, '>'))
+            #rooms.append((x, bottom, '<'))
+            #print(lab2StrLst(rooms))
+            #import time
+            #time.sleep(0.5)
 
         rooms += makeRoom(x, y, w, h)
 
@@ -119,19 +118,8 @@ def makeLabirintRand(n):
 
 
 if __name__ == '__main__':
-    # test
-    r = makeRoom(2,8, 4, 4)
-    r += makeRoom(0,0, 5, 6)
-    #print(lab2StrLst(r))
-    r = makeLabirintRand(10)
+    r = makeLabirintRand(20)
     print(lab2StrLst(r))
-
-    print('h')
-    r = makeRoom(1,1, 8, 8)
-    print(lab2StrLst(r))
-    print(getXY(1,1,r))
-    print(getXY(2,2,r))
-    print('h')
 
 
 
