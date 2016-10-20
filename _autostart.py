@@ -8,27 +8,33 @@ import weather
 exc = subprocess.getoutput
 
 def pogoda():
+    if (0,0,0) == weather.getWeather():
+        print("Нет погоды")
+        return
     temp, perc, wind = weather.getWeather()
-    print("Сегодняшняя средняя погда: T: %.1f  Осадки: %.1f  Ветер: %.1f м/c" % weather.getWeather())
+    print("Сегодняшняя средняя погда: T: %.1f  Осадки: %.1f  Ветер: %.1f м/c" % (temp, perc, wind))
     print("Запишу погоду на сегодня для статистики в ~/weather.cvs")
     dmy = exc('date +%d.%m.%Y')
     with open('/home/ksi/weather.cvs', 'at') as fout:
         fout.write(dmy + "|%.1f|%.1f|%.1f\n" % (temp, perc, wind))
 
-name = subprocess.getoutput('whoami')
-hour = int(exc('date +%H'))
-if 0 < hour < 6:
-    daypart = 'ночуемс'
-elif 6 < hour < 12:
-    daypart = 'утра'
-elif 12 < hour < 18:
-    daypart = 'дня'
-elif 18 < hour < 23:
-    daypart = 'вечера'
-else:
-    daypart = 'времени суток'
-print("Доброго %s %s!"%(daypart, name))
+def greating():
+    name = subprocess.getoutput('whoami')
+    hour = int(exc('date +%H'))
+    if 0 < hour < 6:
+        daypart = 'ночуемс'
+    elif 6 < hour < 12:
+        daypart = 'утра'
+    elif 12 < hour < 18:
+        daypart = 'дня'
+    elif 18 < hour < 23:
+        daypart = 'вечера'
+    else:
+        daypart = 'времени суток'
+    print("Доброго %s %s!"%(daypart, name))
+    return daypart
 
+daypart = greating()
 
 yn = '[y/n]:'
 r = input('Выполнить автозапуск? [y/n]')
@@ -47,8 +53,6 @@ exc('nmcli connection up atel')
 #exc('sleep 2')
 print('Подождём сек...')
 exc('sleep 2')
-#print('Подключаем интернет #2')
-#exc('inet.sh')
 pogoda()
 print('Смотри какая сегодня погода! :)')
 exc('weather.sh')

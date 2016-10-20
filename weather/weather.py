@@ -8,9 +8,13 @@ def getWeather():
     day = int(exc('date +%d'))
     url = 'http://www.yr.no/place/Russia/Yaroslavl/Rybinsk/forecast_hour_by_hour.xml'
     # Берём данные xml.  weatherdata.forecast.tabular .time
-    res = req.get(url)
-    frc = ET.fromstring(res.text)
-    fore = frc.find('forecast').find('tabular').findall('time') 
+    try:
+        res = req.get(url)
+        frc = ET.fromstring(res.text)
+        fore = frc.find('forecast').find('tabular').findall('time') 
+    except:
+        print("Что-то пошло не так")
+        return (0,0,0)
     avgTemp = 0
     periods = 0
     perc = 0
