@@ -3,12 +3,12 @@ import math
 random.seed()
 
 def makeHole(r, x, y):
-    return list(filter(lambda a: a != (x, y), r))
+    return list(filter(lambda a: a != (x, y, Wall), r)) + [(x, y, Floor)]
 
 def makeHWall(x, y, w):
     r = list()
     for i in range(x, x + w + 1):
-        r.append((i, y))
+        r.append((i, y, Wall))
     return r
 
 def makeTunnelH(r, sx, y, ex):
@@ -32,23 +32,24 @@ def makeRoomWithHoles(x, y, w, h):
 
     return r
 
+Wall = '#'
+Floor = '.'
+Void = '`'
 def makeRoom(x, y, w, h):
-    r = [(x, y)]
-    for i in range(x + 1, x + w + 1):
-        r.append((i, y))
+    r = list()
+    w = w - 1
+    h -= 1
 
-    for i in range(x + 1, x + w + 1):
-        r.append((i, y + h))
-
-    for i in range(y + 1, y + h + 1):
-        r.append((x, i))
-
-    for i in range(y + 1, y + h + 1):
-        r.append((x + w, i))
+    for i in range(x, x + w + 1):
+        for j in range(y, y + h + 1):
+            if i == x or i == x + w or j == y or j == y + h :
+                r.append((i, j, Wall))
+            else:
+                r.append((i, j, Floor))
     return r
 
 def makeVoidStrLst(w, h):
-    return ('.' * (w+1) + '\n') * (h+1)
+    return (Void * (w+1) + '\n') * (h+1)
 
 def cdr(tup):
     return tup[1]
@@ -60,122 +61,77 @@ def setXY(l, x, y, w, val):
     l = l[:offset] + val + l[offset+1:]
     return l
 
+def calcWidth(l):
+    return max(list(map(car, l))) + 1
+
 def lab2StrLst(l):
     w = max(list(map(car, l)))
     h = max(list(map(cdr, l)))
     r = makeVoidStrLst(w, h)
-    for x, y in l:
-        r = setXY(r, x, y, w+1, '#')
+    for x, y, tile in l:
+        r = setXY(r, x, y, w+1, tile)
     return r
 
-def makeRecLab():
+def getXY(x, y, lab):
+    l = lab2StrLst(lab)
+    w = calcWidth(lab)
+    x = y * (w + 1) + x
+    try:
+        tile = l[x]
+    except:
+        return Void
+    return l[x]
+
+def isVoid(x, y, lab):
+    return getXY(x, y, lab) == Void
+
+def makeLabirintRand(n):
     fieldW = 90
     fieldH = 25
     minwh = 5
     maxwh = 10
-    dens = 3
-    roomcount = 10
-    rs = list()
+    rooms = list()
+    rooms = makeRoom(0,0, 3,3)
+    for i in range(n):
+        done = False
+        while not done:
+            w = random.randint(minwh, maxwh)
+            h = random.randint(minwh, maxwh)
+            x = random.randint(0, fieldW)
+            y = random.randint(0, fieldH)
+            right = x + w - 1
+            bottom = y + h - 1
+            done = isVoid(x, y, rooms) and isVoid(right, y, rooms) and\
+                    isVoid(x, bottom, rooms) and isVoid(right, bottom, rooms) and\
+                    isVoid(x + w // 2, y + h // 2, rooms)
+            #print('try', x, y, w, h, done, '[',getXY(x,y,rooms),']', right, bottom)
+            rooms.append((x, y, '+'))
+            rooms.append((right, bottom, '*'))
+            rooms.append((right, y, '>'))
+            rooms.append((x, bottom, '<'))
+            print(lab2StrLst(rooms))
+            import time
+            time.sleep(0.5)
 
-    x = fieldW // 2
-    y = fieldH // 2
-
-    def r(x, y, rooms, count):
-        if count == 0:
-            return
-        w = random.randint(minwh, maxwh)
-        h = random.randint(minwh, maxwh)
         rooms += makeRoom(x, y, w, h)
 
-        exits = random.randint(1, 4)
-        for i in range(exits):
-            updownleftright = random.randint(1, 4)
-            if updownleftright == 1: # up
-                y -= h//2 + dens + maxwh//2
-            if updownleftright == 2: # down
-                y += h//2 + dens + maxwh//2
-            if updownleftright == 3: # left
-                x -= w//2 + dens + maxwh//2
-            if updownleftright == 4: # right
-                x += w//2 + dens + maxwh//2
-            room = r(x, y, rooms, count - 1)
-            if room:
-                rooms += room
-        return rooms
-
-    rs = r(x, y, rs, roomcount)
-
-    return rs
-
-
-def makeLabirint():
-    # сделаем комнаты по другому- комната это точка центра и ширина и высота.
-    roomcount = 8
-    fieldW = 90
-    fieldH = 25
-    minwh = 5
-    centers = list()
-    rooms = list()
-    rms = list()
-    labirint = list()
-    # Сгенерируем на площади рандомно множество точек - центров
-    for i in range(roomcount):
-        x = random.randint(0, fieldW)
-        y = random.randint(0, fieldH)
-        centers.append((x, y))
-    # вычислим ширину и высоту комнат от этих центров так чтобы они не пересекались
-    # натий от каждой точки ближайшие, дистанцию
-    for x,y in centers:
-        distances = [math.sqrt((x-a)*(x-a)+(y-b)*(y-b)) for a,b in centers]
-        distances.sort()
-        minDistance = (math.floor(distances[1]))
-        if minDistance < minwh + 1:
-            continue
-        rooms.append((x, y, minDistance))
-
-    for x,y,d in rooms:
-        w = random.randint(minwh, d-1)
-        h = random.randint(minwh, d-1)
-        labirint.append((x, y, w, h))
-        rms += makeRoom(x, y, w, h)
-        
-    return rms
-
-
-def makeSuccsessiveRooms(n):
-    minwh = 2
-    maxwh = 10
-    lastX = 0
-    lastY = 0
-    density = 8
-    rooms = list()
-    for i in range(n):
-        w = random.randint(minwh, maxwh)
-        h = random.randint(minwh, maxwh)
-        x = lastX + random.randint(1, density)
-        y = lastY + random.randint(1, density)
-        room = makeRoom(x, y, w, h)
-        lastX = x + w
-        lastY = y + h
-        rooms += room
     return rooms
+
 
 if __name__ == '__main__':
     # test
     r = makeRoom(2,8, 4, 4)
-    r += makeRoom(0,0, 3, 6)
-    r += makeRoomWithHoles(9,1, 5, 5)
-    r += makeRoomWithHoles(9,8, 5, 5)
-    r += makeRoom(9,15, 5, 5)
-    print(r)
-    r = makeTunnelH(r, 6, 10, 9)
-    print(r)
+    r += makeRoom(0,0, 5, 6)
+    #print(lab2StrLst(r))
+    r = makeLabirintRand(10)
     print(lab2StrLst(r))
-    print(setXY('aaaaaaaaa', 1, 1, 3, 'z'))
-    r = (makeSuccsessiveRooms(3))
+
+    print('h')
+    r = makeRoom(1,1, 8, 8)
     print(lab2StrLst(r))
-    r = makeLabirint()
-    print(lab2StrLst(r))
-    r = makeRecLab()
-    print(lab2StrLst(r))
+    print(getXY(1,1,r))
+    print(getXY(2,2,r))
+    print('h')
+
+
 
