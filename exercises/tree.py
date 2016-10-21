@@ -129,14 +129,22 @@ class BTree(pdict):
     __str__ = __repr__
 
 
+def str2Bytes(s):
+    r = list()
+    for x in s:
+        r.append(ord(x))
+    return r
 # сделать двоичное дерево на словарях
 # сделать алгоритм хаффмана
 def huffman():
-    msg = 'aadlfkfjafjsdlfjsdlfjaskldfjalfjlkcoixucvxucvuxuvuxuvxocvicxoaaoiuadaaaaaoifafu'
+    END = chr(255)*2 + 'END.'
+    msg = 'aadlfkfxx:afjsdlfjsdlfjaskldfjalfjlkcoixucvxucvuxuvuxuvxocvicxoaaoiuadaaaaaoifafu'
     # посчитаем количество каждого символа
     freq = pddict(int)
     for x in msg:
         freq[x] += 1
+    # Добавим спец код для конца.
+    freq[END] = 1
     # вычислим вероятность появления каждого символа
     for k, v in freq.items():
         freq[k] = (v, v/len(msg))
@@ -177,24 +185,51 @@ def huffman():
     msgEnc = ''
     for x in msg:
         msgEnc += (codes[x])
-    print(msgEnc)
+    endcode = codes[END]
+    msgEnc += codes[END]
+    msgEnc += codes[END] # добавив в конец конечных сиволов до дополнения байта
+    print(msgEnc, len(msgEnc), len(msgEnc)%8)
+    msgEnc = msgEnc[:-(len(msgEnc)%8)] # обрежем до байта
+    print(msgEnc, len(msgEnc), len(msgEnc)%8)
     #Расшифруем сообщение
     invCodes = {v: k for k, v in codes.items()} # инвентируем словарь
     print(invCodes)
     curcode = ''
     msgDec = ''
+    msgE = msgEnc
     while msgEnc != '':
         curcode += msgEnc[0]
         msgEnc = msgEnc[1:]
         if curcode in invCodes:
-            msgDec += invCodes[curcode]
+            if curcode != endcode: # Пропускаем сдополняющие коды конца
+                if curcode in invCodes: # и если это правильный код(неправильный - после обрезания)
+                    msgDec += invCodes[curcode] 
             curcode = ''
     #Проверим
     print(msgDec)
     print(msg)
     print(msg==msgDec)
+    msgEnc = msgE
+    #Преобразуем в последовательность байт.
+    msgBytes = list()
+    for x in range(0, len(msgEnc), 8):
+        #print(msgEnc[x:x+8])
+        byte = int(msgEnc[x:x+8], 2)
+        msgBytes.append(byte)
+    print(msgBytes)
+    #дописывать словарь.
+    # формат: размер словаря(байт). последний элемент - элемент END
+    msgKey = list()
+    msgKey.append(len(codes))
+    ordCodes = list(codes.items())
+    ordCodes.sort(key = lambda x: x[0]) # отсортируем чтобы конечный был в конце
+    print(ordCodes)
+    for k, v in ordCodes:
+        msgKey.append(ord(k[0]))
+        msgKey += str2Bytes(v)
 
-
+    print(msgKey)
+    
 
 def maintest():
     t = Tree('a')
