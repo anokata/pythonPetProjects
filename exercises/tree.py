@@ -225,14 +225,15 @@ def hufDec(msg):
     END = chr(255)*2 + 'END.'
     stopCode = 99 # конец кода текущего символа
     #Получим размер словаря и словарь.
-    count = msg[0]*256 + msg[1]
-    print(msg[:count], msg[count:])
+    count = (msg[0])*256 + (msg[1])
+    #print(count)
+    #print(msg[:count], msg[count:])
     codeBytes = msg[2:count]
     curCode = ''
     curByte = codeBytes[0]
     nextIsByte = True
     codes = dict()
-    print(codeBytes)
+    #print(codeBytes)
     i = 0
     for x in codeBytes:
         i += 1
@@ -247,11 +248,11 @@ def hufDec(msg):
             if i == len(codeBytes): 
                 codes[END] = curCode
                 break
-            codes[chr(curByte)] = curCode
+            codes[curByte] = curCode
             curCode = ''
             nextIsByte = True
 
-    print(codes)
+    #print(codes)
     msgBytes = msg[count:]
     endcode = codes[END]
     # Преобразуем в двоичныую строку
@@ -261,19 +262,18 @@ def hufDec(msg):
 
     #Расшифруем сообщение
     invCodes = {v: k for k, v in codes.items()} # инвентируем словарь
-    print(invCodes)
+    #print(invCodes)
     curcode = ''
-    msgDec = ''
+    msgDec = list()
     while msg != '':
         curcode += msg[0]
         msg = msg[1:]
         if curcode in invCodes:
             if curcode != endcode: # Пропускаем сдополняющие коды конца
                 if curcode in invCodes: # и если это правильный код(неправильный - после обрезания)
-                    msgDec += invCodes[curcode] 
+                    msgDec.append(invCodes[curcode])
             curcode = ''
-    #Проверим
-    print(msgDec)
+    #print(msgDec)
     return msgDec
 
 def packFile(fn):
@@ -290,7 +290,15 @@ def packFile(fn):
 
 
 def unpackFile(fn):
-    pass
+    msg = list()
+    with open(fn, 'rb') as fin:
+        while True:
+            b = fin.read(1)
+            if not b: break
+            msg.append(ord(chr(b[0])))
+    with open(fn+'.dec', 'wb') as fout:
+        msg = hufDec(msg)
+        fout.write( bytearray(msg))
 
 def maintest():
     t = Tree('a')
@@ -321,7 +329,9 @@ def maintest():
     #msg = input()
     #print(hufEnc(msg))
     #print(chr(0)+chr(32))
-    packFile('/home/ksi/a')
+    f = ('/home/ksi/a')
+    packFile(f)
+    unpackFile(f+'.enc')
 
 if __name__ == '__main__':
     maintest()
