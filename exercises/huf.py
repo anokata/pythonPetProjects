@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+#сделать показ происходящего и прогресс.
 from collections import defaultdict
 class pddict(defaultdict):
     def __str__(self):
@@ -101,12 +103,14 @@ def str2Bytes(s):
 def hufEnc(msg):
     END = chr(255)*2 + 'END.'
     # посчитаем количество каждого символа
+    print("Считаем частоту байтов")
     freq = pddict(int)
     for x in msg:
         freq[x] += 1
     # Добавим спец код для конца.
     freq[END] = 1
     # вычислим вероятность появления каждого символа
+    print("Вычисляем вероятность каждого байта")
     for k, v in freq.items():
         freq[k] = (v, v/len(msg))
     # сделаем лес деревьв. отсортируем.
@@ -115,9 +119,9 @@ def hufEnc(msg):
         t = BTree()
         t.val = (k, v[0], v[1])
         forest.append(t)
-
+    print("Сортируем в порядке невероятности")
     forest.sort(key=lambda k: k.val[1], reverse=True)
-
+    print("Строим бинарное дерево")
     while len(forest) > 1:
         l = forest[-1]
         r = forest[-2]
@@ -131,12 +135,12 @@ def hufEnc(msg):
         forest.sort(key=lambda k: k.val[1], reverse=True)
 
     # теперь сделаем обход по листьям с запоминанием путя, получением кода для символов.
-    abc = list()
-    forest[0].obxod(forest[0], lambda x: abc.append(x) if x.isLeaf else '', False)
+    print('Обходим дерево и получаем коды для байтов')
     codes = list()
     forest[0].getCodes(forest[0], codes, '')
     codes = pdict(codes)
     #Зашифруем сообщение
+    print('Шифруем сообщение словарём этими кодами')
     msgEnc = ''
     for x in msg:
         msgEnc += (codes[x])
@@ -147,11 +151,13 @@ def hufEnc(msg):
         msgEnc = msgEnc[:-(len(msgEnc)%8)] # обрежем до байта
     #Преобразуем в последовательность байт.
     msgBytes = list()
+    print('Преобразуем коды 01 в байты')
     for x in range(0, len(msgEnc), 8):
         byte = int(msgEnc[x:x+8], 2)
         msgBytes.append(byte)
     #дописывать словарь.
     # формат: размер словаря(байт). последний элемент - элемент END
+    print('Преобразуем в байты словарь кодов')
     msgKey = list()
     codeSize = len(codes) + 2 # плюс сама длинна
     ordCodes = list(codes.items())
@@ -165,6 +171,7 @@ def hufEnc(msg):
     msgKey = [codeSize//256, codeSize%256] + msgKey
 
     msgKey += msgBytes
+    print('Готово!')
     return msgKey
  
 
@@ -179,6 +186,7 @@ def hufDec(msg):
     nextIsByte = True
     codes = dict()
     i = 0
+    print('Декодируем словарь')
     for x in codeBytes:
         i += 1
         if nextIsByte:
@@ -198,12 +206,14 @@ def hufDec(msg):
 
     msgBytes = msg[count:]
     endcode = codes[END]
-    # Преобразуем в двоичныую строку
+    # Преобразуем в двоичную строку
+    print('Преобразуем данные в двочный код')
     msg = ''
     for b in msgBytes:
         msg += "{0:08b}".format(b)
 
     #Расшифруем сообщение
+    print('Расшифровываем данные по словарю')
     invCodes = {v: k for k, v in codes.items()} # инвентируем словарь
     curcode = ''
     msgDec = list()
@@ -215,10 +225,13 @@ def hufDec(msg):
                 if curcode in invCodes: # и если это правильный код(неправильный - после обрезания)
                     msgDec.append(invCodes[curcode])
             curcode = ''
+    print('Готово!')
     return msgDec
 
 def packFile(fn):
     msg = ''
+    print('Упаковываю файл %s'%fn)
+    print('Читаю файл...')
     with open(fn, 'rb') as fin:
         while True:
             b = fin.read(1)
@@ -226,12 +239,15 @@ def packFile(fn):
             msg += chr(b[0])
     with open(fn+'.enc', 'wb') as fout:
         msg = hufEnc(msg)
+        print('Записываю результат в %s'%(fn+'.enc'))
         for b in msg:
             fout.write(bytes([b]))
 
 
 def unpackFile(fn):
     msg = list()
+    print('Распаковываю файл %s'%fn)
+    print('Читаю файл...')
     with open(fn, 'rb') as fin:
         while True:
             b = fin.read(1)
@@ -239,6 +255,7 @@ def unpackFile(fn):
             msg.append(ord(chr(b[0])))
     with open(fn+'.dec', 'wb') as fout:
         msg = hufDec(msg)
+        print('Записываю результат в %s'%(fn+'.dec'))
         fout.write( bytearray(msg))
 
 if __name__ == '__main__':
