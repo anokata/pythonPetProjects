@@ -66,33 +66,44 @@ class BTree(pdict):
         return self[BTree.RIGHT]
     
     def _sleft(self, val):
+        self.isLeaf = False
         if type(val) == BTree:
             self[BTree.LEFT] = val
         else:
             b = BTree()
             b.val = val
             self[BTree.LEFT] = b
-            self.isLeaf = False
         return self._left
 
     def _sright(self, val):
+        self.isLeaf = False
         if type(val) == BTree:
             self[BTree.RIGHT] = val
         else:
             b = BTree()
             b.val = val
             self[BTree.RIGHT] = b
-            self.isLeaf = False
         return self._right
 
     left = property(_left, _sleft)
     right = property(_right, _sright)
 
-    def obxod(self, node, fun):
+    def obxod(self, node, fun, procval=True):
         if type(node) == BTree:
-            fun(node.val)
-            self.obxod(node.left, fun)
-            self.obxod(node.right, fun)
+            if procval:
+                fun(node.val)
+            else:
+                fun(node)
+            self.obxod(node.left, fun, procval)
+            self.obxod(node.right, fun, procval)
+
+    def getCodes(self, node, codes, curpath=''):
+        if not node.isLeaf:
+            self.getCodes(node.left, codes, curpath+'l')
+            self.getCodes(node.right, codes, curpath+'r')
+        else: #isLeaf
+            codes.append((node.val[0], curpath))
+
 
     def tostr(self):
         #self.obxod(self, print)
@@ -130,6 +141,7 @@ def maintest():
     n.add('z3')
     #print(t)
     #print(t.show())
+
     msg = 'aadlfkfjafjsdlfjsdlfjaskldfjalfjlkcoixucvxucvuxuvuxuvxocvicxoaaoiuadaaaaaoifafu'
     # посчитаем количество каждого символа
     freq = pddict(int)
@@ -148,7 +160,6 @@ def maintest():
 
     forest.sort(key=lambda k: k.val[1], reverse=True)
 
-    #print(forest)
     while len(forest) > 1:
         l = forest[-1]
         r = forest[-2]
@@ -160,20 +171,17 @@ def maintest():
         b.val = ('NEW', l.val[1] + r.val[1], l.val[2]+r.val[2])
         forest.append(b)
         forest.sort(key=lambda k: k.val[1], reverse=True)
-        #print(forest)
-        b.obxod(b, print)
-        print()
 
-    #print(type(forest[0]))
-    #print(len(forest))
-    #print(forest[0].val)
-    #print(forest[0].left.val)
-    #print(forest[0].left.left)
-    #print(forest[0].right.val)
-    #print(forest[0])
-    #print()
-    forest[0].obxod(forest[0], lambda x: print(x))
-    # нужно слияние деревьев. простое...
+    print(forest[0])
+    #forest[0].obxod(forest[0], lambda x: print(x))
+    # теперь сделаем обход по листьям с запоминанием путя, получением кода для символов.
+    abc = list()
+    forest[0].obxod(forest[0], lambda x: abc.append(x) if x.isLeaf else '', False)
+    print(abc)
+    codes = list()
+    forest[0].getCodes(forest[0], codes, '')
+    print(codes)
+
     b = BTree()
     b.val = 10
     b.left = 1
@@ -182,9 +190,6 @@ def maintest():
     c.val = 'a'
     c.left = 'b'
     c.right = b
-    #print(type(c.right.left))
-    #print(c.right == b)
-    #print(c)
     return forest
 
 if __name__ == '__main__':
