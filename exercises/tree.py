@@ -1,4 +1,4 @@
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 class Tree:
     """Реализация дерева на списках"""
     # если хранить текущий узел и возвращать self то можно делать типа tree.left.left.right?
@@ -136,9 +136,8 @@ def str2Bytes(s):
     return r
 # сделать двоичное дерево на словарях
 # сделать алгоритм хаффмана
-def huffman():
+def hufEnc(msg):
     END = chr(255)*2 + 'END.'
-    msg = 'aadlfkfxx:afjsdlfjsdlfjaskldfjalfjlkcoixucvxucvuxuvuxuvxocvicxoaaoiuadaaaaaoifafu'
     # посчитаем количество каждого символа
     freq = pddict(int)
     for x in msg:
@@ -191,25 +190,6 @@ def huffman():
     print(msgEnc, len(msgEnc), len(msgEnc)%8)
     msgEnc = msgEnc[:-(len(msgEnc)%8)] # обрежем до байта
     print(msgEnc, len(msgEnc), len(msgEnc)%8)
-    #Расшифруем сообщение
-    invCodes = {v: k for k, v in codes.items()} # инвентируем словарь
-    print(invCodes)
-    curcode = ''
-    msgDec = ''
-    msgE = msgEnc
-    while msgEnc != '':
-        curcode += msgEnc[0]
-        msgEnc = msgEnc[1:]
-        if curcode in invCodes:
-            if curcode != endcode: # Пропускаем сдополняющие коды конца
-                if curcode in invCodes: # и если это правильный код(неправильный - после обрезания)
-                    msgDec += invCodes[curcode] 
-            curcode = ''
-    #Проверим
-    print(msgDec)
-    print(msg)
-    print(msg==msgDec)
-    msgEnc = msgE
     #Преобразуем в последовательность байт.
     msgBytes = list()
     for x in range(0, len(msgEnc), 8):
@@ -220,16 +200,80 @@ def huffman():
     #дописывать словарь.
     # формат: размер словаря(байт). последний элемент - элемент END
     msgKey = list()
-    msgKey.append(len(codes))
+    codeSize = len(codes) + 2 # плюс сама длинна
     ordCodes = list(codes.items())
     ordCodes.sort(key = lambda x: x[0]) # отсортируем чтобы конечный был в конце
     print(ordCodes)
+    stopCode = 99 # конец кода текущего символа
     for k, v in ordCodes:
         msgKey.append(ord(k[0]))
         msgKey += str2Bytes(v)
+        msgKey.append(stopCode)
+        codeSize += len(v) + 1
+    msgKey = [codeSize//256, codeSize%256] + msgKey
 
     print(msgKey)
-    
+    print(msgKey[:codeSize])
+    msgKey += msgBytes
+    return msgKey
+ 
+
+def hufDec(msg):
+    END = chr(255)*2 + 'END.'
+    stopCode = 99 # конец кода текущего символа
+    #Получим размер словаря и словарь.
+    count = msg[0]*256 + msg[1]
+    print(msg[:count], msg[count:])
+    codeBytes = msg[2:count]
+    curCode = ''
+    curByte = codeBytes[0]
+    nextIsByte = True
+    codes = dict()
+    print(codeBytes)
+    i = 0
+    for x in codeBytes:
+        i += 1
+        if nextIsByte:
+            curByte = x
+            nextIsByte = False
+            continue
+        if x != stopCode:
+            curCode += chr(x) 
+        else:
+            # Подправим послдений код для конца 
+            if i == len(codeBytes): 
+                codes[END] = curCode
+                break
+            codes[chr(curByte)] = curCode
+            curCode = ''
+            nextIsByte = True
+
+    print(codes)
+    msgBytes = msg[count:]
+    endcode = codes[END]
+    # Преобразуем в двоичныую строку
+    msg = ''
+    for b in msgBytes:
+        msg += "{0:08b}".format(b)
+
+    #Расшифруем сообщение
+    invCodes = {v: k for k, v in codes.items()} # инвентируем словарь
+    print(invCodes)
+    curcode = ''
+    msgDec = ''
+    while msg != '':
+        curcode += msg[0]
+        msg = msg[1:]
+        if curcode in invCodes:
+            if curcode != endcode: # Пропускаем сдополняющие коды конца
+                if curcode in invCodes: # и если это правильный код(неправильный - после обрезания)
+                    msgDec += invCodes[curcode] 
+            curcode = ''
+    #Проверим
+    print(msgDec)
+    return msgDec
+
+
 
 def maintest():
     t = Tree('a')
@@ -250,7 +294,13 @@ def maintest():
     c.val = 'a'
     c.left = 'b'
     c.right = b
-    huffman()
+
+    msg = ('asdfghjkhidjfhsdfhdjkafhjkldfjflfjshdjfkdhfjkhjkahfjdhfjasfewiyrieywruwye')
+    m = hufEnc(msg)
+    print(m)
+    m2 = hufDec(m)
+    print(msg)
+    print(m2, msg==m2, len(msg), len(m2))
 
 if __name__ == '__main__':
     maintest()
