@@ -135,6 +135,9 @@ def str2Bytes(s):
         r.append(ord(x))
     return r
 
+def progress(x):
+    pass
+
 def maintest():
     t = Tree('a')
     t.add('b')
