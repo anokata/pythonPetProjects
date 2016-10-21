@@ -44,40 +44,61 @@ class pdict(dict):
         
 class BTree(pdict):
     val = ''
+    LEFT = 'left'
+    RIGHT = 'right'
 
     def __init__(self):
         super().__init__(self)
-        self['left'] = ''
-        self['right'] = ''
+        self[BTree.LEFT] = ''
+        self[BTree.RIGHT] = ''
     
     def _left(self):
-        return self['left']
+        return self[BTree.LEFT]
 
     def _right(self):
-        return self['right']
+        return self[BTree.RIGHT]
     
     def _sleft(self, val):
         b = BTree()
         b.val = val
-        self['left'] = b
+        self[BTree.LEFT] = b
         return self._left
 
     def _sright(self, val):
         b = BTree()
         b.val = val
-        self['right'] = b
+        self[BTree.RIGHT] = b
         return self._right
 
     left = property(_left, _sleft)
     right = property(_right, _sright)
 
+    def obxod(self, node, fun):
+        if type(node) == BTree:
+            fun(node.val)
+            self.obxod(node.left, fun)
+            self.obxod(node.right, fun)
+
+    def tostr(self):
+        self.obxod(self, print)
+        return ''
+
+    def _toStr(self, deep):
+        deep += 1
+        t = '' + str(self.val)
+        t += '\n' + ' ' * deep
+        if type(self.left) == BTree:
+            t += self.left._toStr(deep)
+        else: t += str(self.left)
+        if type(self.right) == BTree:
+            t += self.right._toStr(deep)
+        else: t += str(self.right)
+        t += ''
+        return t
+
     def __repr__(self):
-        t = '{' + str(self.val)
-        t += '\n'
-        t += str(self.left)
-        t += '\n'
-        t += str(self.right)
-        t += '}'
+        #t= self._toStr(0)
+        t= self.tostr()
         return t
     __str__ = __repr__
 
@@ -104,11 +125,18 @@ if __name__ == '__main__':
         freq[k] = (v, v/len(msg))
     print(freq)
 
+    # нужно слияние деревьев. простое...
+
 
     b = BTree()
     b.val = 10
     b.left = 1
-    print(b)
+    b.right = 2
+    c = BTree()
+    c.val = 'a'
+    c.left = 'b'
+    c.right = b
+    print(c)
 
 
 
