@@ -169,41 +169,44 @@ def hufEnc(msg):
         forest.append(b)
         forest.sort(key=lambda k: k.val[1], reverse=True)
 
-    print(forest[0])
+    #print(forest[0])
     #forest[0].obxod(forest[0], lambda x: print(x))
     # теперь сделаем обход по листьям с запоминанием путя, получением кода для символов.
     abc = list()
     forest[0].obxod(forest[0], lambda x: abc.append(x) if x.isLeaf else '', False)
-    print(abc)
+    #print(abc)
     codes = list()
     forest[0].getCodes(forest[0], codes, '')
     #print(codes)
     codes = pdict(codes)
-    print(codes)
+    #print(codes)
     #Зашифруем сообщение
     msgEnc = ''
     for x in msg:
+        #print(x, codes[x])
         msgEnc += (codes[x])
     endcode = codes[END]
     msgEnc += codes[END]
     msgEnc += codes[END] # добавив в конец конечных сиволов до дополнения байта
-    print(msgEnc, len(msgEnc), len(msgEnc)%8)
-    msgEnc = msgEnc[:-(len(msgEnc)%8)] # обрежем до байта
-    print(msgEnc, len(msgEnc), len(msgEnc)%8)
+    #print(msgEnc, len(msgEnc), len(msgEnc)%8)
+    if len(msgEnc)%8 != 0:
+        msgEnc = msgEnc[:-(len(msgEnc)%8)] # обрежем до байта
+    #print(msgEnc, len(msgEnc), len(msgEnc)%8)
     #Преобразуем в последовательность байт.
     msgBytes = list()
+    #print(len(msgEnc))
     for x in range(0, len(msgEnc), 8):
         #print(msgEnc[x:x+8])
         byte = int(msgEnc[x:x+8], 2)
         msgBytes.append(byte)
-    print(msgBytes)
+    #print(msgBytes)
     #дописывать словарь.
     # формат: размер словаря(байт). последний элемент - элемент END
     msgKey = list()
     codeSize = len(codes) + 2 # плюс сама длинна
     ordCodes = list(codes.items())
     ordCodes.sort(key = lambda x: x[0]) # отсортируем чтобы конечный был в конце
-    print(ordCodes)
+    #print(ordCodes)
     stopCode = 99 # конец кода текущего символа
     for k, v in ordCodes:
         msgKey.append(ord(k[0]))
@@ -212,8 +215,8 @@ def hufEnc(msg):
         codeSize += len(v) + 1
     msgKey = [codeSize//256, codeSize%256] + msgKey
 
-    print(msgKey)
-    print(msgKey[:codeSize])
+    #print(msgKey)
+    #print(msgKey[:codeSize])
     msgKey += msgBytes
     return msgKey
  
@@ -273,7 +276,21 @@ def hufDec(msg):
     print(msgDec)
     return msgDec
 
+def packFile(fn):
+    msg = ''
+    with open(fn, 'rb') as fin:
+        while True:
+            b = fin.read(1)
+            if not b: break
+            msg += chr(b[0])
+    with open(fn+'.enc', 'wb') as fout:
+        msg = hufEnc(msg)
+        for b in msg:
+            fout.write(bytes([b]))
 
+
+def unpackFile(fn):
+    pass
 
 def maintest():
     t = Tree('a')
@@ -295,12 +312,16 @@ def maintest():
     c.left = 'b'
     c.right = b
 
-    msg = ('asdfghjkhidjfhsdfhdjkafhjkldfjflfjshdjfkdhfjkhjkahfjdhfjasfewiyrieywruwye')
-    m = hufEnc(msg)
-    print(m)
-    m2 = hufDec(m)
-    print(msg)
-    print(m2, msg==m2, len(msg), len(m2))
+    msg = (chr(1)+'as'+chr(0)+chr(2)+chr(254)+chr(33)+chr(255)+'dfghjkhidjfhsdfhdjkafhjkldfjflfjshdjfkdhfjkhjkahfjdhfjasfewiyrieywruwye')
+    #m = hufEnc(msg)
+    #print(m)
+    #m2 = hufDec(m)
+    #print(msg)
+    #print(m2, msg==m2, len(msg), len(m2))
+    #msg = input()
+    #print(hufEnc(msg))
+    #print(chr(0)+chr(32))
+    packFile('/home/ksi/a')
 
 if __name__ == '__main__':
     maintest()
