@@ -41,11 +41,18 @@ class pdict(dict):
         for k, v in self.items():
             t += str(k) + ': ' + str(v) + '\n'
         return t
+class plist(list):
+    def __str__(self):
+        t = ''
+        for x in self:
+            t += str(x) + '\n'
+        return ''
         
 class BTree(pdict):
     val = ''
     LEFT = 'left'
     RIGHT = 'right'
+    isLeaf = True
 
     def __init__(self):
         super().__init__(self)
@@ -59,15 +66,23 @@ class BTree(pdict):
         return self[BTree.RIGHT]
     
     def _sleft(self, val):
-        b = BTree()
-        b.val = val
-        self[BTree.LEFT] = b
+        if type(val) == BTree:
+            self[BTree.LEFT] = val
+        else:
+            b = BTree()
+            b.val = val
+            self[BTree.LEFT] = b
+            self.isLeaf = False
         return self._left
 
     def _sright(self, val):
-        b = BTree()
-        b.val = val
-        self[BTree.RIGHT] = b
+        if type(val) == BTree:
+            self[BTree.RIGHT] = val
+        else:
+            b = BTree()
+            b.val = val
+            self[BTree.RIGHT] = b
+            self.isLeaf = False
         return self._right
 
     left = property(_left, _sleft)
@@ -80,8 +95,8 @@ class BTree(pdict):
             self.obxod(node.right, fun)
 
     def tostr(self):
-        self.obxod(self, print)
-        return ''
+        #self.obxod(self, print)
+        return str(self.val)
 
     def _toStr(self, deep):
         deep += 1
@@ -105,7 +120,7 @@ class BTree(pdict):
 
 # сделать двоичное дерево на словарях
 # сделать алгоритм хаффмана
-if __name__ == '__main__':
+def maintest():
     t = Tree('a')
     t.add('b')
     t.add('c').add('x').add('xx').add('xxx')
@@ -113,8 +128,8 @@ if __name__ == '__main__':
     n.add('z')
     n.add('z2').add('y').add('yy')
     n.add('z3')
-    print(t)
-    print(t.show())
+    #print(t)
+    #print(t.show())
     msg = 'aadlfkfjafjsdlfjsdlfjaskldfjalfjlkcoixucvxucvuxuvuxuvxocvicxoaaoiuadaaaaaoifafu'
     # посчитаем количество каждого символа
     freq = pddict(int)
@@ -123,11 +138,42 @@ if __name__ == '__main__':
     # вычислим вероятность появления каждого символа
     for k, v in freq.items():
         freq[k] = (v, v/len(msg))
-    print(freq)
+    #print(freq)
+    # сделаем лес деревьв. отсортируем.
+    forest = list()
+    for k, v in freq.items():
+        t = BTree()
+        t.val = (k, v[0], v[1])
+        forest.append(t)
 
+    forest.sort(key=lambda k: k.val[1], reverse=True)
+
+    #print(forest)
+    while len(forest) > 1:
+        l = forest[-1]
+        r = forest[-2]
+        del forest[-1]
+        del forest[-1]
+        b = BTree()
+        b.left = l
+        b.right = r
+        b.val = ('NEW', l.val[1] + r.val[1], l.val[2]+r.val[2])
+        forest.append(b)
+        forest.sort(key=lambda k: k.val[1], reverse=True)
+        #print(forest)
+        b.obxod(b, print)
+        print()
+
+    #print(type(forest[0]))
+    #print(len(forest))
+    #print(forest[0].val)
+    #print(forest[0].left.val)
+    #print(forest[0].left.left)
+    #print(forest[0].right.val)
+    #print(forest[0])
+    #print()
+    forest[0].obxod(forest[0], lambda x: print(x))
     # нужно слияние деревьев. простое...
-
-
     b = BTree()
     b.val = 10
     b.left = 1
@@ -136,7 +182,13 @@ if __name__ == '__main__':
     c.val = 'a'
     c.left = 'b'
     c.right = b
-    print(c)
+    #print(type(c.right.left))
+    #print(c.right == b)
+    #print(c)
+    return forest
+
+if __name__ == '__main__':
+    maintest()
 
 
 
