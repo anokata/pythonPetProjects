@@ -99,8 +99,8 @@ class BTree(pdict):
 
     def getCodes(self, node, codes, curpath=''):
         if not node.isLeaf:
-            self.getCodes(node.left, codes, curpath+'l')
-            self.getCodes(node.right, codes, curpath+'r')
+            self.getCodes(node.left, codes, curpath+'0')
+            self.getCodes(node.right, codes, curpath+'1')
         else: #isLeaf
             codes.append((node.val[0], curpath))
 
@@ -131,17 +131,7 @@ class BTree(pdict):
 
 # сделать двоичное дерево на словарях
 # сделать алгоритм хаффмана
-def maintest():
-    t = Tree('a')
-    t.add('b')
-    t.add('c').add('x').add('xx').add('xxx')
-    n = t.add('d')
-    n.add('z')
-    n.add('z2').add('y').add('yy')
-    n.add('z3')
-    #print(t)
-    #print(t.show())
-
+def huffman():
     msg = 'aadlfkfjafjsdlfjsdlfjaskldfjalfjlkcoixucvxucvuxuvuxuvxocvicxoaaoiuadaaaaaoifafu'
     # посчитаем количество каждого символа
     freq = pddict(int)
@@ -180,7 +170,42 @@ def maintest():
     print(abc)
     codes = list()
     forest[0].getCodes(forest[0], codes, '')
+    #print(codes)
+    codes = pdict(codes)
     print(codes)
+    #Зашифруем сообщение
+    msgEnc = ''
+    for x in msg:
+        msgEnc += (codes[x])
+    print(msgEnc)
+    #Расшифруем сообщение
+    invCodes = {v: k for k, v in codes.items()} # инвентируем словарь
+    print(invCodes)
+    curcode = ''
+    msgDec = ''
+    while msgEnc != '':
+        curcode += msgEnc[0]
+        msgEnc = msgEnc[1:]
+        if curcode in invCodes:
+            msgDec += invCodes[curcode]
+            curcode = ''
+    #Проверим
+    print(msgDec)
+    print(msg)
+    print(msg==msgDec)
+
+
+
+def maintest():
+    t = Tree('a')
+    t.add('b')
+    t.add('c').add('x').add('xx').add('xxx')
+    n = t.add('d')
+    n.add('z')
+    n.add('z2').add('y').add('yy')
+    n.add('z3')
+    #print(t)
+    #print(t.show())
 
     b = BTree()
     b.val = 10
@@ -190,7 +215,7 @@ def maintest():
     c.val = 'a'
     c.left = 'b'
     c.right = b
-    return forest
+    huffman()
 
 if __name__ == '__main__':
     maintest()
