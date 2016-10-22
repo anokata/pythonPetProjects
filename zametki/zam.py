@@ -118,14 +118,25 @@ def main(scr):
     k = scr.getch()
     print(k)
 
+    kk = list()
+    def validator(k):
+        kk.append(k)
+        if k == 10:
+            k = False
+        return k
+
     curses.curs_set(True)
     editwin = curses.newwin(5,30, 2,1)
     rectangle(scr, 1,0, 1+5+1, 1+30+1)
     scr.refresh()
     box = Textbox(editwin)
-    box.edit()
+    box.edit(validator)
     message = box.gather()
-    print(message)
+    # del new lines
+    scr.addstr(2,0,str(list(message)))
+    #scr.addstr(0,0,str(kk))
+    k = scr.getch()
+    return kk
 
 
 wrapper(main)
