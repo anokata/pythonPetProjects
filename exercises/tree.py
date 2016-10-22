@@ -139,8 +139,9 @@ def str2Bytes(s):
 def progress(v, maxv):
     L = 40
     g = int(L * v / maxv)
-    bar = '[' + '|' * g + '.' * (L-g) + ']'
-    print(bar)
+    #bar = '[' + '|' * g + '.' * (L-g) + ']'
+    bar = '' + '|' * g 
+    print(bar, sep='', end='')
 
 
 def maintest():
