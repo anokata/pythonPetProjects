@@ -105,12 +105,12 @@ class Player():
 
 # Player anim
 AnimDelay = 0.1 # скорость смены кадров
-AnimGoRight = ['wiz0.png' ,'wiz0.png']
+AnimGoRight = ['human0.png' ,'human0.png']
 AnimGoLeft = ['wiz0.png','wiz0.png']
 AnimJumpLeft = ['wiz0.png', 'wiz0.png']
 AnimJumpRight = ['wiz0.png','wiz0.png']
 AnimJump = ['wiz0.png']
-AnimStand = ['wiz0.png']
+AnimStand = ['human0.png']
 
 class pgPlayer(Player, pygame.sprite.Sprite):
     rect = pygame.Rect(0,0,0,0)
@@ -124,6 +124,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.wallimg = pygame.image.load('catwall.png').convert()
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
+        self.rect.height -= 10
 
         from itertools import repeat
         Anim = list(zip(AnimGoRight, list(repeat(AnimDelay, len(AnimGoRight)))))

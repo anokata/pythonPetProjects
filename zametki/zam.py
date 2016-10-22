@@ -1,6 +1,7 @@
 import curses
 from curses import wrapper
 #from collections import OrderedDict
+from curses.textpad import Textbox, rectangle
 
 class MenuList():
     # список элементов меню = ключ- горячая клавиша, значение (текст, функция обработчик)
@@ -116,6 +117,15 @@ def main(scr):
     w.refresh()
     k = scr.getch()
     print(k)
+
+    curses.curs_set(True)
+    editwin = curses.newwin(5,30, 2,1)
+    rectangle(scr, 1,0, 1+5+1, 1+30+1)
+    scr.refresh()
+    box = Textbox(editwin)
+    box.edit()
+    message = box.gather()
+    print(message)
 
 
 wrapper(main)
