@@ -1,4 +1,5 @@
 from collections import defaultdict, OrderedDict
+
 class Tree:
     """Реализация дерева на списках"""
     # если хранить текущий узел и возвращать self то можно делать типа tree.left.left.right?
@@ -135,8 +136,12 @@ def str2Bytes(s):
         r.append(ord(x))
     return r
 
-def progress(x):
-    pass
+def progress(v, maxv):
+    L = 40
+    g = int(L * v / maxv)
+    bar = '[' + '|' * g + '.' * (L-g) + ']'
+    print(bar)
+
 
 def maintest():
     t = Tree('a')
@@ -148,6 +153,13 @@ def maintest():
     n.add('z3')
     #print(t)
     #print(t.show())
+    progress(3,10)
+    progress(0,10)
+    progress(1,10)
+    progress(8,10)
+    progress(10,10)
+    progress(30,100)
+
 
     b = BTree()
     b.val = 10
