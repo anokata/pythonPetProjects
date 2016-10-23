@@ -21,7 +21,8 @@ class Enemy(pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('cucumber.png').convert()
+        self.image = pygame.image.load('objects/F0.png').convert()
+        self.image.set_colorkey((0,0,0))
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
@@ -105,26 +106,23 @@ class Player():
 
 # Player anim
 AnimDelay = 0.1 # скорость смены кадров
-AnimGoRight = ['human0.png' ,'human0.png']
-AnimGoLeft = ['wiz0.png','wiz0.png']
-AnimJumpLeft = ['wiz0.png', 'wiz0.png']
-AnimJumpRight = ['wiz0.png','wiz0.png']
-AnimJump = ['wiz0.png']
-AnimStand = ['human0.png']
+AnimGoRight = ['objects/walkmanR0.png','objects/walkmanR1.png','objects/walkmanR2.png']
+AnimGoLeft = ['objects/walkmanL0.png','objects/walkmanL1.png','objects/walkmanL2.png']
+AnimGoUp = ['objects/walkmanU0.png','objects/walkmanU1.png','objects/walkmanU2.png']
+AnimJumpLeft = ['objects/walkmanS.png', 'objects/walkmanS.png']
+AnimJumpRight = ['objects/walkmanS.png','objects/walkmanS.png']
+AnimJump = ['objects/walkmanS.png']
+AnimStand = ['objects/walkmanS.png']
 
 class pgPlayer(Player, pygame.sprite.Sprite):
     rect = pygame.Rect(0,0,0,0)
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.standimg = pygame.image.load('cat3.png').convert()
-        self.standRightImg = pygame.image.load('cat3.png').convert()
-        self.standLeftImg = pygame.image.load('cat2L.png').convert()
-        self.image = self.standimg
-        self.wallimg = pygame.image.load('catwall.png').convert()
+        self.image = pygame.image.load('catwall.png').convert()
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
-        self.rect.height -= 10
+        self.rect.height += 0
 
         from itertools import repeat
         Anim = list(zip(AnimGoRight, list(repeat(AnimDelay, len(AnimGoRight)))))
@@ -146,11 +144,17 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         Anim = list(zip(AnimStand, list(repeat(AnimDelay, len(AnimStand)))))
         self.AnimStand = pyganim.PygAnimation(Anim)
         self.AnimStand.play()
+
+        Anim = list(zip(AnimGoUp, list(repeat(AnimDelay, len(AnimGoUp)))))
+        self.AnimUp = pyganim.PygAnimation(Anim)
+        self.AnimUp.play()
+
         self.changeAnim(self.AnimStand)
 
     def changeAnim(self, a):
         self.image.fill(pygame.Color('#000000'))
         a.blit(self.image, (0, 0))
+        #self.image.scroll(dy=20)
 
     def moveSide(self, dt, platforms, enemies):
         self.step()
@@ -158,6 +162,10 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             self.changeAnim(self.AnimLeft)
         elif self.dx > 0:
             self.changeAnim(self.AnimRight)
+        elif self.dy > 0 or self.dy < 0:
+            self.changeAnim(self.AnimUp)
+        else:
+            self.changeAnim(self.AnimStand)
         
         self.dx = - self.moving * self.spd
         self.dy = - self.movingud * self.spd
