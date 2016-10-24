@@ -14,15 +14,19 @@ class MenuList():
     def __init__(self):
         self.items= list()
 
-    def add(self, item, fun, args, key=None):
+    def add(self, item, fun, args, highlightfun, key=None):
         if key == None:
             key = self.lastKey
             self.lastKey = chr(ord(self.lastKey) + 1)
-        self.items.append((key, item, fun, args))
+        self.items.append((key, item, fun, args, highlightfun))
 
     def select(self):
-        (key, text, fun, args) = self.items[self.selected]
+        (key, text, fun, args, *_) = self.items[self.selected]
         return fun(args)
+
+    def highlight(self):
+        (key, text, fun, args, hf, *_) = self.items[self.selected]
+        return hf(args)
 
     def next(self):
         self.selected += 1
@@ -46,7 +50,7 @@ class MenuListCurses(MenuList):
         win = self.win
         x = 1
         y = 0
-        for (k, t, _, _) in self.items:
+        for (k, t, _, *_) in self.items:
             y += 1
             if y - 1 == self.selected:
                 win.addstr(y, x, '(' + k + ') ' + t, curses.color_pair(3) )
@@ -60,18 +64,37 @@ class MenuListCurses(MenuList):
             notEnd = False
         if key == ord('j'):
             self.next()
+            self.highlight()
         if key == ord('k'):
             self.pred()
+            self.highlight()
         if key == ord(' '):
             return self.select()
         self.win.addstr(0,0,str(key))
         return notEnd
+
+class TextView():
+    def __init__(self):
+        self.win = curses.newwin(30, 60, 1, 25)
+        self.win.border()
+        self.win.bkgd(curses.color_pair(2))
+        self.text = list()
+
+    def display(self):
+        win = self.win
+        x = 2
+        y = 0
+        for t in self.text:
+            y += 1
+            win.addstr(y, x, t)
+
 
 class Wincon():
     mainwin = None
     wins = []
     menu = None
     debugwin = None
+    menuContent = None #
 
     def __init__(self, scr):
         self.mainwin = scr
@@ -85,14 +108,19 @@ class Wincon():
         scr.bkgd(curses.color_pair(1))
         
 
+        self.menuContent = TextView()
+        
         def t(a):
-            print(a)
+            self.menuContent.text = [str(a.value())]
             return True
         menu = MenuListCurses()
 
         self.store = vault.Storage(True)
         for k, v in self.store.items():
-            menu.add(k, t, v)
+            if v.isDir():
+                menu.add('['+k+']', t, v, t)
+            else:
+                menu.add(k, t, v, t)
 
         self.menu = menu
 
@@ -103,6 +131,10 @@ class Wincon():
         self.mainwin.refresh()
         for w in self.wins:
             w.refresh()
+        self.menuContent.win.clear()
+        self.menuContent.win.border()
+        self.menuContent.display()
+        self.menuContent.win.refresh()
         self.menu.display()
 
         #self.mainwin.addstr(0,0,str(self.menu.selected)+self.menu.items[self.menu.selected][1])
@@ -119,8 +151,8 @@ def main(scr):
     w.refresh()
     w.work()
     w.refresh()
-    k = scr.getch()
-    print(k)
+    #k = scr.getch()
+    #print(k)
 
     kk = list()
     def validator(k):
@@ -137,9 +169,9 @@ def main(scr):
     #box.edit(validator)
     #message = box.gather()
     # del new lines
-    scr.addstr(2,0,str(list(message)))
+    #scr.addstr(2,0,str(list(message)))
     #scr.addstr(0,0,str(kk))
-    k = scr.getch()
+    #k = scr.getch()
     return kk
 
 

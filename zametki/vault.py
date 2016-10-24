@@ -30,6 +30,9 @@ class StorageItem():
     def isDir(self):
         return False
 
+    def value(self):
+        return base64.b64decode(self.val[1]).decode('utf-8')
+
 class StorageDir():
     storage = pdict() #!!!
 
@@ -81,6 +84,9 @@ class StorageDir():
     def pprint(self):
         for k, v in self.storage.items():
             print(' ', k, '||', v, type(v))
+
+    def value(self):
+        return self.name + ' ' + self.nowstr
 
 class Storage():
     fn = 'storage.dat'
@@ -147,4 +153,9 @@ if __name__ == '__main__':
     print('*'*8)
     print(storage2['Dir1'].storage.keys())
     print(storage2['Dir2']['SubDir0'].getItem('1'))
+    print('*'*8)
+    a = storage['mainValue'] 
+    for k, v in storage2.items():
+        print(k, v, v.isDir(), type(v), '**' ,v.value())
+    print(a)
 
