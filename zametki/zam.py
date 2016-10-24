@@ -130,7 +130,7 @@ class Wincon():
         scr.bkgd(curses.color_pair(ColorBW))
         self.mainRefresh()
         
-        self.inp = inp = Inputer(scr)
+        self.inp = inp = Inputer()
         self.menuContent = TextView()
 
         self.store = vault.Storage(True)
@@ -168,8 +168,6 @@ class Wincon():
             w.refresh()
         self.menuContent.display()
         self.menu.display()
-        if self.inp.running:
-            self.inp.display()
 
     def work(self):
         notEnd = True
@@ -179,14 +177,10 @@ class Wincon():
             self.refresh()
 
 class Inputer():
-    def __init__(self, scr):
-        self.keys = list()
+    def __init__(self):
         self.win = makeWin(1+MenuWidth+TextWidth, 1, 20, 3)
-        self.scr = scr
-        self.running = False
      
     def run(self):
-        self.running = True
         self.msg = ''
         self.display()
         nend = True
@@ -202,10 +196,8 @@ class Inputer():
         key = self.win.getch()
         if key == 10 or key == 27:
             notEnd = False
-            self.running = False
         else:
             self.msg += chr(key)
-        self.win.addstr(2,1,'вы нажали: '+str(key))
         return notEnd
 
     def display(self):
@@ -213,10 +205,12 @@ class Inputer():
         win.refresh()
         win.border()
         curses.curs_set(True)
-        curses.setsyx(4,82) 
-        x = 2
-        y = 1
-        win.addstr(y, x, self.msg, curses.color_pair(ColorBW))
+        #curses.setsyx(4,82) 
+        win.addstr(1, 2, self.msg, curses.color_pair(ColorBW))
+
+class ViTextEdit():
+    pass
+
 
 def main(scr):
     w = Wincon(scr)
