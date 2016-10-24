@@ -86,6 +86,7 @@ ColorBW = 1
 ColorBlW = 2
 ColorRB = 3
 ColorWBl = 4
+ColorRW = 5
 class Wincon():
     mainwin = None
     wins = []
@@ -127,11 +128,13 @@ class Wincon():
         curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_WHITE)
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK )
         curses.init_pair(ColorWBl, curses.COLOR_WHITE, curses.COLOR_BLUE )
+        curses.init_pair(ColorRW, curses.COLOR_RED, curses.COLOR_WHITE)
         scr.bkgd(curses.color_pair(ColorBW))
         self.mainRefresh()
         
         self.inp = inp = Inputer()
         self.menuContent = TextView()
+        self.vit = ViTextEdit()
 
         self.store = vault.Storage(True)
         self.buildMenu()
@@ -154,7 +157,8 @@ class Wincon():
             self.store[name] = name 
             self.buildMenu()
         if key == ord('e'): # Редактирование значения ??? TODO
-            pass
+            newtext = self.vit.run()
+            # save new text
             
         self.win.addstr(curses.LINES-5,1,'вы нажали: '+str(key))
         return notEnd
@@ -209,7 +213,41 @@ class Inputer():
         win.addstr(1, 2, self.msg, curses.color_pair(ColorBW))
 
 class ViTextEdit():
-    pass
+    def __init__(self):
+        self.win = makeWin(1+MenuWidth, 1, TextWidth, curses.LINES-3)
+        self.win.bkgd(curses.color_pair(ColorRW))
+        self.text = list()
+
+    def run(self):
+        #get text from storage selected
+        self.msg = ''
+        self.display()
+        nend = True
+        while nend:
+            nend = self.handler()
+            self.display()
+        self.win.clear()
+        curses.curs_set(False)
+        return 
+
+    def handler(self):
+        notEnd = True
+        key = self.win.getch()
+        if key == 27:
+            notEnd = False
+        else:
+            self.msg += chr(key)
+        return notEnd
+
+    def display(self):
+        win = self.win
+        win.refresh()
+        win.border()
+        curses.curs_set(True)
+        #curses.setsyx(4,82) 
+        #for self. # TODO
+        win.addstr(1, 2, self.msg, curses.color_pair(ColorBW))
+
 
 
 def main(scr):
