@@ -2,6 +2,8 @@ import curses
 from curses import wrapper
 #from collections import OrderedDict
 from curses.textpad import Textbox, rectangle
+import vault
+from vault import * # из за загрузки pickle'ом ??? он не видит модули?
 
 class MenuList():
     # список элементов меню = ключ- горячая клавиша, значение (текст, функция обработчик)
@@ -81,15 +83,17 @@ class Wincon():
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK )
         scr.border()
         scr.bkgd(curses.color_pair(1))
+        
 
         def t(a):
             print(a)
             return True
         menu = MenuListCurses()
-        menu.add('someOne', t, 'some 0')
-        menu.add('someTwo', t, 'afa fa fa a!fA!')
-        menu.add('Thor', t, ' three')
-        menu.add('someOne', t, 'four')
+
+        self.store = vault.Storage(True)
+        for k, v in self.store.items():
+            menu.add(k, t, v)
+
         self.menu = menu
 
     def addWin(self):
@@ -129,9 +133,9 @@ def main(scr):
     editwin = curses.newwin(5,30, 2,1)
     rectangle(scr, 1,0, 1+5+1, 1+30+1)
     scr.refresh()
-    box = Textbox(editwin)
-    box.edit(validator)
-    message = box.gather()
+    #box = Textbox(editwin)
+    #box.edit(validator)
+    #message = box.gather()
     # del new lines
     scr.addstr(2,0,str(list(message)))
     #scr.addstr(0,0,str(kk))

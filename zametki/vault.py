@@ -118,6 +118,9 @@ class Storage():
     def pprint(self):
         self.mainDir.pprint()
 
+    def items(self):
+        return self.mainDir.storage.items()
+
  
 if __name__ == '__main__':
     # types text url urllist dir(as substorage)
