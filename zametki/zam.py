@@ -43,6 +43,7 @@ TextWidth = 60
 class MenuListCurses(MenuList):
 
     def __init__(self):
+        super().__init__()
         self.win = curses.newwin(curses.LINES-3, MenuWidth, 1, 1)
         self.win.border()
         self.win.bkgd(curses.color_pair(2))
@@ -96,6 +97,25 @@ class Wincon():
         self.mainwin.border()
         self.mainwin.addstr(curses.LINES-1, 2, "[k:up j:down q:exit ]")
 
+    def buildMenu(self):
+        def MenuSelect(a):
+            #m = self.inp.run()
+            #self.buildMenu()
+            return True
+
+        def MenuChange(a):
+            self.menuContent.text = [str(a.value())]
+            return True
+
+        self.menu = MenuListCurses()
+        self.win = self.menu.win
+
+        for k, v in self.store.items():
+            if v.isDir():
+                self.menu.add('['+k+']', MenuSelect, v, MenuChange)
+            else:
+                self.menu.add(k, MenuSelect, v, MenuChange)
+
     def __init__(self, scr):
         self.mainwin = scr
         scr.clear()
@@ -111,25 +131,10 @@ class Wincon():
 
         self.inp = inp = Inputer(scr)
         self.menuContent = TextView()
-        
-        def select(a):
-            m = inp.run()
-            return True
-
-        def t(a):
-            self.menuContent.text = [str(a.value())]
-            return True
-        menu = MenuListCurses()
 
         self.store = vault.Storage(True)
-        for k, v in self.store.items():
-            if v.isDir():
-                menu.add('['+k+']', select, v, t)
-            else:
-                menu.add(k, select, v, t)
+        self.buildMenu()
 
-        self.menu = menu
-        self.win = menu.win
 
     def handler(self):
         notEnd = True
@@ -144,6 +149,11 @@ class Wincon():
             self.menu.highlight()
         if key == ord(' '):
             return self.menu.select()
+        if key == ord('a'): # добавление элемента
+            name = self.inp.run()
+            self.store[name] = name 
+            self.buildMenu()
+            
         self.win.addstr(curses.LINES-5,1,'вы нажали: '+str(key))
         return notEnd
 
@@ -162,6 +172,7 @@ class Wincon():
     def work(self):
         notEnd = True
         while notEnd:
+            self.refresh()
             notEnd = self.handler()
             self.refresh()
 
