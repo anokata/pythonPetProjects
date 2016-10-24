@@ -5,6 +5,12 @@ from curses.textpad import Textbox, rectangle
 import vault
 from vault import * # из за загрузки pickle'ом ??? он не видит модули?
 
+def makeWin(x, y, w, h):
+    win = curses.newwin(h, w, y, x)
+    win.border()
+    win.bkgd(curses.color_pair(ColorBlW))
+    return win
+
 class MenuList():
     # список элементов меню = ключ- горячая клавиша, значение (текст, функция обработчик)
     items = []
@@ -44,9 +50,7 @@ class MenuListCurses(MenuList):
 
     def __init__(self):
         super().__init__()
-        self.win = curses.newwin(curses.LINES-3, MenuWidth, 1, 1)
-        self.win.border()
-        self.win.bkgd(curses.color_pair(2))
+        self.win = makeWin(1, 1, MenuWidth, curses.LINES-3)
 
     def display(self):
         win = self.win
@@ -64,9 +68,7 @@ class MenuListCurses(MenuList):
 
 class TextView():
     def __init__(self):
-        self.win = curses.newwin(curses.LINES-3, TextWidth, 1, MenuWidth+1)
-        self.win.border()
-        self.win.bkgd(curses.color_pair(ColorBlW))
+        self.win = makeWin(1+MenuWidth, 1, TextWidth, curses.LINES-3)
         self.text = list()
 
     def display(self):
@@ -125,16 +127,14 @@ class Wincon():
         curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_WHITE)
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK )
         curses.init_pair(ColorWBl, curses.COLOR_WHITE, curses.COLOR_BLUE )
-        scr.bkgd(curses.color_pair(1))
+        scr.bkgd(curses.color_pair(ColorBW))
         self.mainRefresh()
         
-
         self.inp = inp = Inputer(scr)
         self.menuContent = TextView()
 
         self.store = vault.Storage(True)
         self.buildMenu()
-
 
     def handler(self):
         notEnd = True
@@ -153,6 +153,8 @@ class Wincon():
             name = self.inp.run()
             self.store[name] = name 
             self.buildMenu()
+        if key == ord('e'): # Редактирование значения ??? TODO
+            pass
             
         self.win.addstr(curses.LINES-5,1,'вы нажали: '+str(key))
         return notEnd
@@ -179,16 +181,12 @@ class Wincon():
 class Inputer():
     def __init__(self, scr):
         self.keys = list()
-        self.win = curses.newwin(3,20, 1,MenuWidth+TextWidth+1)
-        self.win.border()
-        self.win.bkgd(curses.color_pair(ColorBlW))
+        self.win = makeWin(1+MenuWidth+TextWidth, 1, 20, 3)
         self.scr = scr
         self.running = False
      
     def run(self):
         self.running = True
-        #curses.curs_set(True)
-        curses.setsyx(2,2) 
         self.msg = ''
         self.display()
         nend = True
@@ -196,10 +194,8 @@ class Inputer():
             nend = self.handler()
             self.display()
         self.win.clear()
+        curses.curs_set(False)
         return self.msg
-
-    def refresh(self):
-        self.win.refresh()
 
     def handler(self):
         notEnd = True
@@ -216,12 +212,11 @@ class Inputer():
         win = self.win
         win.refresh()
         win.border()
+        curses.curs_set(True)
+        curses.setsyx(4,82) 
         x = 2
         y = 1
         win.addstr(y, x, self.msg, curses.color_pair(ColorBW))
-
-
-
 
 def main(scr):
     w = Wincon(scr)
