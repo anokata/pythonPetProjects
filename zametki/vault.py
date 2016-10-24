@@ -49,7 +49,7 @@ class StorageDir():
     def getItems(self):
         return self.storage
 
-    def __getitem__(self, key):
+    def getItem(self, key):
         val = self.storage[key]
         now = 'x'
         if type(val) != StorageDir:
@@ -58,6 +58,13 @@ class StorageDir():
         else:
             now = val.nowstr
         return StorageItem(now, val)
+        
+    def __getitem__(self, key):
+        val = self.storage[key]
+        if type(val) != StorageDir:
+            _, val = val.get()
+            val = base64.b64decode(val).decode('utf-8')
+        return val
 
     def __str__(self, pfx=''):
         return pfx + str(self.storage)
@@ -136,5 +143,5 @@ if __name__ == '__main__':
     storage2.pprint()
     print('*'*8)
     print(storage2['Dir1'].storage.keys())
-
+    print(storage2['Dir2']['SubDir0'].getItem('1'))
 
