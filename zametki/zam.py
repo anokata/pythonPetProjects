@@ -38,78 +38,84 @@ class MenuList():
         if self.selected < 0:
             self.selected = len(self.items) - 1
 
-
+MenuWidth = 20
+TextWidth = 60
 class MenuListCurses(MenuList):
 
     def __init__(self):
-        self.win = curses.newwin(curses.LINES-3, 20, 1, 1)
+        self.win = curses.newwin(curses.LINES-3, MenuWidth, 1, 1)
         self.win.border()
         self.win.bkgd(curses.color_pair(2))
 
     def display(self):
         win = self.win
+        win.refresh()
+        win.clear()
+        win.border()
         x = 1
         y = 0
         for (k, t, _, *_) in self.items:
             y += 1
             if y - 1 == self.selected:
-                win.addstr(y, x, '(' + k + ') ' + t, curses.color_pair(3) )
+                win.addstr(y, x, '(' + k + ') ' + t, curses.color_pair(ColorWBl) )
             else:
-                win.addstr(y, x, '(' + k + ') ' + t)
-
-    def handler(self):
-        notEnd = True
-        key = self.win.getch()
-        if key == ord('q') or key == 27:
-            notEnd = False
-        if key == ord('j'):
-            self.next()
-            self.highlight()
-        if key == ord('k'):
-            self.pred()
-            self.highlight()
-        if key == ord(' '):
-            return self.select()
-        self.win.addstr(0,0,str(key))
-        return notEnd
+                win.addstr(y, x, '(' + k + ') ' + t, curses.color_pair(ColorBW))
 
 class TextView():
     def __init__(self):
-        self.win = curses.newwin(30, 60, 1, 25)
+        self.win = curses.newwin(curses.LINES-3, TextWidth, 1, MenuWidth+1)
         self.win.border()
-        self.win.bkgd(curses.color_pair(2))
+        self.win.bkgd(curses.color_pair(ColorBlW))
         self.text = list()
 
     def display(self):
         win = self.win
+        win.refresh()
+        win.clear()
+        win.border()
         x = 2
         y = 0
         for t in self.text:
             y += 1
-            win.addstr(y, x, t)
+            win.addstr(y, x, t, curses.color_pair(ColorBW))
 
-
+ColorBW = 1
+ColorBlW = 2
+ColorRB = 3
+ColorWBl = 4
 class Wincon():
     mainwin = None
     wins = []
     menu = None
     debugwin = None
     menuContent = None #
+    
+    def mainRefresh(self):
+        self.mainwin.refresh()
+        #self.mainwin.clear()
+        self.mainwin.border()
+        self.mainwin.addstr(curses.LINES-1, 2, "[k:up j:down q:exit ]")
 
     def __init__(self, scr):
         self.mainwin = scr
         scr.clear()
         self.wins = list()
         curses.curs_set(False)
-        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
-        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(ColorBW, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_WHITE)
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK )
-        scr.border()
+        curses.init_pair(ColorWBl, curses.COLOR_WHITE, curses.COLOR_BLUE )
         scr.bkgd(curses.color_pair(1))
+        self.mainRefresh()
         
 
+        self.inp = inp = Inputer(scr)
         self.menuContent = TextView()
         
+        def select(a):
+            m = inp.run()
+            return True
+
         def t(a):
             self.menuContent.text = [str(a.value())]
             return True
@@ -118,61 +124,98 @@ class Wincon():
         self.store = vault.Storage(True)
         for k, v in self.store.items():
             if v.isDir():
-                menu.add('['+k+']', t, v, t)
+                menu.add('['+k+']', select, v, t)
             else:
-                menu.add(k, t, v, t)
+                menu.add(k, select, v, t)
 
         self.menu = menu
+        self.win = menu.win
+
+    def handler(self):
+        notEnd = True
+        key = self.win.getch()
+        if key == ord('q') or key == 27:
+            notEnd = False
+        if key == ord('j'):
+            self.menu.next()
+            self.menu.highlight()
+        if key == ord('k'):
+            self.menu.pred()
+            self.menu.highlight()
+        if key == ord(' '):
+            return self.menu.select()
+        self.win.addstr(curses.LINES-5,1,'вы нажали: '+str(key))
+        return notEnd
 
     def addWin(self):
         pass
 
     def refresh(self):
-        self.mainwin.refresh()
+        self.mainRefresh()
         for w in self.wins:
             w.refresh()
-        self.menuContent.win.clear()
-        self.menuContent.win.border()
         self.menuContent.display()
-        self.menuContent.win.refresh()
         self.menu.display()
-
-        #self.mainwin.addstr(0,0,str(self.menu.selected)+self.menu.items[self.menu.selected][1])
+        if self.inp.running:
+            self.inp.display()
 
     def work(self):
         notEnd = True
         while notEnd:
-            notEnd = self.menu.handler()
+            notEnd = self.handler()
             self.refresh()
+
+class Inputer():
+    def __init__(self, scr):
+        self.keys = list()
+        self.win = curses.newwin(3,20, 1,MenuWidth+TextWidth+1)
+        self.win.border()
+        self.win.bkgd(curses.color_pair(ColorBlW))
+        self.scr = scr
+        self.running = False
+     
+    def run(self):
+        self.running = True
+        #curses.curs_set(True)
+        curses.setsyx(2,2) 
+        self.msg = ''
+        self.display()
+        nend = True
+        while nend:
+            nend = self.handler()
+            self.display()
+        self.win.clear()
+        return self.msg
+
+    def refresh(self):
+        self.win.refresh()
+
+    def handler(self):
+        notEnd = True
+        key = self.win.getch()
+        if key == 10 or key == 27:
+            notEnd = False
+            self.running = False
+        else:
+            self.msg += chr(key)
+        self.win.addstr(2,1,'вы нажали: '+str(key))
+        return notEnd
+
+    def display(self):
+        win = self.win
+        win.refresh()
+        win.border()
+        x = 2
+        y = 1
+        win.addstr(y, x, self.msg, curses.color_pair(ColorBW))
+
+
+
 
 def main(scr):
     w = Wincon(scr)
-    scr.addstr(curses.LINES-1, 2, "[k:up j:down q:exit ]")
     w.refresh()
     w.work()
-    w.refresh()
-    #k = scr.getch()
-    #print(k)
-
-    kk = list()
-    def validator(k):
-        kk.append(k)
-        if k == 10:
-            k = False
-        return k
-
     curses.curs_set(True)
-    editwin = curses.newwin(5,30, 2,1)
-    rectangle(scr, 1,0, 1+5+1, 1+30+1)
-    scr.refresh()
-    #box = Textbox(editwin)
-    #box.edit(validator)
-    #message = box.gather()
-    # del new lines
-    #scr.addstr(2,0,str(list(message)))
-    #scr.addstr(0,0,str(kk))
-    #k = scr.getch()
-    return kk
-
 
 wrapper(main)
