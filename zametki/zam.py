@@ -87,6 +87,7 @@ ColorBlW = 2
 ColorRB = 3
 ColorWBl = 4
 ColorRW = 5
+ColorMW = 6
 class Wincon():
     mainwin = None
     wins = []
@@ -129,6 +130,8 @@ class Wincon():
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK )
         curses.init_pair(ColorWBl, curses.COLOR_WHITE, curses.COLOR_BLUE )
         curses.init_pair(ColorRW, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(ColorMW, curses.COLOR_MAGENTA, curses.COLOR_WHITE)
+        
         scr.bkgd(curses.color_pair(ColorBW))
         self.mainRefresh()
         
@@ -212,31 +215,98 @@ class Inputer():
         #curses.setsyx(4,82) 
         win.addstr(1, 2, self.msg, curses.color_pair(ColorBW))
 
+INSERT = 0
+COMMAND = 1
 class ViTextEdit():
+    mode = INSERT
     def __init__(self):
-        self.win = makeWin(1+MenuWidth, 1, TextWidth, curses.LINES-3)
+        self.width = TextWidth
+        self.height = curses.LINES-3
+        self.win = makeWin(1+MenuWidth, 1, self.width, self.height)
         self.win.bkgd(curses.color_pair(ColorRW))
-        self.text = list()
 
     def run(self):
         #get text from storage selected
         self.msg = ''
+        self.x = self.y = 1
+        self.text = list()
+        self.currentLine = -1
+        self.newLine()
+        self.key = ''
         self.display()
+        self.mode2ins()
         nend = True
         while nend:
-            nend = self.handler()
+            if self.mode == INSERT:
+                nend = self.handler()
+            else:
+                nend = self.handlerCom()
             self.display()
         self.win.clear()
         curses.curs_set(False)
         return 
 
+    def addChar(self, c):
+        if len(self.text[self.currentLine]) >= self.width-2:
+            self.newLine()
+        self.text[self.currentLine] += c
+
+    def newLine(self):
+        self.text.append('')
+        self.currentLine += 1
+
+    def mode2ins(self):
+        self.mode = INSERT
+        self.win.bkgd(curses.color_pair(ColorRW))
+
+    
+    def mode2com(self):
+        self.mode = COMMAND
+        self.win.bkgd(curses.color_pair(ColorMW))
+
+    def cursorMove(self, dx, dy):
+        self.y += dy
+        self.x += dx
+        if self.y < 1:
+            self.y = 1
+        if self.y > self.height-2:
+            self.y = self.height-2
+        if self.x < 1:
+            self.x = 1
+        if self.x > self.width-2:
+            self.x = self.width-2
+
+    def handlerCom(self):
+        notEnd = True
+        key = self.win.getkey()
+        if ord(key) == ord('i'):
+            self.mode2ins()
+        elif ord(key) == 24:
+            notEnd = False
+        elif ord(key) == ord('j'):
+            self.cursorMove(0, 1)
+        elif ord(key) == ord('k'):
+            self.cursorMove(0, -1)
+        elif ord(key) == ord('h'):
+            self.cursorMove(-1, 0)
+        elif ord(key) == ord('l'):
+            self.cursorMove(1, 0)
+
+        return notEnd
+
     def handler(self):
         notEnd = True
-        key = self.win.getch()
-        if key == 27:
+        #key = self.win.getch()
+        key = self.win.getkey()
+        if ord(key) == 27: # escape
+            self.mode2com()
+        elif ord(key) == 10: # newline
+            self.newLine()
+        elif ord(key) == 24: # Ctrl-X ^X
             notEnd = False
         else:
-            self.msg += chr(key)
+            self.addChar(key)
+            self.key = str(ord(key))
         return notEnd
 
     def display(self):
@@ -246,8 +316,14 @@ class ViTextEdit():
         curses.curs_set(True)
         #curses.setsyx(4,82) 
         #for self. # TODO
-        win.addstr(1, 2, self.msg, curses.color_pair(ColorBW))
-
+        win.addstr(10, 2, '    ', curses.color_pair(ColorBW))
+        win.addstr(10, 2, self.key, curses.color_pair(ColorBW))
+        y = 1
+        for line in self.text:
+            win.addstr(y, 1, line, curses.color_pair(ColorBW))
+            y += 1
+        if self.mode == COMMAND:
+            win.addstr(self.y, self.x, '', curses.color_pair(ColorBW))
 
 
 def main(scr):
