@@ -87,6 +87,9 @@ class StorageDir():
 
     def value(self):
         return self.name + ' ' + self.nowstr
+    
+    def setDirDescription(self, txt):
+        self.desc = txt
 
 class Storage():
     fn = 'storage.dat'
@@ -134,6 +137,7 @@ if __name__ == '__main__':
     storage['mainValue'] = '10'
     storage.addDir('Dir1')
     storage.addDir('Dir2')
+    storage['Dir1'].desc = 'adf'
     storage['Dir1']['subdirval'] = '123876.23'
     storage['Dir2']['subdirval'] = '1ll.23'
     storage['Dir2'].addDir('SubDir0')

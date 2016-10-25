@@ -4,6 +4,7 @@ from curses import wrapper
 from curses.textpad import Textbox, rectangle
 import vault
 from vault import * # из за загрузки pickle'ом ??? он не видит модули?
+import random
 
 def makeWin(x, y, w, h):
     win = curses.newwin(h, w, y, x)
@@ -108,7 +109,11 @@ class Wincon():
             return True
 
         def MenuChange(a):
+            k, a = a
+            self.path[0] = k
             self.menuContent.text = [str(a.value())]
+            #self.menuContent.text = [str(a.value()), str(a), k]
+            # TODO: надо как то хранить путь к текущему элементу для изменения
             return True
 
         self.menu = MenuListCurses()
@@ -116,9 +121,9 @@ class Wincon():
 
         for k, v in self.store.items():
             if v.isDir():
-                self.menu.add('['+k+']', MenuSelect, v, MenuChange)
+                self.menu.add('['+k+']', MenuSelect, (k, v), MenuChange)
             else:
-                self.menu.add(k, MenuSelect, v, MenuChange)
+                self.menu.add(k, MenuSelect, (k, v), MenuChange)
 
     def __init__(self, scr):
         self.mainwin = scr
@@ -132,6 +137,7 @@ class Wincon():
         curses.init_pair(ColorRW, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(ColorMW, curses.COLOR_MAGENTA, curses.COLOR_WHITE)
         
+        self.path = ['cc']
         scr.bkgd(curses.color_pair(ColorBW))
         self.mainRefresh()
         
@@ -163,6 +169,8 @@ class Wincon():
         if key == ord('e'): # Редактирование значения ??? TODO
             newtext = self.vit.run(self.menuContent.text)
             # save new text
+            self.store[self.path[0]] = ''.join(newtext)
+            self.buildMenu()
             
         self.win.addstr(curses.LINES-5,1,'вы нажали: '+str(key))
         return notEnd
@@ -181,6 +189,7 @@ class Wincon():
         notEnd = True
         while notEnd:
             self.refresh()
+            self.win.addstr(curses.LINES-4,1,': '+self.path[0])
             notEnd = self.handler()
             self.refresh()
 
@@ -246,7 +255,7 @@ class ViTextEdit():
             self.display()
         self.win.clear()
         curses.curs_set(False)
-        return 
+        return self.text
 
     def addChar(self, c):
         if len(self.text[self.currentLine]) >= self.width-2:
