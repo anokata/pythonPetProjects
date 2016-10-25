@@ -22,6 +22,7 @@ def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 class Space:
+    energy = 0
     def charForMap(self):
         return '.'
     def step(self):
@@ -44,9 +45,7 @@ def clearDead():
     """ Уберём всё что не содержит энергии """
     for x in range(WorldW):
         for y in range(WorldH):
-            for x in worldmap[x,y]:
-                    worldmap[x,y] = list(filter(lambda x: x.energy > 0 or x is Space, worldmap[x,y]))
-
+            worldmap[x,y] = list(filter(lambda o: isinstance(o, Space) or o.energy > 0, worldmap[x,y]))
 
 class Eatable():
     energy = 5.0
@@ -57,7 +56,7 @@ class Eatable():
         self.energy -= self.degradation
 
     def charForMap(self):
-        return str(self.energy)[0]
+        return chr(ord('b') + int(self.energy))
 
     def __str__(self):
         return "Enrg:%.2f" % (self.energy)
@@ -73,6 +72,7 @@ class Person(Eatable):
     happyness = 100.0
     # другие показатели
     canEatAtStep = 1.0
+    name = 'Person'
 
     # или сделать таблицу(словарь) какой стат, на что уменьшается как часто?
     #clothe
@@ -92,6 +92,9 @@ class Person(Eatable):
             self.energy += what.energy
         what.energy -= self.canEatAtStep
 
+    def charForMap(self):
+        return chr(ord('A') + int(self.energy/10))
+
 def printmap():
     cls()
     for x in range(WorldW):
@@ -103,8 +106,8 @@ def printmap():
 def worldStep():
     for x in range(WorldW):
         for y in range(WorldH):
-            for x in worldmap[x,y]:
-                x.step()
+            for o in worldmap[x,y]:
+                o.step()
 
 def worldSteps(n):
     for x in range(n):
@@ -112,24 +115,27 @@ def worldSteps(n):
         clearDead()
     printmap()
 
-def worldStepsView(n):
+def printObjects(objs):
+    for o in objs:
+        print(o.__class__.__name__, o)
+
+def worldStepsView(n, p, e):
+    """ Делает n шагов мира и показывает."""
     for x in range(n):
         worldStep()
         clearDead()
         printmap()
-        sleep(0.1)
-
+        printObjects(p+e)
+        sleep(0.2)
 
 def test():
     import random as r
     createWorld()
     p = [addObject(Person(), r.randint(0,10), r.randint(0,10)) for x in range(0,10)]
     e = [addObject(Eatable(), r.randint(0,10), r.randint(0,10)) for x in range(0,10)]
-    #list(map(print, p))
 
-    #worldSteps(13)
-    #worldStepsView(100)
-    #worldStepsView(1)
+    #worldSteps(1)
+    worldStepsView(100, p, e)
     a = Eatable()
     print(a, a.charForMap())
     a.step()
