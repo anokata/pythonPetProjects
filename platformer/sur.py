@@ -5,6 +5,7 @@ from stateSystem import *
 import pyganim
 import roomGenerator as rg
 import random
+#TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
 
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
