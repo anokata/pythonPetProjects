@@ -141,6 +141,7 @@ class Wincon():
 
         self.store = vault.Storage(True)
         self.buildMenu()
+        self.menu.highlight()
 
     def handler(self):
         notEnd = True
@@ -160,7 +161,7 @@ class Wincon():
             self.store[name] = name 
             self.buildMenu()
         if key == ord('e'): # Редактирование значения ??? TODO
-            newtext = self.vit.run()
+            newtext = self.vit.run(self.menuContent.text)
             # save new text
             
         self.win.addstr(curses.LINES-5,1,'вы нажали: '+str(key))
@@ -225,13 +226,14 @@ class ViTextEdit():
         self.win = makeWin(1+MenuWidth, 1, self.width, self.height)
         self.win.bkgd(curses.color_pair(ColorRW))
 
-    def run(self):
+    def run(self, text=''):
         #get text from storage selected
         self.msg = ''
-        self.x = self.y = 1
-        self.text = list()
-        self.currentLine = -1
-        self.newLine()
+        #self.text = text.split('\n')
+        self.text = text
+        self.currentLine = 0
+        self.y = len(text)
+        self.x = len(text[-1])
         self.key = ''
         self.display()
         self.mode2ins()
@@ -249,11 +251,17 @@ class ViTextEdit():
     def addChar(self, c):
         if len(self.text[self.currentLine]) >= self.width-2:
             self.newLine()
-        self.text[self.currentLine] += c
+        self.text[self.currentLine] = self.text[self.currentLine][:self.x-1] + c + self.text[self.currentLine][self.x-1:]
+        self.cursorMove(1,0)
 
     def newLine(self):
         self.text.append('')
         self.currentLine += 1
+        self.cursorMove(-1000,1)
+
+    def bs(self):
+        self.text[self.currentLine] = self.text[self.currentLine][:-1]
+        self.cursorMove(-1,0)
 
     def mode2ins(self):
         self.mode = INSERT
@@ -269,12 +277,14 @@ class ViTextEdit():
         self.x += dx
         if self.y < 1:
             self.y = 1
-        if self.y > self.height-2:
-            self.y = self.height-2
+        if self.y > len(self.text): #self.height-2:
+            self.y = len(self.text)
+        self.currentLine = self.y-1
+
         if self.x < 1:
             self.x = 1
-        if self.x > self.width-2:
-            self.x = self.width-2
+        if self.x > len(self.text[self.currentLine]):
+            self.x = len(self.text[self.currentLine])+1
 
     def handlerCom(self):
         notEnd = True
@@ -304,6 +314,8 @@ class ViTextEdit():
             self.newLine()
         elif ord(key) == 24: # Ctrl-X ^X
             notEnd = False
+        elif ord(key) == 127: # backspace
+            self.bs()
         else:
             self.addChar(key)
             self.key = str(ord(key))
@@ -311,19 +323,19 @@ class ViTextEdit():
 
     def display(self):
         win = self.win
+        curses.curs_set(False)
+        win.clear()
         win.refresh()
         win.border()
-        curses.curs_set(True)
-        #curses.setsyx(4,82) 
-        #for self. # TODO
-        win.addstr(10, 2, '    ', curses.color_pair(ColorBW))
-        win.addstr(10, 2, self.key, curses.color_pair(ColorBW))
+        win.addstr(self.height-1, 2, '    ', curses.color_pair(ColorBW))
+        win.addstr(self.height-1, 2, self.key, curses.color_pair(ColorBW))
         y = 1
         for line in self.text:
             win.addstr(y, 1, line, curses.color_pair(ColorBW))
             y += 1
-        if self.mode == COMMAND:
-            win.addstr(self.y, self.x, '', curses.color_pair(ColorBW))
+        curses.curs_set(True)
+        #if self.mode == COMMAND:
+        win.addstr(self.y, self.x, '', curses.color_pair(ColorBW))
 
 
 def main(scr):
