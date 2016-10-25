@@ -166,11 +166,13 @@ class Wincon():
             name = self.inp.run()
             self.store[name] = name 
             self.buildMenu()
-        if key == ord('e'): # Редактирование значения ??? TODO
+        if key == ord('e'): # Редактирование значения ??? TODO редактирование директорий особо. 
             newtext = self.vit.run(self.menuContent.text)
             # save new text
             self.store[self.path[0]] = ''.join(newtext)
             self.buildMenu()
+        #TODO: add dir, save all. move to dir, path save.
+        # строить меню по текущему пути. менять путь при переходе в дир.
             
         self.win.addstr(curses.LINES-5,1,'вы нажали: '+str(key))
         return notEnd
