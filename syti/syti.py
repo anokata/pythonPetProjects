@@ -21,8 +21,16 @@ def cls():
     import os
     os.system('cls' if os.name == 'nt' else 'clear')
 
-class Space:
+class BaseObj():
     energy = 0
+    x = 0
+    y = 0
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+
+class Space(BaseObj):
     def charForMap(self):
         return '.'
     def step(self):
@@ -35,9 +43,11 @@ WorldW, WorldH = 10, 10
 def createWorld():
     for x in range(WorldW):
         for y in range(WorldH):
-            addObject(Space(), x, y)
+            addObject(Space, x, y)
 
-def addObject(o, x, y):
+def addObject(classname, x, y):
+    o = classname(x, y)
+    print(o)
     worldmap[(x, y)] += [o]
     return o
 
@@ -47,7 +57,7 @@ def clearDead():
         for y in range(WorldH):
             worldmap[x,y] = list(filter(lambda o: isinstance(o, Space) or o.energy > 0, worldmap[x,y]))
 
-class Eatable():
+class Eatable(BaseObj):
     energy = 5.0
     degradation = 0.8
 
@@ -59,7 +69,7 @@ class Eatable():
         return chr(ord('b') + int(self.energy))
 
     def __str__(self):
-        return "Enrg:%.2f" % (self.energy)
+        return "E: {:6.2f}|XY= {:2d}:{:2d}|".format(self.energy, self.x, self.y)
 
 class Person(Eatable):
     """."""
@@ -82,7 +92,8 @@ class Person(Eatable):
         self.energy -= self.energyAtstep
 
     def __str__(self):
-        return "H:%.2f  Age:%i  Enrg:%.2f" % (self.health, self.age, self.energy)
+        s = super().__str__()
+        return s +"H:%.2f  Age:%i  Enrg:%.2f" % (self.health, self.age, self.energy)
     __repr__ = __str__
 
     def eat(self, what):
@@ -97,11 +108,16 @@ class Person(Eatable):
 
 def printmap():
     cls()
+    objects=list()
     for x in range(WorldW):
         s = ''
         for y in range(WorldH):
             s +=worldmap[x, y][-1].charForMap()
+            for o in worldmap[x, y]:
+                if type(o) != Space:
+                    objects.append((x, y, o.__class__.__name__, o))
         print(s)
+    return objects
 
 def worldStep():
     for x in range(WorldW):
@@ -119,26 +135,29 @@ def printObjects(objs):
     for o in objs:
         print(o.__class__.__name__, o)
 
+def printObjects2(objs):
+    for x,y,n,o in objs:
+        print(x,y,n, o)
+
 def worldStepsView(n, p, e):
     """ Делает n шагов мира и показывает."""
     for x in range(n):
         worldStep()
         clearDead()
-        printmap()
-        printObjects(p+e)
+        objs = printmap()
+        printObjects2(objs)
+        #printObjects(p+e)
         sleep(0.2)
+        if objs == []:
+            break
 
 def test():
     import random as r
     createWorld()
-    p = [addObject(Person(), r.randint(0,10), r.randint(0,10)) for x in range(0,10)]
-    e = [addObject(Eatable(), r.randint(0,10), r.randint(0,10)) for x in range(0,10)]
+    p = [addObject(Person, r.randint(0,9), r.randint(0,9)) for x in range(0,10)]
+    e = [addObject(Eatable, r.randint(0,9), r.randint(0,9)) for x in range(0,10)]
 
     #worldSteps(1)
     worldStepsView(100, p, e)
-    a = Eatable()
-    print(a, a.charForMap())
-    a.step()
-    print(a, a.charForMap())
 
 test()
