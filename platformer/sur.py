@@ -24,17 +24,6 @@ def makeSpriteXY(imgname, x, y):
     s.rect.top = y * h
     return s
 
-class Enemy(pygame.sprite.Sprite):
-    rect = pygame.Rect(0,0,0,0)
-
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('objects/F0.png').convert()
-        self.image.set_colorkey((0,0,0))
-        self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
-                         self.image.get_rect().size[1])
-
-
 # делать игрока сначала базового не зависящего от движка.
 class EnergySystem():
     map = {}
@@ -60,16 +49,22 @@ class Block(pygame.sprite.Sprite): # base class for sprites?
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
-    def draw(self, x, y):
-        screen.blit(self.image, (x, y)) 
+    def draw(self, x, y, cam):
+        screen.blit(self.image, cam.calcXY(x, y)) 
         #screen.blit(self.image, (self.rect.left, self.rect.top))
 
+class PhisycBlock():
+    rect = 0
+    def __init__(self, x, y, w):
+        self.rect = pygame.Rect(x, y, w, w)
 
 class Map():
     tiles = 0
     w = h = z = 0
+    blockers = 0
 
     def __init__(self, z):
+        self.blockers = list()
         self.z = z
         self.load()
 
@@ -79,12 +74,13 @@ class Map():
     def __getitem__(self, k):
         return self.tiles[k]
     
-    def draw(self):
+    def draw(self, cam):
         for x in range(self.w):
             for y in range(self.h):
                 for z in range(self.z):
                     for o in self.tiles[x,y,z]:
-                        o.draw(x, y)
+                        a, b = x * self.blockW, y * self.blockH
+                        o.draw(a, b, cam)
     def load(self):
         lev= ["xxxxxxxxxxxxxxxxxxxxxxxxx",
           "x-----x-x-xx-------x----x",
@@ -107,28 +103,30 @@ class Map():
         descrp = {
                 'x': ('objects/block2.png',),
                 '-': ('objects/ground0.png',),
-                'c': ('objects/cube1.png',),
+                'c': ('objects/zap0.png',),
                 }
+        self.blockW = self.blockH = 32
         mapObjects = dict()
         for c, p in descrp.items():
             imgpath = p[0]
-            print(imgpath, p)
             sprite = Block(imgname=imgpath)
             mapObjects[c] = (sprite,)
 
         w = len(lev[0])
-        h = len(lev)
+        h = len(lev) 
 
         self.w = w
         self.h = h
         z = self.z
-        self.tiles = {(x, y, lay): l for x in range(w) for y in range(h) 
+        self.tiles = {(x, y, lay): l for x in range(w+1) for y in range(h+1) 
                 for lay in range(z) for l in [list()]}
 
         for x in range(w):
             for y in range(h):
-                self.tiles[x,y,1] += [mapObjects[lev[y][x]][0]]
- 
+                self.tiles[x,y,0] += [mapObjects[lev[y][x]][0]]
+                if lev[y][x] == 'x': # CHG
+                    a, b = x * self.blockW, y * self.blockH
+                    self.blockers.append(PhisycBlock(a, b, self.blockW))
 
 # Globals
 player = None
@@ -237,16 +235,11 @@ def drawMain():
     global cam, player, textLayer, globmap
     cam.stalkAt(player)
     
-    #for l in Layers:
-        #for e in l:
-            #screen.blit(e.image, cam.calc(e))
-    
     for (e, r) in textLayer['hud']:
         screen.blit(e, r)
 
-    screen.blit(player.image, player.rect)
-    globmap.draw() 
-
+    globmap.draw(cam) 
+    screen.blit(player.image, cam.calc(player))
     pygame.display.flip()
 
 def mainMechanic(d, p, e):
@@ -280,9 +273,7 @@ def mainInit():
     global globmap
     b = Block()
     globmap = Map(2)
-    globmap[1,1,0] += [b]
-    globmap[1,1,0] += [b]
-    globmap[2,1,0] += [b]
+    collided = globmap.blockers # CHG
 
     mp = list()
     entities = list()
