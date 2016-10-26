@@ -12,7 +12,7 @@ from consts import *
 
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
 # сначала всё же без генератора, сделать статичный мир. но интересный
-# Слои
+# Свойства объектов, проходимые, непроходимые, поднимаемые...
 # TODO: map сделать редактор, добавление новых блоков. выбор блоков.
 
 def makeSpriteXY(imgname, x, y):
@@ -114,7 +114,7 @@ class Map():
             imgpath = p[0]
             sprite = Block(imgname=imgpath)
             mapObjects[c] = (sprite,)
-        # Пока один слой надо поддержку многих
+
         z = self.z
         i = 0
         self.layersDim = list()
@@ -126,8 +126,6 @@ class Map():
 
             self.w = w # layer CHG
             self.h = h
-            #self.tiles = {(x, y, lay): l for x in range(w+1) for y in range(h+1) 
-                    #for lay in range(z) for l in [list()]}
 
             self.tiles.append(dict())
             for x in range(w):
