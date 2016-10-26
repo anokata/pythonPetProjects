@@ -5,6 +5,11 @@ from stateSystem import *
 import pyganim
 import roomGenerator as rg
 import random
+from menu import *
+from player import *
+from camera import *
+from consts import *
+
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # TODO: map, переделать отображение. сделать редактор, сохранение загрузка добавление новых блоков. редактор. выбор блоков.
@@ -31,29 +36,6 @@ class Enemy(pygame.sprite.Sprite):
 
 
 # делать игрока сначала базового не зависящего от движка.
-#Камера. у неё есть свои размеры и положение. она не даёт выйти за пределы игроку - меняет положение, следит. Она преобразует данные в неё координаты объекта так чтобы они отображались на экране( вычесть координаты камеры)
-class Camera():
-
-    def __init__(self, w, h):
-        self.rect = pygame.Rect(0, 0, w, h)
-
-    def stalkAt(self, p):
-        """ Следить за """
-        self.rect.left = min(self.rect.left, p.rect.left - WindowW//2) 
-        self.rect.right = max(self.rect.right, p.rect.right)
-        self.rect.top = min(self.rect.top, p.rect.top - WindowH//2)
-        self.rect.right = max(self.rect.right, p.rect.right)
-        self.rect.bottom = max(self.rect.bottom, p.rect.bottom)
-
-    def calc(self, o):
-        """ пересчитать координаты объекта на экран """
-        r = pygame.Rect(0, 0, 0, 0)
-        r.left = o.rect.left - self.rect.left #- WindowH//2
-        r.top = o.rect.top - self.rect.top #+ WindowW//2
-        #r.left = o.rect.left - self.rect.left
-        #r.left = o.rect.left - self.rect.left
-        return r
-
 class EnergySystem():
     map = {}
 
@@ -72,8 +54,12 @@ class Obj():
 
 class Map():
     tiles = 0
+    w = h = z = 0
 
     def __init__(self, w, h, z):
+        self.w = w
+        self.h = h
+        self.z = z
         self.tiles = {(x, y, lay): l for x in range(w) for y in range(h) 
                 for lay in range(z) for l in [list()]}
 
@@ -82,6 +68,13 @@ class Map():
 
     def __getitem__(self, k):
         return self.tiles[k]
+    
+    def draw(self):
+        for x in range(self.w):
+            for y in range(self.h):
+                for z in range(self.z):
+                    for o in self.tiles[x,y,z]:
+                        o.draw(x, y)
 
 class Tiled():
     tiles = []
@@ -102,116 +95,6 @@ class Tiled():
             l.add(x)
 
 
-class Player():
-    health = 100
-    spd = 4.0
-    spdj = 5.0
-    moving = 0
-    movingud = 0
-    dy = 0
-    dx = 0.0
-    energy = 100.0
-
-    def __init__(self):
-        pass
-    
-    def step(self):
-        self.energy -= 0.01
-
-# Player anim
-AnimDelay = 0.1 # скорость смены кадров
-AnimGoRight = ['objects/walkmanR0.png','objects/walkmanR1.png','objects/walkmanR2.png']
-AnimGoLeft = ['objects/walkmanL0.png','objects/walkmanL1.png','objects/walkmanL2.png']
-AnimGoUp = ['objects/walkmanU0.png','objects/walkmanU1.png','objects/walkmanU2.png']
-AnimJumpLeft = ['objects/walkmanS.png', 'objects/walkmanS.png']
-AnimJumpRight = ['objects/walkmanS.png','objects/walkmanS.png']
-AnimJump = ['objects/walkmanS.png']
-AnimStand = ['objects/walkmanS.png']
-
-class pgPlayer(Player, pygame.sprite.Sprite):
-    rect = pygame.Rect(0,0,0,0)
-
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('catwall.png').convert()
-        self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
-                         self.image.get_rect().size[1])
-        self.rect.height += 0
-
-        from itertools import repeat
-        Anim = list(zip(AnimGoRight, list(repeat(AnimDelay, len(AnimGoRight)))))
-        self.AnimRight = pyganim.PygAnimation(Anim)
-        self.AnimRight.play()
-
-        Anim = list(zip(AnimGoLeft, list(repeat(AnimDelay, len(AnimGoLeft)))))
-        self.AnimLeft = pyganim.PygAnimation(Anim)
-        self.AnimLeft.play()
-
-        Anim = list(zip(AnimJumpLeft, list(repeat(AnimDelay, len(AnimJumpLeft)))))
-        self.AnimJumpLeft = pyganim.PygAnimation(Anim)
-        self.AnimJumpLeft.play()
-
-        Anim = list(zip(AnimJumpRight, list(repeat(AnimDelay, len(AnimJumpRight)))))
-        self.AnimJumpRight = pyganim.PygAnimation(Anim)
-        self.AnimJumpRight.play()
-
-        Anim = list(zip(AnimStand, list(repeat(AnimDelay, len(AnimStand)))))
-        self.AnimStand = pyganim.PygAnimation(Anim)
-        self.AnimStand.play()
-
-        Anim = list(zip(AnimGoUp, list(repeat(AnimDelay, len(AnimGoUp)))))
-        self.AnimUp = pyganim.PygAnimation(Anim)
-        self.AnimUp.play()
-
-        self.changeAnim(self.AnimStand)
-
-    def changeAnim(self, a):
-        self.image.fill(pygame.Color('#000000'))
-        a.blit(self.image, (0, 0))
-        #self.image.scroll(dy=20)
-
-    def moveSide(self, dt, platforms, enemies):
-        self.step()
-        if self.dx < 0:
-            self.changeAnim(self.AnimLeft)
-        elif self.dx > 0:
-            self.changeAnim(self.AnimRight)
-        elif self.dy > 0 or self.dy < 0:
-            self.changeAnim(self.AnimUp)
-        else:
-            self.changeAnim(self.AnimStand)
-        
-        self.dx = - self.moving * self.spd
-        self.dy = - self.movingud * self.spd
-
-        
-        self.rect.x += self.dx
-        self.collide(self.dx, 0, platforms)
-
-        self.rect.y += self.dy
-        self.collide(0, self.dy, platforms)
-
-        self.collideEnemies(enemies)
-
-    def collideEnemies(self, enemies):
-        for e in enemies:
-            if pygame.sprite.collide_rect(self, e):
-                self.dx = -self.dx
-
-    def collide(self, dx, dy, platforms):
-        for p in platforms:
-            if pygame.sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
-                if dx > 0:                      # если движется вправо
-                    self.rect.right = p.rect.left # то не движется вправо
-                if dx < 0:                      # если движется влево
-                    self.rect.left = p.rect.right # то не движется влево
-
-                if dy > 0:                    
-                    self.rect.bottom = p.rect.top  
-
-                if dy < 0:                   
-                    self.rect.top = p.rect.bottom 
-
 class Block(pygame.sprite.Sprite): # base class for sprites?
     rect = 0
     def __init__(self, x=0, y=0, imgname='block1.png'):
@@ -225,22 +108,15 @@ class Block(pygame.sprite.Sprite): # base class for sprites?
         #screen.blit(self.image, (self.rect.left, self.rect.top))
 
 # Globals
-WindowH = 550
-WindowW = 800
-Display = (WindowW, WindowH)
-bgColor = "#004400"
 player = None
 bgSurface = None
 screen = 0
 collided = list()
 enemies = list()
-gravity = 0.2
 cam = Camera(400, 300)
 #http://www.pygame.org/docs/ref/key.html
 Sprite = pygame.sprite.Sprite
 entities = None
-layerBg = None
-layerFg = None
 textLayer = None
 menu = None
 hud = None
@@ -284,22 +160,6 @@ def keyUp(k, d):
     if k == pygame.K_DOWN:
         player.movingud = 0
 
-class Font():
-    def __init__(self, size, color = (255, 255, 255), bgcolor=False):
-        self.h = h = size
-        self.color = color
-        self.bg = bgcolor
-        self.font = pygame.font.Font(None, h)
-
-    def render(self, t):
-        if self.bg:
-            return self.font.render(t, 1, self.color, self.bg)
-        else:
-            return self.font.render(t, 1, self.color)
-
-    def get_rect(self):
-        return self.font.get_rect()
-
 class Hud():
     items = []
     enrg = 'Energy: %.2f'
@@ -327,50 +187,6 @@ class Hud():
             self.layer[self.id].append((t, self.rect))
 
 
-class MenuList():
-    items = []
-    selected = 0
-
-    def __init__(self, layer, id, x=20, y=10):
-        self.layer = layer
-        self.items = list()
-        self.id = id
-        self.rect = pygame.Rect(0,0,0,0)
-        self.font = Font(32, (100, 100, 5), (180, 160, 100))
-        self.selfont = Font(32, (180, 160, 30), (100, 80, 50))
-        self.x = x
-        self.y = y
-
-    def rend(self):
-        self.layer[self.id] = list()
-        y = self.y
-        for x in self.items:
-            if self.items.index(x) == self.selected:
-                t = self.selfont.render(x)
-            else:
-                t = self.font.render(x)
-            self.rect = t.get_rect()
-            self.rect.top = y
-            self.rect.left = self.x
-            y += self.font.h // 1.5
-            self.layer[self.id].append((t, self.rect))
-
-    def addItem(self, text):
-        self.items.append(text)
-        self.rend()
-
-    def pred(self):
-        self.selected -= 1
-        if self.selected < 0:
-            self.selected = len(self.items) - 1
-        self.rend()
-
-    def next(self):
-        self.selected += 1
-        if self.selected >= len(self.items):
-            self.selected = 0
-        self.rend()
-
 def createMenu(id, lst): # add обработчик выбора, обработчик 
     addState(id)
     setEventHandler(id, 'keyDown', menuKeyDown)
@@ -394,12 +210,12 @@ def drawMenu():
 
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
-    global cam, player, Layers, textLayer
+    global cam, player, textLayer
     cam.stalkAt(player)
     
-    for l in Layers:
-        for e in l:
-            screen.blit(e.image, cam.calc(e))
+    #for l in Layers:
+        #for e in l:
+            #screen.blit(e.image, cam.calc(e))
     
     for (e, r) in textLayer['hud']:
         screen.blit(e, r)
@@ -442,14 +258,14 @@ def mainInit():
     print(mar.tiles)
 
     mp = list()
-    Layers = list()
-    Layers.append(pygame.sprite.Group())
-    Layers.append(pygame.sprite.Group())
-    Layers.append(pygame.sprite.Group())
+    #Layers = list()
+    #Layers.append(pygame.sprite.Group())
+    #Layers.append(pygame.sprite.Group())
+    #Layers.append(pygame.sprite.Group())
 
-    layerBg = Layers[0]
-    layerFg = Layers[2]
-    entities = Layers[1]
+    #layerBg = Layers[0]
+    #layerFg = Layers[2]
+    entities = list()
     textLayer = {'menu1': list()}
 
     # menu
@@ -458,23 +274,23 @@ def mainInit():
 
     hud = Hud(textLayer, WindowW-150, WindowH-30)
 
-    for x in range(30):
-        mp += [(x,15)]
-    m = Tiled('ground1.png', mp)
-    m.addToLayer(layerBg)
+    #for x in range(30):
+        #mp += [(x,15)]
+    #m = Tiled('ground1.png', mp)
+    #m.addToLayer(layerBg)
 
-    mp = list()
-    for x in range(30):
-        for y in range(30):
-            mp.append((x,y))
-    m = Tiled('objects/ground0.png', mp)
-    m.addToLayer(layerBg)
+    #mp = list()
+    #for x in range(30):
+        #for y in range(30):
+            #mp.append((x,y))
+    #m = Tiled('objects/ground0.png', mp)
+    #m.addToLayer(layerBg)
 
-    mp = list()
-    for x in range(140):
-        mp += [(x,1)]
-    m = Tiled('sky0.png', mp)
-    m.addToLayer(layerBg)
+    #mp = list()
+    #for x in range(140):
+        #mp += [(x,1)]
+    #m = Tiled('sky0.png', mp)
+    #m.addToLayer(layerBg)
 
     lev= ["xxxxxxxxxxxxxxxxxxxxxxxxx",
           "x-----x-x-xx-------x----x",
@@ -494,21 +310,21 @@ def mainInit():
           "x-----------------------x",
           "xxxxxxxxxxxxxxxxxxxxxxxxx",
              ]
-    blockwh = pygame.image.load('block1.png').get_rect().size[0]
-    for x in range(len(lev)):
-        for y in range(len(lev[0])):
-            if lev[x][y] == 'x':
-                b = Block(y*blockwh, x*blockwh,)
-                collided += [b]
-                entities.add(b)
-            if lev[x][y] == 'c':
-                e = Enemy(y*blockwh, x*blockwh+blockwh//2)
-                entities.add(e)
-                enemies.append(e)
+    #blockwh = pygame.image.load('block1.png').get_rect().size[0]
+    #for x in range(len(lev)):
+        #for y in range(len(lev[0])):
+            #if lev[x][y] == 'x':
+                #b = Block(y*blockwh, x*blockwh,)
+                #collided += [b]
+                #entities.add(b)
+            #if lev[x][y] == 'c':
+                #e = Enemy(y*blockwh, x*blockwh+blockwh//2)
+                #entities.add(e)
+                #enemies.append(e)
 
-    layerFg.add(player)
-    createEnemies(layerFg)
-    randomClouds(layerBg)
+    #layerFg.add(player)
+    #createEnemies(layerFg)
+    #randomClouds(layerBg)
     
 def randomClouds(layer):
     count = 10
