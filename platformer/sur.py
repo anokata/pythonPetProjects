@@ -7,7 +7,7 @@ import roomGenerator as rg
 import random
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
 # сначала всё же без генератора, сделать статичный мир. но интересный
-# TODO: map
+# TODO: map, переделать отображение. сделать редактор, сохранение загрузка добавление новых блоков. редактор. выбор блоков.
 
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
@@ -69,6 +69,19 @@ class EnergySystem():
 
 class Obj():
     energy = 0.0
+
+class Map():
+    tiles = 0
+
+    def __init__(self, w, h, z):
+        self.tiles = {(x, y, lay): l for x in range(w) for y in range(h) 
+                for lay in range(z) for l in [list()]}
+
+    def __setitem__(self, k, v):
+        self.tiles[k] = v
+
+    def __getitem__(self, k):
+        return self.tiles[k]
 
 class Tiled():
     tiles = []
@@ -201,12 +214,15 @@ class pgPlayer(Player, pygame.sprite.Sprite):
 
 class Block(pygame.sprite.Sprite): # base class for sprites?
     rect = 0
-    def __init__(self, x, y, imgname=''):
+    def __init__(self, x=0, y=0, imgname='block1.png'):
         Sprite.__init__(self)
-        self.image = pygame.image.load('block1.png').convert()
+        self.image = pygame.image.load(imgname).convert()
         self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
+    def draw(self, x, y):
+        screen.blit(self.image, (x, y)) 
+        #screen.blit(self.image, (self.rect.left, self.rect.top))
 
 # Globals
 WindowH = 550
@@ -417,6 +433,13 @@ def mainInit():
     setEventHandler('mainRun', 'keyDown', keyDown)
     setEventHandler('mainRun', 'keyUp', keyUp)
     setEventHandler('mainRun', 'mechanic', mainMechanic)
+    
+    b = Block()
+    mar = Map(3,3,2)
+    mar[1,1,0] += [b]
+    mar[1,1,0] += [b]
+    mar[2,1,0] += [b]
+    print(mar.tiles)
 
     mp = list()
     Layers = list()
@@ -497,7 +520,6 @@ def randomClouds(layer):
         y = random.randint(1, w)
         points.append((x,y))
     obj = Tiled('objects/F0.png', points)
-    print(points)
     obj.addToLayer(layer)
 
 
@@ -523,6 +545,7 @@ def mainLoop():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     isExit = True
+                    continue
                 handleEvent('keyDown', event.key, event)
             if event.type == pygame.KEYUP:
                 handleEvent('keyUp', event.key, event)
