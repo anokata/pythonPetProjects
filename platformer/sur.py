@@ -82,29 +82,26 @@ class Map():
                         a, b = x * self.blockW, y * self.blockH
                         o.draw(a, b, cam)
     def load(self):
-        lev= ["xxxxxxxxxxxxxxxxxxxxxxxxx",
-          "x-----x-x-xx-------x----x",
-          "x-----------x------x----x",
-          "x---c---c-------c-------x",
-          "xxxxx---xxxx---xxxxx----x",
-          "x-----------------------x",
-          "x----------xxx----------x",
-          "x-----------------------x",
-          "x-----x-------x----x----x",
-          "x-x-xxxxx------xxxxx----x",
-          "xx----------------------x",
-          "xxxxxxx---------xxxx----x",
-          "x-------x---xxxxxxxx----x",
-          "x--xxx----------xxxx----x",
-          "x-----------------------x",
-          "x-----------------------x",
-          "xxxxxxxxxxxxxxxxxxxxxxxxx",
-             ]
-        descrp = {
-                'x': ('objects/block2.png',),
-                '-': ('objects/ground0.png',),
-                'c': ('objects/zap0.png',),
-                }
+        lev = list()
+        with open('map.map', 'rt') as fin:
+            line = 'trash'
+            while True:
+                line = fin.readline()
+                if line == '\n':
+                    break
+                lev.append(line[:-1])
+
+            descrp = dict()
+            while True:
+                char = fin.read(1)
+                if char == '\n':
+                    break
+                fin.read(1) # space
+                imgpath = fin.readline()[:-1]
+                descrp[char] = (imgpath,)
+
+        self.lev = lev
+        self.descrp = descrp
         self.blockW = self.blockH = 32
         mapObjects = dict()
         for c, p in descrp.items():
@@ -127,6 +124,18 @@ class Map():
                 if lev[y][x] == 'x': # CHG
                     a, b = x * self.blockW, y * self.blockH
                     self.blockers.append(PhisycBlock(a, b, self.blockW))
+
+    def save(self):
+        with open('map.map', 'wt') as fout:
+            for l in self.lev:
+                fout.write(l+'\n')
+            fout.write('\n')
+            for c, img in self.descrp.items():
+                img = img[0]
+                fout.write(c + ' ' + img)
+                fout.write('\n')
+            fout.write('\n')
+
 
 # Globals
 player = None
@@ -274,6 +283,7 @@ def mainInit():
     b = Block()
     globmap = Map(2)
     collided = globmap.blockers # CHG
+    globmap.save()
 
     mp = list()
     entities = list()
