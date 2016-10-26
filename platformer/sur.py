@@ -52,16 +52,26 @@ class EnergySystem():
 class Obj():
     energy = 0.0
 
+class Block(pygame.sprite.Sprite): # base class for sprites?
+    rect = 0
+    def __init__(self, x=0, y=0, imgname='block1.png'):
+        Sprite.__init__(self)
+        self.image = pygame.image.load(imgname).convert()
+        self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
+                         self.image.get_rect().size[1])
+
+    def draw(self, x, y):
+        screen.blit(self.image, (x, y)) 
+        #screen.blit(self.image, (self.rect.left, self.rect.top))
+
+
 class Map():
     tiles = 0
     w = h = z = 0
 
-    def __init__(self, w, h, z):
-        self.w = w
-        self.h = h
+    def __init__(self, z):
         self.z = z
-        self.tiles = {(x, y, lay): l for x in range(w) for y in range(h) 
-                for lay in range(z) for l in [list()]}
+        self.load()
 
     def __setitem__(self, k, v):
         self.tiles[k] = v
@@ -94,38 +104,31 @@ class Map():
           "x-----------------------x",
           "xxxxxxxxxxxxxxxxxxxxxxxxx",
              ]
+        descrp = {
+                'x': ('objects/block2.png',),
+                '-': ('objects/ground0.png',),
+                'c': ('objects/cube1.png',),
+                }
+        mapObjects = dict()
+        for c, p in descrp.items():
+            imgpath = p[0]
+            print(imgpath, p)
+            sprite = Block(imgname=imgpath)
+            mapObjects[c] = (sprite,)
+
+        w = len(lev[0])
+        h = len(lev)
+
+        self.w = w
+        self.h = h
+        z = self.z
+        self.tiles = {(x, y, lay): l for x in range(w) for y in range(h) 
+                for lay in range(z) for l in [list()]}
+
+        for x in range(w):
+            for y in range(h):
+                self.tiles[x,y,1] += [mapObjects[lev[y][x]][0]]
  
-
-class Tiled():
-    tiles = []
-
-    def __init__(self, imgname, mp):
-        tiles = list()
-        for x,y in mp:
-            obj = Obj()
-            #EnergySystem.registr
-            self.tiles += [(makeSpriteXY(imgname, x, y), obj)]
-
-    def draw(self):
-        for (x, o) in self.tiles:
-            screen.blit(x.image, (x.x, x.y))
-
-    def addToLayer(self, l):
-        for (x, o) in self.tiles:
-            l.add(x)
-
-
-class Block(pygame.sprite.Sprite): # base class for sprites?
-    rect = 0
-    def __init__(self, x=0, y=0, imgname='block1.png'):
-        Sprite.__init__(self)
-        self.image = pygame.image.load(imgname).convert()
-        self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
-                         self.image.get_rect().size[1])
-
-    def draw(self, x, y):
-        screen.blit(self.image, (x, y)) 
-        #screen.blit(self.image, (self.rect.left, self.rect.top))
 
 # Globals
 player = None
@@ -276,7 +279,7 @@ def mainInit():
     
     global globmap
     b = Block()
-    globmap = Map(3,3,2)
+    globmap = Map(2)
     globmap[1,1,0] += [b]
     globmap[1,1,0] += [b]
     globmap[2,1,0] += [b]
