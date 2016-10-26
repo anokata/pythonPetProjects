@@ -88,6 +88,7 @@ class Map():
         with open('map.map', 'rt') as fin:
             line = 'trash'
             layersCount = int(fin.readline())
+            self.layersCount = layersCount
             for i in range(layersCount):
                 layers.append(list())
                 while True:
@@ -142,9 +143,11 @@ class Map():
 
     def save(self):
         with open('map.map', 'wt') as fout:
-            for l in self.lev: # CHG Layers for all
-                fout.write(l+'\n')
-            fout.write('\n')
+            fout.write(str(self.layersCount) + '\n')
+            for lay in self.layers:
+                for l in lay: # CHG Layers for all
+                    fout.write(l+'\n')
+                fout.write('\n')
             for c, img in self.descrp.items():
                 img = img[0]
                 fout.write(c + ' ' + img)

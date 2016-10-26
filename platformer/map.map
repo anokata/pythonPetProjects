@@ -35,8 +35,8 @@ x-----------------------x--------------------x
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 c objects/zap0.png
-- objects/ground0.png
-x objects/block2.png
-l objects/stolb.png
 . objects/space.png
+x objects/block2.png
+- objects/ground0.png
+l objects/stolb.png
 
