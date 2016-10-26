@@ -12,7 +12,8 @@ from consts import *
 
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
 # сначала всё же без генератора, сделать статичный мир. но интересный
-# TODO: map, переделать отображение. сделать редактор, сохранение загрузка добавление новых блоков. редактор. выбор блоков.
+# Слои
+# TODO: map сделать редактор, добавление новых блоков. выбор блоков.
 
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
@@ -75,21 +76,25 @@ class Map():
         return self.tiles[k]
     
     def draw(self, cam):
-        for x in range(self.w):
-            for y in range(self.h):
-                for z in range(self.z):
-                    for o in self.tiles[x,y,z]:
-                        a, b = x * self.blockW, y * self.blockH
-                        o.draw(a, b, cam)
+        for lay in self.tiles:
+            for (x,y), o in lay.items():
+                if o:
+                    o = o[0]
+                    a, b = x * self.blockW, y * self.blockH
+                    o.draw(a, b, cam)
+
     def load(self):
-        lev = list()
+        self.layers = layers = list() 
         with open('map.map', 'rt') as fin:
             line = 'trash'
-            while True:
-                line = fin.readline()
-                if line == '\n':
-                    break
-                lev.append(line[:-1])
+            layersCount = int(fin.readline())
+            for i in range(layersCount):
+                layers.append(list())
+                while True:
+                    line = fin.readline()
+                    if line == '\n':
+                        break
+                    layers[i].append(line[:-1])
 
             descrp = dict()
             while True:
@@ -100,34 +105,44 @@ class Map():
                 imgpath = fin.readline()[:-1]
                 descrp[char] = (imgpath,)
 
-        self.lev = lev
+        self.lev = layers[0] # CHG
         self.descrp = descrp
-        self.blockW = self.blockH = 32
+        self.blockW = self.blockH = 42
         mapObjects = dict()
         for c, p in descrp.items():
             imgpath = p[0]
             sprite = Block(imgname=imgpath)
             mapObjects[c] = (sprite,)
-
-        w = len(lev[0])
-        h = len(lev) 
-
-        self.w = w
-        self.h = h
+        # Пока один слой надо поддержку многих
         z = self.z
-        self.tiles = {(x, y, lay): l for x in range(w+1) for y in range(h+1) 
-                for lay in range(z) for l in [list()]}
+        i = 0
+        self.layersDim = list()
+        self.tiles = list()
+        for lev in self.layers:
+            w = len(lev[0])
+            h = len(lev) 
+            self.layersDim.append((w, h))
 
-        for x in range(w):
-            for y in range(h):
-                self.tiles[x,y,0] += [mapObjects[lev[y][x]][0]]
-                if lev[y][x] == 'x': # CHG
-                    a, b = x * self.blockW, y * self.blockH
-                    self.blockers.append(PhisycBlock(a, b, self.blockW))
+            self.w = w # layer CHG
+            self.h = h
+            #self.tiles = {(x, y, lay): l for x in range(w+1) for y in range(h+1) 
+                    #for lay in range(z) for l in [list()]}
+
+            self.tiles.append(dict())
+            for x in range(w):
+                for y in range(h):
+                    self.tiles[i][x,y] = list()
+                    if lev[y][x] == '.':
+                        continue
+                    self.tiles[i][x,y] += [mapObjects[lev[y][x]][0]]
+                    if lev[y][x] == 'x': # CHG
+                        a, b = x * self.blockW, y * self.blockH
+                        self.blockers.append(PhisycBlock(a, b, self.blockW))
+            i += 1
 
     def save(self):
         with open('map.map', 'wt') as fout:
-            for l in self.lev:
+            for l in self.lev: # CHG Layers for all
                 fout.write(l+'\n')
             fout.write('\n')
             for c, img in self.descrp.items():
@@ -283,7 +298,7 @@ def mainInit():
     b = Block()
     globmap = Map(2)
     collided = globmap.blockers # CHG
-    globmap.save()
+    #globmap.save()
 
     mp = list()
     entities = list()
