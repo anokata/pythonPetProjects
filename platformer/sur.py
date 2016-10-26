@@ -75,6 +75,26 @@ class Map():
                 for z in range(self.z):
                     for o in self.tiles[x,y,z]:
                         o.draw(x, y)
+    def load(self):
+        lev= ["xxxxxxxxxxxxxxxxxxxxxxxxx",
+          "x-----x-x-xx-------x----x",
+          "x-----------x------x----x",
+          "x---c---c-------c-------x",
+          "xxxxx---xxxx---xxxxx----x",
+          "x-----------------------x",
+          "x----------xxx----------x",
+          "x-----------------------x",
+          "x-----x-------x----x----x",
+          "x-x-xxxxx------xxxxx----x",
+          "xx----------------------x",
+          "xxxxxxx---------xxxx----x",
+          "x-------x---xxxxxxxx----x",
+          "x--xxx----------xxxx----x",
+          "x-----------------------x",
+          "x-----------------------x",
+          "xxxxxxxxxxxxxxxxxxxxxxxxx",
+             ]
+ 
 
 class Tiled():
     tiles = []
@@ -120,6 +140,7 @@ entities = None
 textLayer = None
 menu = None
 hud = None
+globmap = 0
 
 def menuKeyDown(k, d):
     if k == pygame.K_DOWN:
@@ -210,7 +231,7 @@ def drawMenu():
 
 def drawMain():
     screen.blit(bgSurface.image, (0, 0))
-    global cam, player, textLayer
+    global cam, player, textLayer, globmap
     cam.stalkAt(player)
     
     #for l in Layers:
@@ -219,6 +240,9 @@ def drawMain():
     
     for (e, r) in textLayer['hud']:
         screen.blit(e, r)
+
+    screen.blit(player.image, player.rect)
+    globmap.draw() 
 
     pygame.display.flip()
 
@@ -250,105 +274,21 @@ def mainInit():
     setEventHandler('mainRun', 'keyUp', keyUp)
     setEventHandler('mainRun', 'mechanic', mainMechanic)
     
+    global globmap
     b = Block()
-    mar = Map(3,3,2)
-    mar[1,1,0] += [b]
-    mar[1,1,0] += [b]
-    mar[2,1,0] += [b]
-    print(mar.tiles)
+    globmap = Map(3,3,2)
+    globmap[1,1,0] += [b]
+    globmap[1,1,0] += [b]
+    globmap[2,1,0] += [b]
 
     mp = list()
-    #Layers = list()
-    #Layers.append(pygame.sprite.Group())
-    #Layers.append(pygame.sprite.Group())
-    #Layers.append(pygame.sprite.Group())
-
-    #layerBg = Layers[0]
-    #layerFg = Layers[2]
     entities = list()
     textLayer = {'menu1': list()}
 
     # menu
     global menu, hud
     menu = createMenu('men1', ['it0','it2','end'])
-
     hud = Hud(textLayer, WindowW-150, WindowH-30)
-
-    #for x in range(30):
-        #mp += [(x,15)]
-    #m = Tiled('ground1.png', mp)
-    #m.addToLayer(layerBg)
-
-    #mp = list()
-    #for x in range(30):
-        #for y in range(30):
-            #mp.append((x,y))
-    #m = Tiled('objects/ground0.png', mp)
-    #m.addToLayer(layerBg)
-
-    #mp = list()
-    #for x in range(140):
-        #mp += [(x,1)]
-    #m = Tiled('sky0.png', mp)
-    #m.addToLayer(layerBg)
-
-    lev= ["xxxxxxxxxxxxxxxxxxxxxxxxx",
-          "x-----x-x-xx-------x----x",
-          "x-----------x------x----x",
-          "x---c---c-------c-------x",
-          "xxxxx---xxxx---xxxxx----x",
-          "x-----------------------x",
-          "x----------xxx----------x",
-          "x-----------------------x",
-          "x-----x-------x----x----x",
-          "x-x-xxxxx------xxxxx----x",
-          "xx----------------------x",
-          "xxxxxxx---------xxxx----x",
-          "x-------x---xxxxxxxx----x",
-          "x--xxx----------xxxx----x",
-          "x-----------------------x",
-          "x-----------------------x",
-          "xxxxxxxxxxxxxxxxxxxxxxxxx",
-             ]
-    #blockwh = pygame.image.load('block1.png').get_rect().size[0]
-    #for x in range(len(lev)):
-        #for y in range(len(lev[0])):
-            #if lev[x][y] == 'x':
-                #b = Block(y*blockwh, x*blockwh,)
-                #collided += [b]
-                #entities.add(b)
-            #if lev[x][y] == 'c':
-                #e = Enemy(y*blockwh, x*blockwh+blockwh//2)
-                #entities.add(e)
-                #enemies.append(e)
-
-    #layerFg.add(player)
-    #createEnemies(layerFg)
-    #randomClouds(layerBg)
-    
-def randomClouds(layer):
-    count = 10
-    w = 30
-    width = 32
-    points = list()
-    for i in range(count):
-        x = random.randint(1, w)
-        y = random.randint(1, w)
-        points.append((x,y))
-    obj = Tiled('objects/F0.png', points)
-    obj.addToLayer(layer)
-
-
-def createEnemies(layer):
-    count = 10
-    w = 30
-    width = 32
-    for i in range(count):
-        x = random.randint(1, w) * width
-        y = random.randint(1, w) * width
-        enemy = Enemy(x, y)
-        layer.add(enemy)
-
 
 def mainLoop():
     clock = pygame.time.Clock()
@@ -358,6 +298,7 @@ def mainLoop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 isExit = True
+                continue
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     isExit = True
