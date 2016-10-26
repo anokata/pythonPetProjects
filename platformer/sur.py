@@ -6,6 +6,8 @@ import pyganim
 import roomGenerator as rg
 import random
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
+# сначала всё же без генератора, сделать статичный мир. но интересный
+# TODO: map
 
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
@@ -67,8 +69,6 @@ class EnergySystem():
 
 class Obj():
     energy = 0.0
-
-
 
 class Tiled():
     tiles = []
@@ -320,8 +320,8 @@ class MenuList():
         self.items = list()
         self.id = id
         self.rect = pygame.Rect(0,0,0,0)
-        self.font = Font(32, (100, 0, 250), (100, 100, 100))
-        self.selfont = Font(32, (80, 100, 230), (180, 180, 180))
+        self.font = Font(32, (100, 100, 5), (180, 160, 100))
+        self.selfont = Font(32, (180, 160, 30), (100, 80, 50))
         self.x = x
         self.y = y
 
