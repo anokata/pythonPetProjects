@@ -4,7 +4,6 @@ import requests as rq
 host = 'http://anokata.pythonanywhere.com/'
 host = 'http://localhost:7000/'
 gethistUrl = host + 'chat'
-putmsgUrl = host + 'chat/'
 clearUrl =  host + 'chatclear'
 postUrl = host + 'chat/post'
 
@@ -33,7 +32,6 @@ main.bind('<Escape>', exit)
 def sendmsg():
     try:
         msg = usernameEntry.get() + '|- ' + userMsg.get()
-        #res = rq.get(putmsgUrl + msg) 
         rq.post(postUrl, {'msg': msg})
     except:
         pass
