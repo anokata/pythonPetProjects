@@ -1,4 +1,4 @@
-from bottle import run, route
+from bottle import run, route, post, request
 
 chatFile = 'chat.txt'
 br = '<br>'
@@ -23,6 +23,11 @@ def getHist():
         for l in fin:
             h += l + br
     return h
+
+@route('/chat/post', method='POST')
+def chatPost():
+    res = str(request.forms) + str(request.forms.get('msg'))
+    return res
 
 
 run(host='localhost', port=7000, reloader=True)

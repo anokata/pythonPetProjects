@@ -30,38 +30,45 @@ main.bind('<Escape>', exit)
 
 def sendmsg():
     try:
-        msg = usernameEntry.get() + '|- ' + e.get()
+        msg = usernameEntry.get() + '|- ' + userMsg.get()
         res = rq.get(putmsgUrl + msg) 
+        # rq.post({'msg':'abcde'})
     except:
         pass
     chatUpd()
 
 def chatUpd():
-    l['text'] = getHist()
-
-e = tk.Entry(main)
-e.insert(0, "defval")
+    chatMsg['text'] = getHist()
 
 random.seed()
-usernameEntry = tk.Entry(main)
+root = main
+frameHist=tk.Frame(root,bg='#DDD',bd=5)
+frameInp=tk.Frame(root,bg='#BBB',bd=5)
+frame3=tk.Frame(root,bg='#CCC',bd=5)
+
+userMsg = tk.Entry(frameInp, width=40)
+userMsg.insert(0, "defval")
+usernameEntry = tk.Entry(frameInp, width=20)
 usernameEntry.insert(0, 'userN' + str(random.randint(500, 1000)))
-b = tk.Button(main, text='Отправить...', width = 20, command=sendmsg)
 
-exitButton = tk.Button(main, text='Выйти', width = 20, command=exit)
-regetButton = tk.Button(main, text='Обновить', width = 20, command=chatUpd)
-clearBut = tk.Button(main, text='!Очистить!', width = 20, command=clearhist)
-b.pack()
-exitButton.pack()
-regetButton.pack()
-clearBut.pack()
+sendBtn = tk.Button(frameInp, text='Отправить...', width = 20, command=sendmsg)
+exitButton = tk.Button(frame3, text='Выйти', width = 20, command=exit)
+regetButton = tk.Button(frame3, text='Обновить', width = 20, command=chatUpd)
+clearBut = tk.Button(frame3, text='!Очистить!', width = 10, command=clearhist)
 
-e.pack()
-usernameEntry.pack()
-l = tk.Label(main, text='chat...->', width = 100, height = 300)
-l['text'] = getHist()
+chatMsg = tk.Label(frameHist, text='chat...->', bg="#EEE", width = 100, height = '20', font=("Helvetica", 16), justify='left')
+chatMsg['text'] = getHist()
 
+usernameEntry.pack(side=tk.LEFT)
+userMsg.pack(side=tk.LEFT)
+sendBtn.pack(side=tk.LEFT)
+exitButton.pack(side=tk.LEFT)
+regetButton.pack(side=tk.LEFT)
+clearBut.pack(side=tk.LEFT)
+chatMsg.pack(side=tk.LEFT)
+frameHist.pack(side=tk.TOP, expand=True,fill='both')
+frame3.pack(side=tk.BOTTOM)
+frameInp.pack(side=tk.BOTTOM)
 
-l.pack()
-
-e.focus_set()
+userMsg.focus_set()
 main.mainloop()
