@@ -21,6 +21,7 @@ def getHist():
 
 def clearhist():
     req(clearUrl)
+    chatUpd()
 
 main = tk.Tk()
 def keyPress(k):
@@ -56,7 +57,7 @@ exitButton = tk.Button(frame3, text='Выйти', width = 20, command=exit)
 regetButton = tk.Button(frame3, text='Обновить', width = 20, command=chatUpd)
 clearBut = tk.Button(frame3, text='!Очистить!', width = 10, command=clearhist)
 
-chatMsg = tk.Label(frameHist,anchor='w', text='chat...->', bg="#EEE",
+chatMsg = tk.Label(frameHist,anchor='nw', text='chat...->', bg="#EEE",
         width = 100, height = '30', font=("Helvetica", 10), justify='left')
 chatMsg['text'] = getHist()
 

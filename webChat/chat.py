@@ -30,5 +30,10 @@ def chatPost():
     addMsg(msg)
     return getHist()
 
+@route('/chatclear')
+def chatClear():
+    with open(chatFile, 'wt') as f:
+        pass
+    return ''
 
 run(host='localhost', port=7000, reloader=True)
