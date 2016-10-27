@@ -21,10 +21,10 @@ xD-c-rr---xx-------x----x--------------------x
 xW---bb---x-x------x-------------------------x
 xBSF0rb-c-x-----c----------------------------x
 xgggg-g-xxxx---xxxxx-------------------------x
-x-g-------x----------------------------------x
-x---------xxxx----------x--------------------x
-x-----l-----------------x--------------------x
-x-----l-------x----x-------------------------x
+x-g-------x-R==------------------------------x
+x---------xx|x----------x--------------------x
+x-----l-----|-----------x--------------------x
+x-==========/-x----x-------------------------x
 x-x--xlll-x----xxxxx-------------------------x
 xx------l-x----------------------------------x
 xxxllllll-x-----xxxx-------------------------x
@@ -38,6 +38,10 @@ c objects/zap0.png
 . objects/space.png
 x objects/block2.png
 - objects/ground0.png
+= objects/groundgrass.png
+/ objects/groundgrassLU.png
+| objects/groundgrassBU.png
+R objects/groundgrassBR.png
 l objects/stolb.png
 g objects/grass.png
 b objects/cube1.png
