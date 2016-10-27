@@ -6,6 +6,7 @@ host = 'http://localhost:7000/'
 gethistUrl = host + 'chat'
 clearUrl =  host + 'chatclear'
 postUrl = host + 'chat/post'
+#TODO: читать периодически. переделать на другом гуй.
 
 def req(url):
     h = None
