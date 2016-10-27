@@ -266,7 +266,7 @@ def drawMain():
         screen.blit(e, r)
 
     globmap.draw(cam) 
-    screen.blit(player.image, cam.calc(player))
+    screen.blit(player.image, player.getRect(cam))
     pygame.display.flip()
 
 def mainMechanic(d, p, e):
