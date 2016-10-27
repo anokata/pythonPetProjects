@@ -1,5 +1,6 @@
 import pygame
 import pyganim
+from itertools import repeat
 
 class Player():
     health = 100
@@ -19,9 +20,9 @@ class Player():
 
 # Player anim
 AnimDelay = 0.1 # скорость смены кадров
-AnimGoRight = ['objects/walkmanR0.png','objects/walkmanR1.png','objects/walkmanR2.png']
-AnimGoLeft = ['objects/walkmanL0.png','objects/walkmanL1.png','objects/walkmanL2.png']
-AnimGoUp = ['objects/walkmanU0.png','objects/walkmanU1.png','objects/walkmanU2.png']
+AnimRight = ['objects/walkmanR0.png','objects/walkmanR1.png','objects/walkmanR2.png']
+AnimLeft = ['objects/walkmanL0.png','objects/walkmanL1.png','objects/walkmanL2.png']
+AnimUp = ['objects/walkmanU0.png','objects/walkmanU1.png','objects/walkmanU2.png']
 AnimStand = ['objects/stand0.png','objects/stand1.png','objects/stand2.png']
 AnimKick = ['objects/kick0.png','objects/kick1.png','objects/kick2.png', 'objects/kick3.png']
 
@@ -36,29 +37,21 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                          self.image.get_rect().size[1])
         self.rect.height += 0
 
-        from itertools import repeat
-        Anim = list(zip(AnimGoRight, list(repeat(AnimDelay, len(AnimGoRight)))))
-        self.AnimRight = pyganim.PygAnimation(Anim)
-        self.AnimRight.play()
+        self.AnimRight = self.animLoad(AnimRight) 
+        self.AnimLeft = self.animLoad(AnimLeft) 
+        self.AnimStand = self.animLoad(AnimStand) 
+        self.AnimUp = self.animLoad(AnimUp) 
 
-        Anim = list(zip(AnimGoLeft, list(repeat(AnimDelay, len(AnimGoLeft)))))
-        self.AnimLeft = pyganim.PygAnimation(Anim)
-        self.AnimLeft.play()
-
-        Anim = list(zip(AnimStand, list(repeat(AnimDelay, len(AnimStand)))))
-        self.AnimStand = pyganim.PygAnimation(Anim)
-        self.AnimStand.play()
-
-        Anim = list(zip(AnimGoUp, list(repeat(AnimDelay, len(AnimGoUp)))))
-        self.AnimUp = pyganim.PygAnimation(Anim)
-        self.AnimUp.play()
-
-        Anim = list(zip(AnimKick, list(repeat(AnimDelay, len(AnimGoUp)))))
-        self.AnimKick = pyganim.PygAnimation(Anim)
-        self.AnimKick.play()
+        self.AnimKick = self.animLoad(AnimKick)
         self.AnimKickTicks = 10
 
         self.changeAnim(self.AnimStand)
+
+    def animLoad(self, animlist):
+        animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))
+        ranim = pyganim.PygAnimation(animlistdelay)
+        ranim.play()
+        return ranim
 
     def changeAnim(self, a):
         self.image.fill(pygame.Color('#000000'))
