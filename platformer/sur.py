@@ -193,6 +193,8 @@ def keyDown(k, d):
         player.movingud = 1
     if k == pygame.K_DOWN:
         player.movingud = -1
+    if k == pygame.K_z:
+        player.kick()
 
 def keyUp(k, d):
     global player

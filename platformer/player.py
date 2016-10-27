@@ -22,13 +22,12 @@ AnimDelay = 0.1 # скорость смены кадров
 AnimGoRight = ['objects/walkmanR0.png','objects/walkmanR1.png','objects/walkmanR2.png']
 AnimGoLeft = ['objects/walkmanL0.png','objects/walkmanL1.png','objects/walkmanL2.png']
 AnimGoUp = ['objects/walkmanU0.png','objects/walkmanU1.png','objects/walkmanU2.png']
-AnimJumpLeft = ['objects/walkmanS.png', 'objects/walkmanS.png']
-AnimJumpRight = ['objects/walkmanS.png','objects/walkmanS.png']
-AnimJump = ['objects/walkmanS.png']
-AnimStand = ['objects/walkmanS.png']
+AnimStand = ['objects/stand0.png','objects/stand1.png','objects/stand2.png']
+AnimKick = ['objects/kick0.png','objects/kick1.png','objects/kick2.png', 'objects/kick3.png']
 
 class pgPlayer(Player, pygame.sprite.Sprite):
     rect = pygame.Rect(0,0,0,0)
+    kicking = 0
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -46,14 +45,6 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.AnimLeft = pyganim.PygAnimation(Anim)
         self.AnimLeft.play()
 
-        Anim = list(zip(AnimJumpLeft, list(repeat(AnimDelay, len(AnimJumpLeft)))))
-        self.AnimJumpLeft = pyganim.PygAnimation(Anim)
-        self.AnimJumpLeft.play()
-
-        Anim = list(zip(AnimJumpRight, list(repeat(AnimDelay, len(AnimJumpRight)))))
-        self.AnimJumpRight = pyganim.PygAnimation(Anim)
-        self.AnimJumpRight.play()
-
         Anim = list(zip(AnimStand, list(repeat(AnimDelay, len(AnimStand)))))
         self.AnimStand = pyganim.PygAnimation(Anim)
         self.AnimStand.play()
@@ -62,12 +53,20 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.AnimUp = pyganim.PygAnimation(Anim)
         self.AnimUp.play()
 
+        Anim = list(zip(AnimKick, list(repeat(AnimDelay, len(AnimGoUp)))))
+        self.AnimKick = pyganim.PygAnimation(Anim)
+        self.AnimKick.play()
+        self.AnimKickTicks = 10
+
         self.changeAnim(self.AnimStand)
 
     def changeAnim(self, a):
         self.image.fill(pygame.Color('#000000'))
         a.blit(self.image, (0, 0))
         #self.image.scroll(dy=20)
+
+    def kick(self):
+        self.kicking = self.AnimKickTicks
 
     def moveSide(self, dt, platforms, enemies):
         self.step()
@@ -79,6 +78,10 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             self.changeAnim(self.AnimUp)
         else:
             self.changeAnim(self.AnimStand)
+
+        if self.kicking:
+            self.changeAnim(self.AnimKick)
+            self.kicking -= 1
         
         self.dx = - self.moving * self.spd
         self.dy = - self.movingud * self.spd
