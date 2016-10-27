@@ -2,9 +2,11 @@ import random
 import tkinter as tk
 import requests as rq
 host = 'http://anokata.pythonanywhere.com/'
+host = 'http://localhost:7000/'
 gethistUrl = host + 'chat'
 putmsgUrl = host + 'chat/'
 clearUrl =  host + 'chatclear'
+postUrl = host + 'chat/post'
 
 def req(url):
     h = None
@@ -31,8 +33,8 @@ main.bind('<Escape>', exit)
 def sendmsg():
     try:
         msg = usernameEntry.get() + '|- ' + userMsg.get()
-        res = rq.get(putmsgUrl + msg) 
-        # rq.post({'msg':'abcde'})
+        #res = rq.get(putmsgUrl + msg) 
+        rq.post(postUrl, {'msg': msg})
     except:
         pass
     chatUpd()
@@ -56,7 +58,8 @@ exitButton = tk.Button(frame3, text='Выйти', width = 20, command=exit)
 regetButton = tk.Button(frame3, text='Обновить', width = 20, command=chatUpd)
 clearBut = tk.Button(frame3, text='!Очистить!', width = 10, command=clearhist)
 
-chatMsg = tk.Label(frameHist, text='chat...->', bg="#EEE", width = 100, height = '20', font=("Helvetica", 16), justify='left')
+chatMsg = tk.Label(frameHist,anchor='w', text='chat...->', bg="#EEE",
+        width = 100, height = '30', font=("Helvetica", 10), justify='left')
 chatMsg['text'] = getHist()
 
 usernameEntry.pack(side=tk.LEFT)

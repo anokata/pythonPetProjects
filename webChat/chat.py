@@ -26,8 +26,9 @@ def getHist():
 
 @route('/chat/post', method='POST')
 def chatPost():
-    res = str(request.forms) + str(request.forms.get('msg'))
-    return res
+    msg = request.forms.get('msg')
+    addMsg(msg)
+    return getHist()
 
 
 run(host='localhost', port=7000, reloader=True)
