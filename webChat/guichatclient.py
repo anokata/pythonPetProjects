@@ -7,7 +7,7 @@ gethistUrl = host + 'chat'
 clearUrl =  host + 'chatclear'
 postUrl = host + 'chat/post'
 #TODO: читать периодически. переделать на другом гуй.
-
+# auth, chat create, user add, list all users & chats
 def req(url):
     h = None
     try:
@@ -47,6 +47,7 @@ root = main
 frameHist=tk.Frame(root,bg='#DDD',bd=5)
 frameInp=tk.Frame(root,bg='#BBB',bd=5)
 frame3=tk.Frame(root,bg='#CCC',bd=5)
+frameUser=tk.Frame(root,bg='#FCC',bd=5)
 
 userMsg = tk.Entry(frameInp, width=40)
 userMsg.insert(0, "defval")
@@ -61,6 +62,13 @@ clearBut = tk.Button(frame3, text='!Очистить!', width = 10, command=clea
 chatMsg = tk.Label(frameHist,anchor='nw', text='chat...->', bg="#EEE",
         width = 100, height = '30', font=("Helvetica", 10), justify='left')
 chatMsg['text'] = getHist()
+
+
+usernameAuth = tk.Entry(frameUser, width=40)
+usernameAuth.insert(0, "name1")
+userpassAuth = tk.Entry(frameUser, width=20)
+userpassAuth.insert(0, '****' + str(random.randint(500, 1000)))
+# butons TODO
 
 usernameEntry.pack(side=tk.LEFT)
 userMsg.pack(side=tk.LEFT)
