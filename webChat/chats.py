@@ -27,7 +27,7 @@ class Chats():
         else:
             return False
 
-    def genfilename(name, users):
+    def genfilename(self, name, users):
         fn = 'cht_'
         fn += name 
         for u in users:
@@ -38,7 +38,10 @@ class Chats():
         pass
 
     def getchats(self):
-        return self.chats.keys()
+        r = ''
+        for c in self.chats.keys():
+            r += c + '\n'
+        return r
 
     def post(self, chatname, user, msg):
         msg += '\n'
@@ -50,10 +53,14 @@ class Chats():
 
     def hist(self, chatname):
         h = ''
+        if chatname not in self.chats:
+            return 'no such chat'
         _, chatFile = self.chats[chatname]
+        if not os.path.exists(chatFile):
+            return 'no chatfile'
         with open(chatFile, 'rt') as fin:
             for l in fin:
-                h += l + br
+                h += l
         return h
                 
                 

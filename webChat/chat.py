@@ -5,27 +5,21 @@ from urls import *
 users = auth.Users()
 users.add('adm', 'asm')
 cht = chats.Chats()
-
-#chatFile = 'chat.txt'
+#TODO: читать чат может только один из его пользователей авторизованный
 br = '<br>'
 br = '\n'
-@route('/chat', method='POST')
+@route(urlHist, method='POST')
 def home():
     chat = request.forms.get('chat')
     return getHist(chat)
 
-@route('/chat/<msg>')
-def chatMsg(msg):
-    addMsg(msg)
-    return getHist()
-
-@route('/chat/post', method='POST')
+@route(urlPost, method='POST')
 def chatPost():
     msg = request.forms.get('msg')
-    user = request.forms.get('user')
+    user = request.forms.get('name')
     chat = request.forms.get('chat')
-    addMsg(msg, user, chat)
-    return getHist()
+    r = addMsg(msg, user, chat)
+    return r
 
 @route('/chatclear') # TODO
 def chatClear():
@@ -40,7 +34,7 @@ def webAddUser():
     res = addUser(name, pswd)
     return res
 
-@route('/chat/auth', method='POST')
+@route(urlAuth, method='POST')
 def webAddUser():
     name = request.forms.get('name')
     pswd = request.forms.get('pswd')
@@ -60,6 +54,11 @@ def webGetUsers():
     usrs = users.getusers()
     print(usrs)
     return str(usrs)
+@route(urlGetChats, method='POST')
+def webGetUsers():
+    chats = cht.getchats()
+    print(chats)
+    return str(chats)
 
 
 
@@ -67,12 +66,12 @@ def webGetUsers():
 def addMsg(msg, userId, chatId):
     if users.authed(userId):
         cht.post(chatId, userId, msg) 
+        return 'ok add msg'
+    else:
+        return 'no auth'
 
 def getHist(chat): 
-    try:
-        h = cht.hist(chat)
-    except:
-        h = 'no chat'
+    h = cht.hist(chat)
     return h
 
 def addUser(name, pswd):
@@ -81,7 +80,8 @@ def addUser(name, pswd):
 
 def authUser(name, pswd):
     r = users.auth(name, pswd)
-    return 'OK' if r else 'do not login'
+    print(name, pswd, r)
+    return r
 
 def addChat(name, users):
     r = cht.add(name, users)

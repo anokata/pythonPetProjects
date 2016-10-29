@@ -43,13 +43,17 @@ class Users():
 
     def auth(self, name, pswd):
         if name in self.users:
-            spswd = self.users[name]
+            spswd, _ = self.users[name]
             ais = spswd == pswd
             if ais:
                 self.authorized.append(name)
-            return ais
+                return 'ok'
+            return 'not pass'
+        else:
+            return 'no user'
 
     def authed(self, name):
+        print(name, self.authorized)
         return name in self.authorized
 
     def load(self):
