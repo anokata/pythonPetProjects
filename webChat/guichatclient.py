@@ -14,6 +14,7 @@ getChatsUrl = host[:-1] + urlGetChats
 authUrl = host[:-1] + urlAuth
 #TODO: читать периодически. переделать на другом гуй.
 # auth, chat create, user add, list all users & chats
+#TODO: сделать удобный клиент для пользователя и отладочный отдельно (или режим отладки, сообщений окно, и команд)
 def req(url, param={}):
     h = None
     try:
