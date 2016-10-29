@@ -1,7 +1,7 @@
 from bottle import run, route, post, request
 import auth
 import chats
-urlChatAdd = '/chat/add'
+from urls import *
 users = auth.Users()
 users.add('adm', 'asm')
 cht = chats.Chats()
@@ -9,9 +9,10 @@ cht = chats.Chats()
 #chatFile = 'chat.txt'
 br = '<br>'
 br = '\n'
-@route('/chat')
+@route('/chat', method='POST')
 def home():
-    return getHist()
+    chat = request.forms.get('chat')
+    return getHist(chat)
 
 @route('/chat/<msg>')
 def chatMsg(msg):
@@ -32,7 +33,7 @@ def chatClear():
         pass
     return ''
 
-@route('/chat/adduser', method='POST')
+@route(urlUserAdd, method='POST')
 def webAddUser():
     name = request.forms.get('name')
     pswd = request.forms.get('pswd')
@@ -54,6 +55,11 @@ def webAddChat():
     res = addChat(name, users)
     return res
 
+@route(urlGetUsers, method='POST')
+def webGetUsers():
+    usrs = users.getusers()
+    print(usrs)
+    return str(usrs)
 
 
 
@@ -63,7 +69,11 @@ def addMsg(msg, userId, chatId):
         cht.post(chatId, userId, msg) 
 
 def getHist(chat): 
-    return cht.hist(chat)
+    try:
+        h = cht.hist(chat)
+    except:
+        h = 'no chat'
+    return h
 
 def addUser(name, pswd):
     r = users.add(name, pswd)

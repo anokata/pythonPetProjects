@@ -32,7 +32,10 @@ class Users():
             self.save()
     
     def getusers(self):
-        return users.keys()
+        r = ''
+        for u in self.users.keys():
+            r += u + '\n'
+        return r
 
     def get(self, name):
         if name in self.users:
