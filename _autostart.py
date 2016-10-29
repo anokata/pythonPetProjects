@@ -65,6 +65,10 @@ exc('gnumeric')
 #if r[0] == 'y':
 #    exc('midori&')
 
+print('Установим обои')
+exc('wallpaperText.py --file "/home/ksi/txthub/doings.txt" \
+    --bg "/home/ksi/Downloads/bg1.png" --fontsize 17 \
+    --fontcolor "(10,100,0)"')
 #exc('qiv -z /usr/local/share/backgrounds/black-and-white-city-skyline-buildings.jpg') 
 
 print('Удачного %s!' % daypart)
