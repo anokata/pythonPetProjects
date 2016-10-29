@@ -32,6 +32,6 @@ d.multiline_text((20,10), text, fill=None, font=fnt, anchor=None, spacing=5, ali
 #txt.show()
 # сохранить в файл
 imgfn = 'walltext.png' 
-txt.save(imgfn, 'PNG')
+txt.save(imgfn, 'PNG', optimize=True)
 # сделать фоном
 exc('qiv -z ' + imgfn)
