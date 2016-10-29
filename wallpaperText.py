@@ -5,14 +5,13 @@ import optparse
 from PIL import Image, ImageDraw, ImageFont
 # прога для рисования на изображении текста(из файла, статус системы...) и отображения его на фон, периодически
 # args = periodic(secs?) textfile/syscmd to exec, bgimg file, fontcolor, fontsize
-# ARGV names изучить как там их обрабатывать
-# args img, 
 W = 1280
 H = 1024
 p = optparse.OptionParser()
 p.add_option('--bg', default="")
 p.add_option('--file', default="")
 p.add_option('--fontsize', default=20)
+p.add_option('--fontcolor', default='(100,50,255)')
 options, arguments = p.parse_args()
 
 if options.bg != '':
@@ -25,6 +24,7 @@ if options.file != '':
     fn = options.file
 else:
     fn = 'wallpaperText.py'
+fontcolor = eval(options.fontcolor)
 # создать имг или загрузить фон.
 fontPath = "/usr/share/fonts/truetype/dejavu/"
 f1 = 'DejaVuSansMono.ttf'
@@ -39,7 +39,7 @@ d = ImageDraw.Draw(txt)
 text = ''
 with open(fn, 'rt') as fin:
     text = ''.join(fin.readlines())
-d.multiline_text((20,10), text, fill=None, font=fnt, anchor=None, spacing=5, align="left")
+d.multiline_text((20,10), text, fill=fontcolor, font=fnt, anchor=None, spacing=5, align="left")
 #txt.show()
 # сохранить в файл
 imgfn = 'walltext.png' 
