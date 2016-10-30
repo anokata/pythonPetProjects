@@ -1,4 +1,5 @@
 import pygame
+import gameObjects
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # Свойства объектов, проходимые, непроходимые, поднимаемые...
 # TODO: map сделать редактор, добавление новых блоков. выбор блоков.
@@ -77,10 +78,11 @@ class Map():
         self.descrp = descrp
         self.blockW = self.blockH = 42
         mapObjects = dict()
-        for c, p in descrp.items():
-            imgpath = p[0]
+        for char, path in descrp.items():
+            imgpath = path[0]
             sprite = Block(imgname=imgpath)
-            mapObjects[c] = (sprite,)
+            #sprite = gameObjects.
+            mapObjects[char] = (sprite,)
 
         z = self.z
         i = 0
@@ -91,7 +93,7 @@ class Map():
             h = len(lev) 
             self.layersDim.append((w, h))
 
-            self.w = w # layer CHG
+            self.w = w # not need?
             self.h = h
 
             self.tiles.append(dict())
