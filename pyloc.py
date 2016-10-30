@@ -2,6 +2,7 @@
 # Подсчёт строк кода. игнорируя пустые строки и комментарии. средняя длинна строки кода, количество коментов, кол-во символов.
 import os
 import glob
+from sys import argv
 
 def getlines(fn):
     """ Получает содержимое файла как список строк """
@@ -11,7 +12,7 @@ def getlines(fn):
     return lines
 
 pwd = os.path.abspath(os.curdir)
-print('Search in {}'.format(pwd))
+#print('Search in {}'.format(pwd))
 # Получим список всех файлов 
 files = glob.glob('**', recursive=True)
 # Отфильтруем только питоновские
@@ -40,6 +41,15 @@ for l in contents:
     codelines.append(l)
 
 LOC = len(codelines)
+
+if len(argv)>1 and argv[1] == 'loc':
+    fn = 'statpyloc.txt'
+    with open(fn, 'rt') as fin:
+        lastloc = int(fin.readline())
+    with open(fn, 'wt') as fout:
+        fout.write(str(LOC))
+    print(LOC, lastloc, LOC-lastloc)
+    exit()
 print('Строк кода (LOC):', LOC)
 print('Символов всего:', chars)
 print('Средняя длинна строки кода:', int(chars/LOC), 'символов')
