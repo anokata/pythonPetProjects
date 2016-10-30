@@ -1,4 +1,4 @@
-class Inv():
+class Inventory():
     food = {}
 
     def __init__(self):
