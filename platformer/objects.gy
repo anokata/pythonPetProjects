@@ -1,0 +1,4 @@
+apple:
+    type: FOOD
+    basePrice: 1
+
