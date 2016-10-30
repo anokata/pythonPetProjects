@@ -1,4 +1,22 @@
 apple:
-    type: FOOD
+    typ: FOOD
     basePrice: 1
+    imagename: objects/apple.png
+    material: bio
+    weight: 100
+    takeable: True
+    passable: True
+    mapchar: A
+cherry:
+    typ: FOOD
+    basePrice: 2
+    imagename: objects/cherry.png
+    material: bio
+    weight: 20
+
+stonewall:
+    imagename: objects/block2.png 
+    mapchar: x
+    passable: False
+    takeable: False
 

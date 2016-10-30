@@ -1,13 +1,32 @@
 import yaml
+import objectTypes
 class AnObject():
     otype = 0
-    objectsFilename = 'objects.gy'
 
     def __init__(self, typ):
         self.otype = typ
 
-class Objects():
+class ObjectsFactory():
+
+    objectsFilename = 'objects.gy'
+
+    def __init__(self):
+        self.load()
 
     def load(self):
-        objDict = yaml.load(open(self.objectsFilename))
+        """ Load objects prototypes. """
+        self.objetcsPrototypes = yaml.load(open(self.objectsFilename))
 
+    def createObject(self, name):
+        if name in self.objetcsPrototypes:
+            objectModel = self.objetcsPrototypes[name]
+            obj = AnObject(objectModel['typ'])
+            for propname, propvalue in objectModel.items():
+                setattr(obj, propname, propvalue)
+            return obj
+        return False
+
+if __name__=='__main__':
+    factory = ObjectsFactory()
+    ob1 = factory.createObject('apple')
+    print(ob1, ob1.imagename, ob1.basePrice)

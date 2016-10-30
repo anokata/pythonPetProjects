@@ -1,1 +1,1 @@
-FOOD = 1
+FOOD = 'FOOD'
