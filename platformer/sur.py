@@ -12,6 +12,7 @@ from consts import *
 #from util import makeSpriteXY
 from map import *
 import gameObjects
+import gameInventory
 Sprite = pygame.sprite.Sprite
 
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
@@ -177,6 +178,10 @@ def mainInit():
 
     # gobj test
     g1 = gameObjects.GObject('apple')
+    print(g1.typ)
+    inv = gameInventory.GInventory()
+    inv.add(g1)
+    print(inv.food)
 
 def mainLoop():
     clock = pygame.time.Clock()

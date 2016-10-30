@@ -8,6 +8,7 @@ class GObject(Block):
     def __init__(self, name):
         self.baseObject = objectFactory.createObject(name)
         super().__init__(imgname=self.baseObject.imagename)
+        self.typ = self.baseObject.typ
 
 
 if __name__=='__main__':

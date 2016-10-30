@@ -1,10 +1,10 @@
 import yaml
 import objectTypes
 class AnObject():
-    otype = 0
+    typ = 0
 
     def __init__(self, typ):
-        self.otype = typ
+        self.typ = typ
 
 class ObjectsFactory():
 
@@ -29,4 +29,4 @@ class ObjectsFactory():
 if __name__=='__main__':
     factory = ObjectsFactory()
     ob1 = factory.createObject('apple')
-    print(ob1, ob1.imagename, ob1.basePrice)
+    print(ob1, ob1.typ, ob1.imagename, ob1.basePrice)
