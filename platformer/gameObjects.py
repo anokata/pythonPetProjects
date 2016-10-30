@@ -1,6 +1,6 @@
 import objects
 import pygame
-from map import Block
+from util import Block
 objectFactory = objects.ObjectsFactory()
 
 class GObject(Block):

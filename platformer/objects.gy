@@ -5,7 +5,7 @@ apple:
     material: bio
     weight: 100
     takeable: True
-    passable: True
+    passable: False
     mapchar: A
 cherry:
     typ: FOOD
@@ -13,10 +13,18 @@ cherry:
     imagename: objects/cherry.png
     material: bio
     weight: 20
+    passable: True
 
 stonewall:
+    typ: MAPWALL
     imagename: objects/block2.png 
     mapchar: x
     passable: False
     takeable: False
 
+ground0:
+    typ: MAPGROUND
+    imagename: objects/ground0.png
+    mapchar: _
+    passable: True
+    takeable: False

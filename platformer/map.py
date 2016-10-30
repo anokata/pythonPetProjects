@@ -1,26 +1,12 @@
 import pygame
 import gameObjects
+from util import Block
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # Свойства объектов, проходимые, непроходимые, поднимаемые...
 # TODO: map сделать редактор, добавление новых блоков. выбор блоков.
 
 #TODO Переделать загрузку объектов
-Sprite = pygame.sprite.Sprite
-
-class Block(pygame.sprite.Sprite): # base class for sprites?
-    rect = 0
-    def __init__(self, x=0, y=0, imgname='block1.png'):
-        Sprite.__init__(self)
-        self.image = pygame.image.load(imgname).convert()
-        size = self.image.get_rect().size
-        #print(x,y, self.image, imgname, size, pygame.Rect)
-        self.rect = pygame.Rect(x, y, size[0], size[1])
-
-    def draw(self, x, y, cam, screen):
-        screen.blit(self.image, cam.calcXY(x, y)) 
-    def simpleDraw(self, screen):
-        screen.blit(self.image, (self.rect.left, self.rect.top))
-
+# Обработка коллизий с нужными объектами
 class PhisycBlock():
     rect = 0
     def __init__(self, x, y, w):
@@ -65,24 +51,19 @@ class Map():
                         break
                     layers[i].append(line[:-1])
 
-            descrp = dict()
+            objectNames = list()
             while True:
-                char = fin.read(1)
-                if char == '\n':
+                objectName = fin.readline()[:-1]
+                if objectName == 'endObjectNames':
                     break
-                fin.read(1) # space
-                imgpath = fin.readline()[:-1]
-                descrp[char] = (imgpath,)
+                objectNames.append(objectName)
 
-        self.lev = layers[0] # CHG
-        self.descrp = descrp
-        self.blockW = self.blockH = 42
+        self.objectNames = objectNames 
+        self.blockW = self.blockH = 42 # CHG REad
         mapObjects = dict()
-        for char, path in descrp.items():
-            imgpath = path[0]
-            sprite = Block(imgname=imgpath)
-            #sprite = gameObjects.
-            mapObjects[char] = (sprite,)
+        for objectName in objectNames:
+            obj = gameObjects.GObject(objectName)
+            mapObjects[obj.baseObject.mapchar] = obj
 
         z = self.z
         i = 0
@@ -102,10 +83,13 @@ class Map():
                     self.tiles[i][x,y] = list()
                     if lev[y][x] == '.':
                         continue
-                    self.tiles[i][x,y] += [mapObjects[lev[y][x]][0]]
-                    if lev[y][x] == 'x': # CHG
-                        a, b = x * self.blockW, y * self.blockH
-                        self.blockers.append(PhisycBlock(a, b, self.blockW))
+                    char = lev[y][x]
+                    if char in mapObjects:
+                        self.tiles[i][x,y] += [mapObjects[char]]
+                        if not mapObjects[char].baseObject.passable:
+                            obj = mapObjects[char]
+                            a, b = (x-0) * self.blockW, (y-0) * self.blockH
+                            self.blockers.append(PhisycBlock(a, b, obj.rect.width))
             i += 1
 
     def save(self):

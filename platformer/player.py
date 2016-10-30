@@ -39,9 +39,9 @@ class pgPlayer(Player, pygame.sprite.Sprite):
 
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('catwall.png').convert()
-        self.rect = pygame.Rect(x, y, self.image.get_rect().size[0],
-                         self.image.get_rect().size[1])
+        self.image = pygame.image.load('none.png').convert()
+        size = self.image.get_rect().size
+        self.rect = pygame.Rect(x, y, size[0], size[1])
         self.rect.height -= wallInpact
         self.rect.top += wallInpact
         self.rectImg = pygame.Rect(x, y, self.image.get_rect().size[0],

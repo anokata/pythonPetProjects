@@ -120,6 +120,7 @@ def drawMenu():
     pygame.display.flip()
 
 def drawMain():
+    #screen.set_colorkey((0,0,0))
     screen.blit(bgSurface.image, (0, 0))
     global cam, player, textLayer, globmap
     cam.stalkAt(player)
