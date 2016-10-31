@@ -1,0 +1,8 @@
+defval
+a> test msg
+a> test msg
+a> 123
+a> 
+2016.10.31 16:19:26 a> test msg
+2016.10.31 16:19:29 a> test msg
+2016.10.31 16:20:24 adm> test msg

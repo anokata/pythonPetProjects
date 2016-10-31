@@ -1,5 +1,6 @@
 import pickle
 import os
+import datetime
 chatname = 'chats.cht'
 class Chats():
     #chat = users, file, name
@@ -17,12 +18,13 @@ class Chats():
         if not os.path.exists(chatname):
             return False
         with open(chatname, 'rb') as fin:
-            pass
-            #data = fin.read...&
+            data = pickle.loads(fin.read())
+            self.chats = data
 
     def add(self, name, users):
         if name not in self.chats:
             self.chats[name] = (users, self.genfilename(name, users))
+            self.save()
             return True
         else:
             return False
@@ -40,12 +42,14 @@ class Chats():
     def getchats(self):
         r = ''
         for c in self.chats.keys():
-            r += c + '\n'
+            r += c + '\n' #+ str(self.chats[c])
         return r
 
     def post(self, chatname, user, msg):
-        msg += '\n'
-        msg += user + '> ' # date TODO
+        #msg += '\n'
+        #msg += user + '> ' # date TODO
+        timestamp = datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S")
+        msg = '\n' + timestamp + ' ' + user + '> ' + msg
         _, chatFile = self.chats[chatname]
         with open(chatFile, 'at') as fout:
             fout.write(msg)

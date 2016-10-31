@@ -80,8 +80,10 @@ def auth():
 
 chatMsg = 0
 usernameAuth = userpassAuth = 0
+chatInput = 0
+userMsg = usernameEntry = 0
 def maintest():
-    global chatMsg, usernameAuth, userpassAuth
+    global chatMsg, usernameAuth, userpassAuth, chatInput, usernameEntry, userMsg
     main = tk.Tk()
     main.bind('<Key>', keyPress)
     main.bind('<Escape>', exit)
