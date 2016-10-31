@@ -183,6 +183,7 @@ def mainInit():
     # gobj test
     g1 = gameObjects.GObject('apple')
     print(g1.typ)
+    #TODO переключение на инв. добавление объекта, вишни, и чтобы стало 2 яблока. переключение категорий. выбор объектов, действия.
     inventory = gameInventory.GInventory(screen)
     inventory.add(g1)
     print(inventory.food)
