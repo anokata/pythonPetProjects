@@ -33,29 +33,4 @@ def genprimes(n):
     print('prime generated')
 
 
-def prime(n):
-    e = n
-    i = 2
-    while i<e:
-        if n%i == 0:
-            return False
-        i+=1
-    return True
 
-def roundprime(n):
-    x = str(n)
-    for i in range(len(x)):
-        #print(i, prime(int(x)), x)
-        if not primeis(int(x)):
-            return False
-        x = x[-1] + x[:-1]
-    return True
-
-mx = 1000000
-genprimes(mx)
-#print(sorted(list(primed)))
-c = 1
-for x in range(3, mx):
-    if roundprime(x):
-        c += 1
-print(c)
