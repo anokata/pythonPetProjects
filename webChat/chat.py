@@ -1,4 +1,4 @@
-from bottle import run, route, post, request
+from bottle import run, route, post, request, default_app
 import auth
 import chats
 from urls import *
@@ -88,5 +88,8 @@ def addChat(name, users):
     r = cht.add(name, users)
     return 'OK' if r else 'not'
 
+if __name__=='__main__':
+    run(host='localhost', port=7000, reloader=True)
+    
+#application = default_app()
 
-run(host='localhost', port=7000, reloader=True)
