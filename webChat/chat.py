@@ -6,6 +6,7 @@ users = auth.Users()
 users.add('adm', 'asm')
 cht = chats.Chats()
 #TODO: читать чат может только один из его пользователей авторизованный
+# хранить пользователей, чаты
 br = '<br>'
 br = '\n'
 @route(urlHist, method='POST')

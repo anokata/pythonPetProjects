@@ -1,8 +1,11 @@
+import pickle
+import os
 #TODO namedtuple
 class Users():
     users = {} # name:(passhash, id)
     lastId = 0
     authorized = []
+    filename = 'users.pdb'
     
     def __init__(self):
         self.users = dict()
@@ -57,7 +60,15 @@ class Users():
         return name in self.authorized
 
     def load(self):
-        pass
+        if os.path.exists(self.filename):
+            with open(self.filename, 'rb') as fin:
+                data = pickle.loads(fin.read())
+                self.lastId = data['lastId']
+                self.users = data['users']
+
     def save(self):
-        pass
+        data = {'users':self.users, 'lastId': self.lastId}
+        with open(self.filename, 'wb') as fout:
+            fout.write(pickle.dumps(data))
+
 

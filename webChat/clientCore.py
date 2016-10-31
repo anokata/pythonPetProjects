@@ -78,7 +78,10 @@ def auth():
     r = req(authUrl, {'name':name, 'pswd':pswd})
     viewtext(r)
 
+chatMsg = 0
+usernameAuth = userpassAuth = 0
 def maintest():
+    global chatMsg, usernameAuth, userpassAuth
     main = tk.Tk()
     main.bind('<Key>', keyPress)
     main.bind('<Escape>', exit)
