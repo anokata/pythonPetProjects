@@ -30,6 +30,7 @@ textLayer = None
 menu = None
 hud = None
 globmap = 0
+inventory = 0
 
 def menuKeyDown(k, d):
     if k == pygame.K_DOWN:
@@ -123,7 +124,7 @@ def drawMenu():
 def drawMain():
     #screen.set_colorkey((0,0,0))
     screen.blit(bgSurface.image, (0, 0))
-    global cam, player, textLayer, globmap
+    global cam, player, textLayer, globmap, inventory
     cam.stalkAt(player)
     
     for (e, r) in textLayer['hud']:
@@ -131,6 +132,9 @@ def drawMain():
 
     globmap.draw(cam) 
     screen.blit(player.image, player.getRect(cam))
+    #inv test
+    if inventory:
+        inventory.draw()
     pygame.display.flip()
 
 def mainMechanic(d, p, e):
@@ -144,7 +148,7 @@ def main():
 
 def mainInit():
     global screen
-    global collided, cam, player, enemies, Layers, textLayer 
+    global collided, cam, player, enemies, Layers, textLayer, inventory
     global bgSurface
     screen = pygame.display.set_mode(Display)
     pygame.display.set_caption("/TXS/")
@@ -179,9 +183,9 @@ def mainInit():
     # gobj test
     g1 = gameObjects.GObject('apple')
     print(g1.typ)
-    inv = gameInventory.GInventory()
-    inv.add(g1)
-    print(inv.food)
+    inventory = gameInventory.GInventory(screen)
+    inventory.add(g1)
+    print(inventory.food)
 
 def mainLoop():
     clock = pygame.time.Clock()
