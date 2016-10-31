@@ -90,6 +90,7 @@ def addChat(name, users):
 
 if __name__=='__main__':
     run(host='localhost', port=7000, reloader=True)
+    pass
     
-#application = default_app()
+applicationChat = default_app()
 

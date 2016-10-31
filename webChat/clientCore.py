@@ -3,7 +3,7 @@ import tkinter as tk
 import requests as rq
 from urls import *
 host = 'http://anokata.pythonanywhere.com/'
-host = 'http://localhost:7000/'
+#host = 'http://localhost:7000/'
 gethistUrl = host[:-1] + urlHist
 clearUrl =  host + 'chatclear'
 postUrl = host[:-1] + urlPost
