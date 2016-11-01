@@ -17,14 +17,14 @@ cherry:
 
 stonewall:
     typ: MAPWALL
-    imagename: objects/block2.png 
+    imagename: objects/block1.png 
     mapchar: x
     passable: False
     takeable: False
 
 ground0:
     typ: MAPGROUND
-    imagename: objects/ground0.png
+    imagename: objects/ground1.png
     mapchar: _
     passable: True
     takeable: False
