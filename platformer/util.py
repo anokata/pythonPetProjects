@@ -25,4 +25,20 @@ class Block(pygame.sprite.Sprite): # base class for sprites?
     def simpleDraw(self, screen):
         screen.blit(self.image, (self.rect.left, self.rect.top))
 
+class Font():
+    def __init__(self, size, color = (255, 255, 255), bgcolor=False):
+        self.h = h = size
+        self.color = color
+        self.bg = bgcolor
+        self.font = pygame.font.Font(None, h)
+
+    def render(self, t):
+        if self.bg:
+            return self.font.render(t, 1, self.color, self.bg)
+        else:
+            return self.font.render(t, 1, self.color)
+
+    def get_rect(self):
+        return self.font.get_rect()
+
 

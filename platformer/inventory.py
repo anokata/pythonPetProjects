@@ -24,12 +24,22 @@ class Inventory():
         self.sizes[typ] = (w,h,max,count+1)
         return count
 
+    def getStored(self, obj):
+        for n, x in self.categorys[obj.typ].items():
+            if x.obj == obj:
+                return x
+        return False
+
     def add(self, obj):
         if obj.typ == FOOD:
             # find existed
-
-            cellIndex = self.getEmptyCell(FOOD)
-            if cellIndex != None:
-                self.food[cellIndex] = obj
+            inventoryObj = self.getStored(obj)
+            if not inventoryObj:
+                cellIndex = self.getEmptyCell(FOOD)
+                if cellIndex != None:
+                    self.food[cellIndex] = obj.pack()
+                    return True
+            else:
+                inventoryObj.add()
                 return True
         return False

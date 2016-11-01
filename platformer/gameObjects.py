@@ -1,7 +1,8 @@
 import objects
 import pygame
-from util import Block
+from util import Block, Font
 objectFactory = objects.ObjectsFactory()
+
 
 class GObject(Block):
     
@@ -10,6 +11,20 @@ class GObject(Block):
         super().__init__(imgname=self.baseObject.imagename)
         self.typ = self.baseObject.typ
 
+    def pack(self):
+        return ObjectPack(self)
+
+class ObjectPack():
+
+    count = 1
+    obj = None
+
+    def __init__(self, obj):
+        self.obj = obj
+        self.image = obj.image
+
+    def add(self):
+        self.count += 1
 
 if __name__=='__main__':
     pygame.init()

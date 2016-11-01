@@ -1,20 +1,5 @@
 import pygame
-
-class Font():
-    def __init__(self, size, color = (255, 255, 255), bgcolor=False):
-        self.h = h = size
-        self.color = color
-        self.bg = bgcolor
-        self.font = pygame.font.Font(None, h)
-
-    def render(self, t):
-        if self.bg:
-            return self.font.render(t, 1, self.color, self.bg)
-        else:
-            return self.font.render(t, 1, self.color)
-
-    def get_rect(self):
-        return self.font.get_rect()
+from util import Font
 
 class MenuList():
     items = []

@@ -1,5 +1,6 @@
 import pygame
 import inventory
+from util import Font
 #TODO отображение. переключение в него, управление.
 class GInventory(inventory.Inventory):
     backgroundImg = 'objects/inventoryBG.png'
@@ -16,6 +17,7 @@ class GInventory(inventory.Inventory):
         self.bgRect = self.bg.get_rect()
         self.bgRect.left = self.x
         self.bgRect.top = self.y
+        self.font = Font(22, (100, 255, 255))
 
     def draw(self):
         self.screen.blit(self.bg, self.bgRect)
@@ -36,4 +38,10 @@ class GInventory(inventory.Inventory):
                     cellRect.left += (cellRect.width - objw)//2
                     cellRect.top += (cellRect.height - objh)//2
                     self.screen.blit(obj.image, cellRect)
+                    # text count of objects
+                    text = self.font.render(str(obj.count))
+                    cellRect.left = self.x + (self.panx + cellRect.width) * x + self.panx*3
+                    cellRect.top = self.y + (self.pany + cellRect.height) * y + self.pany*3
+                    self.screen.blit(text, cellRect)
+
 
