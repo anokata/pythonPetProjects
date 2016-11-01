@@ -32,6 +32,10 @@ hud = None
 globmap = 0
 inventory = 0
 
+def inventoryKeyDown(k, d):
+    if k == pygame.K_i:
+        changeState('mainRun')
+
 def menuKeyDown(k, d):
     if k == pygame.K_DOWN:
         menu.next()
@@ -59,6 +63,8 @@ def keyDown(k, d):
         player.movingud = -1
     if k == pygame.K_z:
         player.kick()
+    if k == pygame.K_i:
+        changeState('inventory')
 
 def keyUp(k, d):
     global player
@@ -132,7 +138,11 @@ def drawMain():
 
     globmap.draw(cam) 
     screen.blit(player.image, player.getRect(cam))
-    #inv test
+    pygame.display.flip()
+
+def drawInventory():
+    screen.blit(bgSurface.image, (0, 0))
+    global inventory
     if inventory:
         inventory.draw()
     pygame.display.flip()
@@ -159,11 +169,14 @@ def mainInit():
     bgSurface.image.fill((0,0,0))
     player = pgPlayer(44, 44)
     addState('mainRun')
+    addState('inventory')
     changeState('mainRun')
     setEventHandler('mainRun', 'draw', drawMain)
     setEventHandler('mainRun', 'keyDown', keyDown)
     setEventHandler('mainRun', 'keyUp', keyUp)
     setEventHandler('mainRun', 'mechanic', mainMechanic)
+    setEventHandler('inventory', 'draw', drawInventory)
+    setEventHandler('inventory', 'keyDown', inventoryKeyDown)
     
     global globmap
     b = Block()
@@ -182,11 +195,11 @@ def mainInit():
 
     # gobj test
     g1 = gameObjects.GObject('apple')
-    print(g1.typ)
-    #TODO переключение на инв. добавление объекта, вишни, и чтобы стало 2 яблока. переключение категорий. выбор объектов, действия.
+    #print(g1.typ)
+    #TODO добавление объекта, вишни, и чтобы стало 2 яблока. переключение категорий. выбор объектов, действия.
     inventory = gameInventory.GInventory(screen)
     inventory.add(g1)
-    print(inventory.food)
+    #print(inventory.food)
 
 def mainLoop():
     clock = pygame.time.Clock()
