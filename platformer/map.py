@@ -9,8 +9,10 @@ from util import Block
 # Обработка коллизий с нужными объектами
 class PhisycBlock():
     rect = 0
-    def __init__(self, x, y, w):
+    obj = None
+    def __init__(self, x, y, w, obj):
         self.rect = pygame.Rect(x, y, w, w)
+        self.obj = obj
 
 class Map():
     tiles = 0
@@ -28,6 +30,9 @@ class Map():
 
     def __getitem__(self, k):
         return self.tiles[k]
+
+    def removeObject(self, obj):
+        pass
     
     def draw(self, cam):
         for lay in self.tiles:
@@ -61,6 +66,7 @@ class Map():
         self.objectNames = objectNames 
         self.blockW = self.blockH = 42 # CHG REad
         mapObjects = dict()
+        # Объекты должны быть и разные, по экземпляру каждый раз.
         for objectName in objectNames:
             obj = gameObjects.GObject(objectName)
             mapObjects[obj.baseObject.mapchar] = obj
@@ -89,7 +95,7 @@ class Map():
                         if not mapObjects[char].baseObject.passable:
                             obj = mapObjects[char]
                             a, b = (x-0) * self.blockW, (y-0) * self.blockH
-                            self.blockers.append(PhisycBlock(a, b, obj.rect.width))
+                            self.blockers.append(PhisycBlock(a, b, obj.rect.width, obj))
             i += 1
 
     def save(self):
@@ -99,6 +105,7 @@ class Map():
                 for l in lay: # CHG Layers for all
                     fout.write(l+'\n')
                 fout.write('\n')
+        #CHNG!!!
             for c, img in self.descrp.items():
                 img = img[0]
                 fout.write(c + ' ' + img)

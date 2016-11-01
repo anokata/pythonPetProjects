@@ -2,6 +2,7 @@ import pygame
 import pyganim
 from itertools import repeat
 import gameInventory
+from objectTypes import *
 # TODO: отдельные ректы для рисования и физики. останавливаться когда бьёт?
 
 class Player():
@@ -127,10 +128,17 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, e):
                 self.dx = -self.dx
 
+    def collideObject(self, phisObj):
+        print(phisObj.obj.typ)
+        if phisObj.obj.typ == FOOD:
+            self.inventory.add(phisObj.obj)
+            #надо убрать объект с карты
+
     def collide(self, dx, dy, platforms):
         self.rectphistoimg()
         for p in platforms:
             if pygame.sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
+                self.collideObject(p)
                 if dx > 0:                      # если движется вправо
                     self.rect.right = p.rect.left # то не движется вправо
                 if dx < 0:                      # если движется влево
