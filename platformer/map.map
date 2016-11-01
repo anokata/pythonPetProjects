@@ -21,10 +21,10 @@ ______________________________________________
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xD_c_rr___xx_______x____x____________________x
 xW_A_bb___x_x______x___k_____________________x
-xBSF0rb_c_x_____c______k_____________________x
-xgggg_g_xxxx___xxxxx___k_____________________x
-x_g_______x_R===L_ss___k_____________________x
-x_________xx|x_E/_ssssskx____________________x
+xBSFAAAAc_x_____c______k_____________________x
+xggWFCWFCxxx___xxxxx___k_____________________x
+x_g____A__x_R===L_ss___k_____________________x
+x______A__xx|x_E/_ssssskx____________________x
 x_____l_____|__________kx____________________x
 x_E=========/_x____x___k_____________________x
 x_x__xlll_x____xxxxx___k_____________________x
@@ -39,6 +39,9 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 apple
 stonewall
 ground0
+fish
+cherry
+wood
 endObjectNames
 
 c objects/zap0.png

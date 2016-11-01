@@ -18,7 +18,6 @@ Sprite = pygame.sprite.Sprite
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
 
 # Globals
-player = None
 bgSurface = None
 screen = 0
 collided = list()
@@ -27,9 +26,6 @@ cam = Camera(400, 300)
 #http://www.pygame.org/docs/ref/key.html
 entities = None
 textLayer = None
-menu = None
-hud = None
-globmap = 0
 
 def inventoryKeyDown(k, d):
     if k == pygame.K_i:
@@ -155,6 +151,12 @@ def main():
     mainInit()
     mainLoop()
 
+#class World():
+player = None
+menu = None
+hud = None
+globmap = 0
+
 def mainInit():
     global screen
     global collided, cam, player, enemies, Layers, textLayer
@@ -166,7 +168,6 @@ def mainInit():
     bgSurface.image = pygame.image.load('nightSky0.png').convert()
     bgSurface.image = pygame.Surface([800,1000])
     bgSurface.image.fill((0,0,0))
-    player = pgPlayer(44, 44, screen)
     addState('mainRun')
     addState('inventory')
     changeState('mainRun')
@@ -182,6 +183,7 @@ def mainInit():
     globmap = Map(2, screen)
     collided = globmap.blockers # CHG
     #globmap.save()
+    player = pgPlayer(44, 44, screen, globmap)
 
     mp = list()
     entities = list()

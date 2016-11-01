@@ -26,6 +26,10 @@ class Inventory():
 
     def add(self, obj):
         if obj.typ == FOOD:
+            # find existed
+
             cellIndex = self.getEmptyCell(FOOD)
             if cellIndex != None:
                 self.food[cellIndex] = obj
+                return True
+        return False

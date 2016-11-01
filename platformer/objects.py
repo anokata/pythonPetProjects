@@ -26,6 +26,17 @@ class ObjectsFactory():
             return obj
         return False
 
+class ObjectPack():
+
+    count = 1
+    obj = None
+
+    def __init__(self, obj):
+        self.obj = obj
+
+    def add(self, obj):
+        self.count += 1
+
 if __name__=='__main__':
     factory = ObjectsFactory()
     ob1 = factory.createObject('apple')

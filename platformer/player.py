@@ -40,7 +40,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     faceat = 0 # UP LEFT RIGHT
     inventory = None
 
-    def __init__(self, x, y, screen):
+    def __init__(self, x, y, screen, map):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('none.png').convert()
         size = self.image.get_rect().size
@@ -64,6 +64,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.changeAnim(self.AnimStand)
 
         self.inventory = gameInventory.GInventory(screen)
+        self.map = map
 
     def animLoad(self, animlist):
         animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))
@@ -131,14 +132,17 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def collideObject(self, phisObj):
         print(phisObj.obj.typ)
         if phisObj.obj.typ == FOOD:
-            self.inventory.add(phisObj.obj)
-            #надо убрать объект с карты
+            if self.inventory.add(phisObj.obj):
+                #надо убрать объект с карты
+                self.map.removeObject(phisObj)
 
     def collide(self, dx, dy, platforms):
         self.rectphistoimg()
         for p in platforms:
             if pygame.sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
                 self.collideObject(p)
+                if p.obj.baseObject.passable:
+                    return
                 if dx > 0:                      # если движется вправо
                     self.rect.right = p.rect.left # то не движется вправо
                 if dx < 0:                      # если движется влево

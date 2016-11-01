@@ -5,7 +5,8 @@ apple:
     material: bio
     weight: 100
     takeable: True
-    passable: False
+    collided: True
+    passable: True
     mapchar: A
 cherry:
     typ: FOOD
@@ -14,6 +15,9 @@ cherry:
     material: bio
     weight: 20
     passable: True
+    mapchar: C
+    takeable: True
+    collided: True
 
 stonewall:
     typ: MAPWALL
@@ -21,6 +25,7 @@ stonewall:
     mapchar: x
     passable: False
     takeable: False
+    collided: True
 
 ground0:
     typ: MAPGROUND
@@ -28,3 +33,28 @@ ground0:
     mapchar: _
     passable: True
     takeable: False
+    collided: False
+
+wood:
+    typ: FOOD
+    basePrice: 1
+    imagename: objects/wood0.png
+    material: bio
+    weight: 100
+    takeable: True
+    passable: False
+    mapchar: W
+    collided: True
+
+fish:
+    typ: FOOD
+    basePrice: 1
+    imagename: objects/fish.png
+    material: bio
+    weight: 100
+    takeable: True
+    passable: False
+    mapchar: F
+    collided: True
+
+

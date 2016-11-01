@@ -7,6 +7,8 @@ from util import Block
 
 #TODO Переделать загрузку объектов
 # Обработка коллизий с нужными объектами
+GRIDH = 42
+ObjectLayer = 1
 class PhisycBlock():
     rect = 0
     obj = None
@@ -31,8 +33,15 @@ class Map():
     def __getitem__(self, k):
         return self.tiles[k]
 
-    def removeObject(self, obj):
-        pass
+    def removeObject(self, phisObj):
+        obj = phisObj.obj
+        rect = phisObj.rect
+        x = rect.left // GRIDH
+        y = rect.top // GRIDH
+        if obj in self.tiles[ObjectLayer][x,y]:
+            self.tiles[ObjectLayer][x,y].remove(obj)
+        self.blockers.remove(phisObj)
+        #remove from phis objs
     
     def draw(self, cam):
         for lay in self.tiles:
@@ -64,9 +73,9 @@ class Map():
                 objectNames.append(objectName)
 
         self.objectNames = objectNames 
-        self.blockW = self.blockH = 42 # CHG REad
+        self.blockW = self.blockH = GRIDH # CHG REad
         mapObjects = dict()
-        # Объекты должны быть и разные, по экземпляру каждый раз.
+        # Объекты должны быть и разные, по экземпляру каждый раз. а может и нет. Просто для множества сделать ПакОбъект. а на карте они остаются в других ячейках же.
         for objectName in objectNames:
             obj = gameObjects.GObject(objectName)
             mapObjects[obj.baseObject.mapchar] = obj
@@ -92,7 +101,7 @@ class Map():
                     char = lev[y][x]
                     if char in mapObjects:
                         self.tiles[i][x,y] += [mapObjects[char]]
-                        if not mapObjects[char].baseObject.passable:
+                        if mapObjects[char].baseObject.collided:
                             obj = mapObjects[char]
                             a, b = (x-0) * self.blockW, (y-0) * self.blockH
                             self.blockers.append(PhisycBlock(a, b, obj.rect.width, obj))
