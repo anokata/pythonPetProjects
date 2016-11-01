@@ -1,6 +1,7 @@
 import pygame
 import pyganim
 from itertools import repeat
+import gameInventory
 # TODO: отдельные ректы для рисования и физики. останавливаться когда бьёт?
 
 class Player():
@@ -36,8 +37,9 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     rectImg = pygame.Rect(0,0,0,0)
     kicking = 0
     faceat = 0 # UP LEFT RIGHT
+    inventory = None
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, screen):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('none.png').convert()
         size = self.image.get_rect().size
@@ -59,6 +61,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.AnimKickTicks = 10
 
         self.changeAnim(self.AnimStand)
+
+        self.inventory = gameInventory.GInventory(screen)
 
     def animLoad(self, animlist):
         animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))

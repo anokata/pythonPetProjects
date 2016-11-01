@@ -30,7 +30,6 @@ textLayer = None
 menu = None
 hud = None
 globmap = 0
-inventory = 0
 
 def inventoryKeyDown(k, d):
     if k == pygame.K_i:
@@ -130,7 +129,7 @@ def drawMenu():
 def drawMain():
     #screen.set_colorkey((0,0,0))
     screen.blit(bgSurface.image, (0, 0))
-    global cam, player, textLayer, globmap, inventory
+    global cam, player, textLayer, globmap
     cam.stalkAt(player)
     
     for (e, r) in textLayer['hud']:
@@ -142,9 +141,9 @@ def drawMain():
 
 def drawInventory():
     screen.blit(bgSurface.image, (0, 0))
-    global inventory
-    if inventory:
-        inventory.draw()
+    global player
+    if player.inventory:
+        player.inventory.draw()
     pygame.display.flip()
 
 def mainMechanic(d, p, e):
@@ -158,7 +157,7 @@ def main():
 
 def mainInit():
     global screen
-    global collided, cam, player, enemies, Layers, textLayer, inventory
+    global collided, cam, player, enemies, Layers, textLayer
     global bgSurface
     screen = pygame.display.set_mode(Display)
     pygame.display.set_caption("/TXS/")
@@ -167,7 +166,7 @@ def mainInit():
     bgSurface.image = pygame.image.load('nightSky0.png').convert()
     bgSurface.image = pygame.Surface([800,1000])
     bgSurface.image.fill((0,0,0))
-    player = pgPlayer(44, 44)
+    player = pgPlayer(44, 44, screen)
     addState('mainRun')
     addState('inventory')
     changeState('mainRun')
@@ -193,13 +192,9 @@ def mainInit():
     menu = createMenu('men1', ['it0','it2','end'])
     hud = Hud(textLayer, WindowW-150, WindowH-30)
 
-    # gobj test
-    g1 = gameObjects.GObject('apple')
-    #print(g1.typ)
+    #g1 = gameObjects.GObject('apple')
     #TODO добавление объекта, вишни, и чтобы стало 2 яблока. переключение категорий. выбор объектов, действия.
-    inventory = gameInventory.GInventory(screen)
-    inventory.add(g1)
-    #print(inventory.food)
+    #inventory.add(g1)
 
 def mainLoop():
     clock = pygame.time.Clock()
