@@ -32,5 +32,11 @@ def genprimes(n):
             print(x)
     print('prime generated')
 
+def justPrime(n):
+    m = int(math.sqrt(n)) + 2
+    for x in range(3, m, 2):
+        if n%x == 0:
+            return False
+    return True
 
 
