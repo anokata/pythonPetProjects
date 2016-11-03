@@ -13,11 +13,13 @@ def isStraightTriangle(a, b, c):
 #print(isStraightTriangle(3,4,5))
 #count = 0
 perimeterCounter = collections.Counter()
+for x,y,z in zip(range(1,n),range(1,n),range(1,n)):
+    print(x)
 for x in range(1, n):
     print(x)
     for y in range(1, n):
         for z in range(1, n):
-            if isStraightTriangle(x, y, z):
+            #if isStraightTriangle(x, y, z):
                 perimeter = x + y + z
                 if perimeter <= 1000:
                     perimeterCounter[perimeter] += 1
