@@ -1,4 +1,8 @@
 from objectTypes import *
+from collections import namedtuple
+
+Size = namedtuple("InventorySize", "w,h,len,current")
+
 class Inventory():
     food = {} # (x,y) in cell  = obj/ not (x) in cell = obj а потом преобразуем в коорд x y
     sizes = {} # nameCategory : w, h, w*h, current
@@ -8,9 +12,13 @@ class Inventory():
     def __init__(self):
         self.food = dict()
         self.sizes = dict()
-        self.sizes[FOOD] = (2,2, 2*2, 0)
+        self.sizes[FOOD] = Size(2,2,2*2,0) #(2,2, 2*2, 0)
         self.categorys = dict()
         self.categorys[FOOD] = self.food
+
+    def next(self):
+        cat = self.sizes[self.activeCategory] 
+        cat = cat._replace(current=cat.current+1)
 
     def getTab(self):
         return self.categorys[self.activeCategory]
