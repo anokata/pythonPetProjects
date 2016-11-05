@@ -30,7 +30,7 @@ for p1 in p:
                     if p1!=p2!=p3:
                         d1 = p1-p2
                         d2 = p2-p3
-                        if d1==d2 and abs(d1) == 3330:
+                        if d1==d2 and abs(d1) == 3330 and p1 != 1487:
                             i += 1
                             if i%300==0:
                                 print(p1,p2,p3,d1,d2)
