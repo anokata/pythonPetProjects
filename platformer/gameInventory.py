@@ -18,6 +18,23 @@ class GInventory(inventory.Inventory):
         self.bgRect.left = self.x
         self.bgRect.top = self.y
         self.font = Font(22, (100, 255, 255))
+        self.cellRect = self.cell.get_rect()
+
+    def refactored_draw(self):
+        self._draw_bg()
+        w,h, *_ = self.getTabSize()
+        for x in range(w):
+            for y in range(h):
+                self._draw_cell(x, y)
+
+    def _draw_bg(self):
+        self.screen.blit(self.bg, self.bgRect)
+
+    def _draw_cell(self, x, y):
+        self.screen.blit(self.cell, self._calc_cell_rect(x, y))
+        pass
+
+
 
     def draw(self):
         self.screen.blit(self.bg, self.bgRect)
@@ -43,5 +60,7 @@ class GInventory(inventory.Inventory):
                     cellRect.left = self.x + (self.panx + cellRect.width) * x + self.panx*3
                     cellRect.top = self.y + (self.pany + cellRect.height) * y + self.pany*3
                     self.screen.blit(text, cellRect)
+                    if y*w+x == self.getActiveIndex:
+                        pass
 
 

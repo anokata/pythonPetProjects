@@ -16,6 +16,9 @@ class Inventory():
         self.categorys = dict()
         self.categorys[FOOD] = self.food
 
+    def getActiveIndex(self):
+        return self.sizes[self.activeCategory].current
+
     def next(self):
         cat = self.sizes[self.activeCategory] 
         cat = cat._replace(current=cat.current+1)
