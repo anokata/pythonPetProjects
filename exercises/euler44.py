@@ -11,7 +11,7 @@ def generatePentaNumbers(n):
 p = generatePentaNumbers(10000)
 ps = set(p)
 dd = list()
-d = 100
+d = 100000000000000
 i = 0
 for p1, p2 in product(p, p):
     if p1 != p2:
