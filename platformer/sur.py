@@ -14,6 +14,8 @@ from map import *
 import gameObjects
 import gameInventory
 import enemy
+import bullet
+
 Sprite = pygame.sprite.Sprite
 
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
@@ -61,6 +63,12 @@ def keyDown(k, d):
         player.kick()
     if k == pygame.K_i:
         changeState('inventory')
+    keyfuncs = {
+        pygame.K_x: player.shoot,
+            }
+    fun = keyfuncs.get(k, False)
+    if fun:
+        fun()
 
 def keyUp(k, d):
     global player
@@ -133,7 +141,8 @@ def drawMain():
         screen.blit(e, r)
 
     globmap.draw(cam) 
-    screen.blit(player.image, player.getRect(cam))
+    #screen.blit(player.image, player.getRect(cam))
+    player.draw(cam)
     for e in enemies:
         screen.blit(e.image, e.getRect(cam))
 

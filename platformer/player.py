@@ -4,6 +4,7 @@ from itertools import repeat
 import gameInventory
 from objectTypes import *
 # TODO: отдельные ректы для рисования и физики. останавливаться когда бьёт?
+import bullet
 
 class Player():
     health = 100
@@ -64,7 +65,9 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.changeAnim(self.AnimStand)
 
         self.inventory = gameInventory.GInventory(screen)
+        self.screen = screen
         self.map = map
+        self.bullets = list()
 
     def animLoad(self, animlist):
         animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))
@@ -76,6 +79,32 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.image.fill(pygame.Color('#000000'))
         a.blit(self.image, (0, 0))
         #self.image.scroll(dy=20)
+
+    def shoot(self):
+        if self.faceat == self.RIGHT:
+            dx = 1
+        else:
+            dx = -1
+        dy = 0
+        if self.faceat == self.UP:
+            dy = 1
+        if self.faceat == self.DOWN:
+            dy = -1
+
+        dy -= self.movingud
+        print(self.movingud)
+        dx -= self.moving
+        self.bullets.append(bullet.Bullet(self.rect.x, self.rect.y, dx, dy))
+        print(self.bullets)
+
+    def drawBullets(self, cam):
+        for b in self.bullets:
+            b.draw(b.rect.x, b.rect.y, cam, self.screen)
+
+    def draw(self, cam):
+        self.screen.blit(self.image, self.getRect(cam))
+        self.drawBullets(cam)
+
     
     def getRect(self, cam):
         return cam.calcXY(self.rectImg.x, self.rectImg.y)
@@ -86,23 +115,49 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def rectphistoimg(self):
         self.rectImg = pygame.Rect(self.rect.x, self.rect.y - wallInpact, self.rectImg.width, self.rectImg.height)
 
+    def allstep(self, enemies, platforms):
+        bullet_to_remove = list()
+        for b in self.bullets:
+            b.fly()
+            killed = b.kill(enemies)
+            if killed:
+                bullet_to_remove.append(b)
+                # enemy wound
+
+            smashed = b.smash(platforms)
+            if smashed:
+                bullet_to_remove.append(b)
+
+        for b in bullet_to_remove:
+            self.bullets.remove(b)
+
+
+    UP = 0
+    DOWN = 1
+    RIGHT = 2
+    LEFT = 3
+
     def moveSide(self, dt, platforms, enemies):
         self.step()
-        if self.faceat == 0:
+        self.allstep(enemies, platforms)
+        if self.faceat == self.UP or self.faceat == self.DOWN:
             self.changeAnim(self.AnimStand)
-        elif self.faceat == 1:
+        elif self.faceat == self.RIGHT:
             self.changeAnim(self.AnimStandR)
-        elif self.faceat == 2:
+        elif self.faceat == self.LEFT:
             self.changeAnim(self.AnimStandL)
 
         if self.dx < 0:
             self.changeAnim(self.AnimLeft)
-            self.faceat = 2
+            self.faceat = self.LEFT
         elif self.dx > 0:
             self.changeAnim(self.AnimRight)
-            self.faceat = 1
-        elif self.dy > 0 or self.dy < 0:
-            self.faceat = 0
+            self.faceat = self.RIGHT
+        elif self.dy > 0:
+            self.faceat = self.UP
+            self.changeAnim(self.AnimUp)
+        elif self.dy < 0:
+            self.faceat = self.DOWN
             self.changeAnim(self.AnimUp)
 
         if self.kicking:
