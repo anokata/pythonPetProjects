@@ -199,8 +199,11 @@ def mainInit():
     collided = globmap.blockers # CHG
     #globmap.save()
     player = pgPlayer(44, 44, screen, globmap)
+    eFactory = enemy.EnemyFactory(screen, globmap)
+
     for i in range(10):
         enemies.append(enemy.Enemy(100+i*20,100,screen, globmap))
+        enemies.append(eFactory.create('poringp', 200*i, 120))
 
     mp = list()
     entities = list()

@@ -1,8 +1,8 @@
 import player
 import random
 import pygame
+import yaml
 
-AnimStand = ['objects/poringb.png', 'objects/poringb1.png','objects/poringb2.png']
 class Enemy(player.pgPlayer):
 
     ticks = 0
@@ -10,9 +10,15 @@ class Enemy(player.pgPlayer):
     spd = 1
     health = 2
     canPickUp = False
+    animStand = ['objects/poringb.png', 'objects/poringb1.png','objects/poringb2.png']
     
-    def __init__(self, x, y, screen, map):
+    def __init__(self, x, y, screen, map, load=True):
         super().__init__(x, y, screen, map)
+        if load:
+            self.load(x, y)
+
+    def load(self, x, y):
+        AnimStand = self.animStand
         self.image = pygame.image.load(AnimStand[0]).convert()
         self.AnimStand = self.animLoad(AnimStand) 
         self.changeAnim(self.AnimStand)
@@ -25,6 +31,7 @@ class Enemy(player.pgPlayer):
         self.AnimUp = self.AnimStand
         self.AnimStandR = self.AnimStand
         self.AnimStandL = self.AnimStand
+
 
     def randomMove(self, dt, platforms, enemies):
         self.ticks += 1
@@ -41,12 +48,24 @@ class Enemy(player.pgPlayer):
         return False
 
 class EnemyFactory():
+    enemiesFileName = 'enemies.yaml'
+
     def __init__(self, screen, map):
         self.screen = screen
         self.map = map
+        self.load()
 
-    def create(self, name):
-        e = Enemy(0,0, self.screen, self.map)
+    def load(self):
+        self.prototypes = yaml.load(open(self.enemiesFileName))
+
+    def create(self, name, x, y):
+        e = False
+        if name in self.prototypes:
+            objectModel = self.prototypes[name]
+            e = Enemy(0,0, self.screen, self.map)
+            for propname, propvalue in objectModel.items():
+                setattr(e, propname, propvalue)
+            e.load(x, y)
         return e
 
 

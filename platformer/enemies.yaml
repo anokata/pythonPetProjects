@@ -4,3 +4,9 @@ poringb:
         - objects/poringb1.png
         - objects/poringb2.png
     health: 2
+poringp:
+    animStand: 
+        - objects/poringp0.png
+        - objects/poringp1.png
+        - objects/poringp2.png
+    health: 1
