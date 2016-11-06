@@ -8,6 +8,8 @@ class Enemy(player.pgPlayer):
     ticks = 0
     maxticks = 30
     spd = 1
+    health = 2
+    canPickUp = False
     
     def __init__(self, x, y, screen, map):
         super().__init__(x, y, screen, map)
@@ -32,3 +34,8 @@ class Enemy(player.pgPlayer):
             self.movingud = random.randint(-1,1)
         self.moveSide(0, platforms, [])
 
+    def wound(self, damage):
+        self.health -= damage
+        if self.health <= 0:
+            return True
+        return False

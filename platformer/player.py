@@ -15,6 +15,7 @@ class Player():
     dy = 0
     dx = 0.0
     energy = 100.0
+    canPickUp = True
 
     def __init__(self):
         pass
@@ -92,10 +93,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             dy = -1
 
         dy -= self.movingud
-        print(self.movingud)
         dx -= self.moving
         self.bullets.append(bullet.Bullet(self.rect.x, self.rect.y, dx, dy))
-        print(self.bullets)
 
     def drawBullets(self, cam):
         for b in self.bullets:
@@ -117,19 +116,29 @@ class pgPlayer(Player, pygame.sprite.Sprite):
 
     def allstep(self, enemies, platforms):
         bullet_to_remove = list()
+        enemies_to_wound = list()
+        enemies_to_kill = list()
         for b in self.bullets:
             b.fly()
             killed = b.kill(enemies)
             if killed:
                 bullet_to_remove.append(b)
-                # enemy wound
+                enemies_to_wound.append(killed)
 
             smashed = b.smash(platforms)
             if smashed:
                 bullet_to_remove.append(b)
 
         for b in bullet_to_remove:
-            self.bullets.remove(b)
+            if b in self.bullets:
+                self.bullets.remove(b)
+        for e in enemies_to_wound:
+            killed = e.wound(1)
+            if killed:
+                enemies_to_kill.append(e)
+        for e in enemies_to_kill:
+            if e in enemies:
+                enemies.remove(e)
 
 
     UP = 0
@@ -186,10 +195,11 @@ class pgPlayer(Player, pygame.sprite.Sprite):
 
     def collideObject(self, phisObj):
         #print(phisObj.obj.typ)
-        if phisObj.obj.typ == FOOD:
-            if self.inventory.add(phisObj.obj):
-                #надо убрать объект с карты
-                self.map.removeObject(phisObj)
+        if self.canPickUp:
+            if phisObj.obj.typ == FOOD:
+                if self.inventory.add(phisObj.obj):
+                    #надо убрать объект с карты
+                    self.map.removeObject(phisObj)
 
     def collide(self, dx, dy, platforms):
         self.rectphistoimg()
