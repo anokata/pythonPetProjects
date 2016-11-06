@@ -39,3 +39,14 @@ class Enemy(player.pgPlayer):
         if self.health <= 0:
             return True
         return False
+
+class EnemyFactory():
+    def __init__(self, screen, map):
+        self.screen = screen
+        self.map = map
+
+    def create(self, name):
+        e = Enemy(0,0, self.screen, self.map)
+        return e
+
+

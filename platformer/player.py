@@ -82,9 +82,10 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         #self.image.scroll(dy=20)
 
     def shoot(self):
+        dx = 0
         if self.faceat == self.RIGHT:
             dx = 1
-        else:
+        elif self.faceat == self.LEFT:
             dx = -1
         dy = 0
         if self.faceat == self.UP:
@@ -145,7 +146,6 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     DOWN = 1
     RIGHT = 2
     LEFT = 3
-
     def moveSide(self, dt, platforms, enemies):
         self.step()
         self.allstep(enemies, platforms)

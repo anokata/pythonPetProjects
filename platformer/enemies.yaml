@@ -1,0 +1,6 @@
+poringb:
+    animStand: 
+        - objects/poringb.png
+        - objects/poringb1.png
+        - objects/poringb2.png
+    health: 2
