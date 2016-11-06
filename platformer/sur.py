@@ -13,6 +13,7 @@ from consts import *
 from map import *
 import gameObjects
 import gameInventory
+import enemy
 Sprite = pygame.sprite.Sprite
 
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
@@ -125,7 +126,7 @@ def drawMenu():
 def drawMain():
     #screen.set_colorkey((0,0,0))
     screen.blit(bgSurface.image, (0, 0))
-    global cam, player, textLayer, globmap
+    global cam, player, textLayer, globmap, enemies
     cam.stalkAt(player)
     
     for (e, r) in textLayer['hud']:
@@ -133,6 +134,9 @@ def drawMain():
 
     globmap.draw(cam) 
     screen.blit(player.image, player.getRect(cam))
+    for e in enemies:
+        screen.blit(e.image, e.getRect(cam))
+
     pygame.display.flip()
 
 def drawInventory():
@@ -144,6 +148,8 @@ def drawInventory():
 
 def mainMechanic(d, p, e):
     player.moveSide(d, p, e)
+    for e in enemies:
+        e.randomMove(d, p, e)
     hud.refresh()
 
 def main():
@@ -184,6 +190,8 @@ def mainInit():
     collided = globmap.blockers # CHG
     #globmap.save()
     player = pgPlayer(44, 44, screen, globmap)
+    for i in range(10):
+        enemies.append(enemy.Enemy(100+i*20,100,screen, globmap))
 
     mp = list()
     entities = list()

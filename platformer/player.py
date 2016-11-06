@@ -130,7 +130,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                 self.dx = -self.dx
 
     def collideObject(self, phisObj):
-        print(phisObj.obj.typ)
+        #print(phisObj.obj.typ)
         if phisObj.obj.typ == FOOD:
             if self.inventory.add(phisObj.obj):
                 #надо убрать объект с карты
