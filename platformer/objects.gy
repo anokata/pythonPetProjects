@@ -42,7 +42,7 @@ wood:
     material: bio
     weight: 100
     takeable: True
-    passable: False
+    passable: True
     mapchar: W
     collided: True
 
@@ -53,7 +53,7 @@ fish:
     material: bio
     weight: 100
     takeable: True
-    passable: False
+    passable: True
     mapchar: F
     collided: True
 

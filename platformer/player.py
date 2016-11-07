@@ -217,19 +217,12 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                 self.health -= 1
                 self.particles.append(particles.Particles(self.rect.x, self.rect.y, n=3, imgname='objects/particleBlood.png'))
 
-    def collideObject(self, phisObj):
-        #print(phisObj.obj.typ)
-        if self.canPickUp:
-            if phisObj.obj.typ == FOOD:
-                if self.inventory.add(phisObj.obj):
-                    #надо убрать объект с карты
-                    self.map.removeObject(phisObj)
 
     def collide(self, dx, dy, platforms):
         self.rectphistoimg()
         for p in platforms:
             if pygame.sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
-                self.collideObject(p)
+                #self.collideObject(p)
                 if p.obj.baseObject.passable:
                     return
                 if dx > 0:                      # если движется вправо

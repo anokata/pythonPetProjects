@@ -159,10 +159,21 @@ def drawInventory():
 
 def mainMechanic(d, p, e):
     r = player.moveSide(d, p, e)
+    collideObjects()
     for e in enemies:
         e.randomMove(d, p, e)
     hud.refresh()
     return r
+
+def collideObjects():
+#if self.canPickUp:
+    global player, globmap, collided
+    for p in collided:
+        if pygame.sprite.collide_rect(player, p):
+            if p.obj.typ == FOOD:
+                if player.inventory.add(p.obj):
+                    #надо убрать объект с карты
+                    globmap.removeObject(p)
 
 def main():
     pygame.init()
