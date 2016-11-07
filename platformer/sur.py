@@ -43,7 +43,8 @@ def menuKeyDown(k, d):
         changeState('mainRun')
 
 def mechanic(dt):
-    handleEvent('mechanic', dt)
+    r = handleEvent('mechanic', dt)
+    return r
 
 def keyDown(k, d):
     global player
@@ -86,23 +87,25 @@ def keyUp(k, d):
 class Hud():
     items = []
     enrg = 'Energy: %.2f'
+    hp = 'HP: %d'
 
     def __init__(self, layer, x=0, y=10):
         self.layer = layer
         i = self.items = list()
         self.id = 'hud'
         self.rect = pygame.Rect(0,0,0,0)
-        self.font = Font(24, (230, 50, 50))
+        self.font = Font(24, (250, 250, 90))
         self.x = x
         self.y = y
-        i.append(self.enrg)
+        i.append(self.hp)
         self.refresh()
 
     def refresh(self):
         self.layer[self.id] = list()
         y = self.y
         for x in self.items:
-            t = self.font.render(x % player.energy)
+            #t = self.font.render(x % player.energy)
+            t = self.font.render(x % player.health)
             self.rect = t.get_rect()
             self.rect.top = y
             self.rect.left = self.x
@@ -137,11 +140,10 @@ def drawMain():
     global cam, player, textLayer, globmap, enemies
     cam.stalkAt(player)
     
-    for (e, r) in textLayer['hud']:
-        screen.blit(e, r)
-
     globmap.draw(cam) 
     #screen.blit(player.image, player.getRect(cam))
+    for (e, r) in textLayer['hud']:
+        screen.blit(e, r)
     player.draw(cam)
     for e in enemies:
         screen.blit(e.image, e.getRect(cam))
@@ -156,10 +158,11 @@ def drawInventory():
     pygame.display.flip()
 
 def mainMechanic(d, p, e):
-    player.moveSide(d, p, e)
+    r = player.moveSide(d, p, e)
     for e in enemies:
         e.randomMove(d, p, e)
     hud.refresh()
+    return r
 
 def main():
     pygame.init()

@@ -48,5 +48,6 @@ def handleEvent(event, *args):
     global currentState
     fun = stateEventHanders[(currentState, event)]
     if fun:
-        fun(*args)
+        return fun(*args)
+    return False
 

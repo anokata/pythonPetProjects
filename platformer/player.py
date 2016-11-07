@@ -209,11 +209,13 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.collide(0, self.dy, platforms)
 
         self.collideEnemies(enemies)
+        return self. health > 0
 
     def collideEnemies(self, enemies):
         for e in enemies:
             if pygame.sprite.collide_rect(self, e):
-                self.dx = -self.dx
+                self.health -= 1
+                self.particles.append(particles.Particles(self.rect.x, self.rect.y, n=3, imgname='objects/particleBlood.png'))
 
     def collideObject(self, phisObj):
         #print(phisObj.obj.typ)
