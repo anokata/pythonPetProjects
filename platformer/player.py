@@ -5,6 +5,7 @@ import gameInventory
 from objectTypes import *
 # TODO: отдельные ректы для рисования и физики. останавливаться когда бьёт?
 import bullet
+import particles
 
 class Player():
     health = 100
@@ -69,6 +70,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.screen = screen
         self.map = map
         self.bullets = list()
+        self.particles = list()
 
     def animLoad(self, animlist):
         animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))
@@ -104,6 +106,11 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def draw(self, cam):
         self.screen.blit(self.image, self.getRect(cam))
         self.drawBullets(cam)
+        self.drawParticles(cam)
+
+    def drawParticles(self, cam):
+        for p in self.particles:
+            p.draw(cam, self.screen)
 
     
     def getRect(self, cam):
@@ -125,10 +132,12 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             if killed:
                 bullet_to_remove.append(b)
                 enemies_to_wound.append(killed)
+                self.particles.append(particles.Particles(b.rect.x, b.rect.y))
 
             smashed = b.smash(platforms)
             if smashed:
                 bullet_to_remove.append(b)
+                self.particles.append(particles.Particles(b.rect.x, b.rect.y))
 
         for b in bullet_to_remove:
             if b in self.bullets:
@@ -140,6 +149,19 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         for e in enemies_to_kill:
             if e in enemies:
                 enemies.remove(e)
+
+        self.particlesStep()
+
+    def particlesStep(self):
+        particles_to_remove = list() ## PATTERN TODO
+        for p in self.particles:
+            r = p.step()
+            if not r:
+                particles_to_remove.append(p)
+
+        for p in particles_to_remove:
+            if p in self.particles:
+                self.particles.remove(p)
 
 
     UP = 0
