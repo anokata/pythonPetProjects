@@ -174,6 +174,8 @@ def collideObjects():
                 if player.inventory.add(p.obj):
                     #надо убрать объект с карты
                     globmap.removeObject(p)
+            elif p.obj.typ == PORTAL:
+                loadMap(p.obj.baseObject.mapname)
 
 def main():
     pygame.init()
@@ -189,11 +191,11 @@ menu = None
 hud = None
 globmap = 0
 
-def loadMap():
+def loadMap(mapname):
     global globmap
     global screen
     global collided, player, enemies
-    globmap = Map('map.map', screen)
+    globmap = Map(mapname, screen)
     collided = globmap.blockers # CHG
     #globmap.save()
     player = pgPlayer(globmap.px, globmap.py, screen, globmap)
@@ -224,7 +226,7 @@ def bgInit():
 def mainInit():
     stateInit()
     bgInit()
-    loadMap()
+    loadMap('map.map')
 
     global Layers, textLayer
     entities = list()

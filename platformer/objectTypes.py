@@ -1,1 +1,2 @@
 FOOD = 'FOOD'
+PORTAL = 'PORTAL'

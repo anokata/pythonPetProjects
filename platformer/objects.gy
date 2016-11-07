@@ -59,7 +59,7 @@ fish:
 
 
 portal:
-    typ: MAPGROUND
+    typ: PORTAL
     imagename: objects/portal.png
     mapchar: P
     passable: True
