@@ -166,6 +166,9 @@ def mainMechanic(d, p, e):
 
 def main():
     pygame.init()
+    global screen
+    screen = pygame.display.set_mode(Display)
+    pygame.display.set_caption("/SurGame/")
     mainInit()
     mainLoop()
 
@@ -175,17 +178,21 @@ menu = None
 hud = None
 globmap = 0
 
-def mainInit():
+def loadMap():
+    global globmap
     global screen
-    global collided, cam, player, enemies, Layers, textLayer
-    global bgSurface
-    screen = pygame.display.set_mode(Display)
-    pygame.display.set_caption("/TXS/")
+    global collided, player, enemies
+    globmap = Map('map.map', screen)
+    collided = globmap.blockers # CHG
+    #globmap.save()
+    player = pgPlayer(globmap.px, globmap.py, screen, globmap)
+    eFactory = enemy.EnemyFactory(screen, globmap)
 
-    bgSurface = pygame.sprite.Sprite()
-    bgSurface.image = pygame.image.load('nightSky0.png').convert()
-    bgSurface.image = pygame.Surface([800,1000])
-    bgSurface.image.fill((0,0,0))
+    for i in range(10):
+        enemies.append(enemy.Enemy(100+i*20,100,screen, globmap))
+        enemies.append(eFactory.create('poringp', 200*i, 120))
+
+def stateInit():
     addState('mainRun')
     addState('inventory')
     changeState('mainRun')
@@ -195,31 +202,26 @@ def mainInit():
     setEventHandler('mainRun', 'mechanic', mainMechanic)
     setEventHandler('inventory', 'draw', drawInventory)
     setEventHandler('inventory', 'keyDown', inventoryKeyDown)
-    
-    global globmap
-    b = Block()
-    globmap = Map(2, screen)
-    collided = globmap.blockers # CHG
-    #globmap.save()
-    player = pgPlayer(44, 44, screen, globmap)
-    eFactory = enemy.EnemyFactory(screen, globmap)
 
-    for i in range(10):
-        enemies.append(enemy.Enemy(100+i*20,100,screen, globmap))
-        enemies.append(eFactory.create('poringp', 200*i, 120))
+def bgInit():
+    global bgSurface
+    bgSurface = pygame.sprite.Sprite()
+    bgSurface.image = pygame.image.load('nightSky0.png').convert()
+    #bgSurface.image = pygame.Surface([800,1000])
+    #bgSurface.image.fill((0,0,0))
 
-    mp = list()
+def mainInit():
+    stateInit()
+    bgInit()
+    loadMap()
+
+    global Layers, textLayer
     entities = list()
     textLayer = {'menu1': list()}
-
     # menu
     global menu, hud
     menu = createMenu('men1', ['it0','it2','end'])
     hud = Hud(textLayer, WindowW-150, WindowH-30)
-
-    #g1 = gameObjects.GObject('apple')
-    #TODO добавление объекта, вишни, и чтобы стало 2 яблока. переключение категорий. выбор объектов, действия.
-    #inventory.add(g1)
 
 def mainLoop():
     clock = pygame.time.Clock()

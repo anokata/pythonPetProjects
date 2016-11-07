@@ -18,13 +18,13 @@ class PhisycBlock():
 
 class Map():
     tiles = 0
-    w = h = z = 0
+    w = h = 0
     blockers = 0
+    px = py = 0
 
-    def __init__(self, z, screen):
+    def __init__(self, mapname, screen):
         self.blockers = list()
-        self.z = z
-        self.load()
+        self.load(mapname)
         self.screen = screen
 
     def __setitem__(self, k, v):
@@ -51,9 +51,9 @@ class Map():
                     a, b = x * self.blockW, y * self.blockH
                     o.draw(a, b, cam, self.screen)
 
-    def load(self):
+    def load(self, mapname):
         self.layers = layers = list() 
-        with open('map.map', 'rt') as fin:
+        with open(mapname, 'rt') as fin:
             line = 'trash'
             layersCount = int(fin.readline())
             self.layersCount = layersCount
@@ -80,7 +80,6 @@ class Map():
             obj = gameObjects.GObject(objectName)
             mapObjects[obj.baseObject.mapchar] = obj
 
-        z = self.z
         i = 0
         self.layersDim = list()
         self.tiles = list()
@@ -98,6 +97,9 @@ class Map():
                     self.tiles[i][x,y] = list()
                     if lev[y][x] == '.':
                         continue
+                    if lev[y][x] == '~':
+                        self.px = x * self.blockW
+                        self.py = y * self.blockW
                     char = lev[y][x]
                     if char in mapObjects:
                         self.tiles[i][x,y] += [mapObjects[char]]
@@ -107,8 +109,8 @@ class Map():
                             self.blockers.append(PhisycBlock(a, b, obj.rect.width, obj))
             i += 1
 
-    def save(self):
-        with open('map.map', 'wt') as fout:
+    def save(self, mapname):
+        with open(mapname, 'wt') as fout:
             fout.write(str(self.layersCount) + '\n')
             for lay in self.layers:
                 for l in lay: # CHG Layers for all

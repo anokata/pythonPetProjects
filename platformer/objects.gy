@@ -58,3 +58,12 @@ fish:
     collided: True
 
 
+portal:
+    typ: MAPGROUND
+    imagename: objects/portal.png
+    mapchar: P
+    passable: True
+    takeable: False
+    collided: True
+    mapname: map.map
+
