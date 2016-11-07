@@ -26,8 +26,8 @@ xggWFCWFCxxx___xxxxx___k_____________________x
 x_g____A__x_R===L_ss___k_____________________x
 x______A__xx|x_E/_ssssskx____________________x
 x_~___l__P__|__________kx____________________x
-x_E=========/_x____x___k_____________________x
-x_x__xlll_x____xxxxx___k_____________________x
+x_E===TTT===/_x____x___k_____________________x
+x_x__x|||_x____xxxxx___k_____________________x
 xx______l_x____________k_____________________x
 xxxllllll_x_____xxxx_________________________x
 x_______x_x_x__xx__x____x____________________x
@@ -43,28 +43,7 @@ fish
 cherry
 wood
 portal
+tree
+stolb
 endObjectNames
-
-c objects/zap0.png
-. objects/space.png
-x objects/block2.png
-_ objects/ground0.png
-= objects/groundgrass.png
-/ objects/groundgrassLU.png
-| objects/groundgrassBU.png
-R objects/groundgrassBR.png
-E objects/groundgrassER.png
-L objects/groundgrassLB.png
-l objects/stolb.png
-g objects/grass.png
-b objects/cube1.png
-r objects/rock.png
-D objects/cloud0.png
-W objects/wood0.png
-B objects/block0.png
-S objects/staff0.png
-F objects/fish.png
-0 objects/apple.png
-k objects/rockL.png
-s objects/groundstone.png
 

@@ -27,6 +27,22 @@ stonewall:
     takeable: False
     collided: True
 
+stolb:
+    typ: MAPWALL
+    imagename: objects/stolb.png 
+    mapchar: l
+    passable: False
+    takeable: False
+    collided: True
+
+tree:
+    typ: MAPWALL
+    imagename: tree.png 
+    mapchar: T
+    passable: False
+    takeable: False
+    collided: True
+
 ground0:
     typ: MAPGROUND
     imagename: objects/ground1.png
