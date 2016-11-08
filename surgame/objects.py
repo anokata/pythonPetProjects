@@ -1,5 +1,7 @@
 import yaml
 import objectTypes
+import datafiles
+
 class AnObject():
     typ = 0
 
@@ -8,7 +10,7 @@ class AnObject():
 
 class ObjectsFactory():
 
-    objectsFilename = 'objects.gy'
+    objectsFilename = datafiles.objects
 
     def __init__(self):
         self.load()

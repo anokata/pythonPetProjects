@@ -1,4 +1,5 @@
 import pygame
+import images
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
     s.image = img = pygame.image.load(imgname).convert()
@@ -13,7 +14,7 @@ Sprite = pygame.sprite.Sprite
 
 class Block(pygame.sprite.Sprite): # base class for sprites?
     rect = 0
-    def __init__(self, x=0, y=0, imgname='block1.png'):
+    def __init__(self, x=0, y=0, imgname=images.defaultBlock):
         Sprite.__init__(self)
         self.image = pygame.image.load(imgname).convert()
         size = self.image.get_rect().size

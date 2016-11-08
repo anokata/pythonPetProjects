@@ -2,6 +2,7 @@ import player
 import random
 import pygame
 import yaml
+import datafiles
 
 class Enemy(player.pgPlayer):
 
@@ -10,7 +11,6 @@ class Enemy(player.pgPlayer):
     spd = 1
     health = 2
     canPickUp = False
-    animStand = ['objects/poringb.png', 'objects/poringb1.png','objects/poringb2.png']
     
     def __init__(self, x, y, screen, map, load=True):
         super().__init__(x, y, screen, map)
@@ -48,7 +48,7 @@ class Enemy(player.pgPlayer):
         return False
 
 class EnemyFactory():
-    enemiesFileName = 'enemies.yaml'
+    enemiesFileName = datafiles.enemies 
 
     def __init__(self, screen, map):
         self.screen = screen
@@ -62,7 +62,7 @@ class EnemyFactory():
         e = False
         if name in self.prototypes:
             objectModel = self.prototypes[name]
-            e = Enemy(0,0, self.screen, self.map)
+            e = Enemy(0,0, self.screen, self.map, load=False)
             for propname, propvalue in objectModel.items():
                 setattr(e, propname, propvalue)
             e.load(x, y)

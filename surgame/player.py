@@ -1,4 +1,6 @@
 import pygame
+import sys
+sys.path += ["lib",'./']
 import pyganim
 from itertools import repeat
 import gameInventory
@@ -6,6 +8,7 @@ from objectTypes import *
 # TODO: отдельные ректы для рисования и физики. останавливаться когда бьёт?
 import bullet
 import particles
+import images
 
 class Player():
     health = 100
@@ -26,14 +29,14 @@ class Player():
 
 # Player anim
 AnimDelay = 0.1 # скорость смены кадров
-AnimRight = ['objects/walkmanR0.png','objects/walkmanR1.png','objects/walkmanR2.png']
-AnimLeft = ['objects/walkmanL0.png','objects/walkmanL1.png','objects/walkmanL2.png']
-AnimUp = ['objects/walkmanU0.png','objects/walkmanU1.png','objects/walkmanU2.png']
-AnimStand = ['objects/stand0.png','objects/stand1.png','objects/stand2.png']
-AnimStandR = ['objects/standR0.png','objects/standR1.png']
-AnimStandL = ['objects/standL0.png','objects/standL1.png']
-AnimKickL = ['objects/kick0.png','objects/kick1.png','objects/kick2.png', 'objects/kick3.png']
-AnimKickR = ['objects/kickR0.png','objects/kickR1.png','objects/kickR2.png', 'objects/kickR3.png']
+AnimRight = images.playerAnimRight 
+AnimLeft = images.playerAnimLeft 
+AnimUp = images.playerAnimUp 
+AnimStand = images.playerAnimStand 
+AnimStandR = images.playerAnimStandR 
+AnimStandL = images.playerAnimStandL 
+AnimKickL = images.playerAnimKickL 
+AnimKickR = images.playerAnimKickR 
 wallInpact = 15
 
 class pgPlayer(Player, pygame.sprite.Sprite):
@@ -45,7 +48,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
 
     def __init__(self, x, y, screen, map):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load('none.png').convert()
+        self.image = pygame.image.load(images.none).convert()
         size = self.image.get_rect().size
         self.rect = pygame.Rect(x, y, size[0], size[1])
         self.rect.height -= wallInpact
@@ -215,7 +218,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         for e in enemies:
             if pygame.sprite.collide_rect(self, e):
                 self.health -= 1
-                self.particles.append(particles.Particles(self.rect.x, self.rect.y, n=3, imgname='objects/particleBlood.png'))
+                self.particles.append(particles.Particles(self.rect.x, self.rect.y, n=3, imgname=images.particleBlood))
 
 
     def collide(self, dx, dy, platforms):

@@ -37,7 +37,7 @@ stolb:
 
 tree:
     typ: MAPWALL
-    imagename: tree.png 
+    imagename: objects/tree.png 
     mapchar: T
     passable: False
     takeable: False

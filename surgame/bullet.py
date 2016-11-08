@@ -1,7 +1,8 @@
 import util
 import pygame
+import images
 
-bulimg = 'objects/bullet.png'
+bulimg = images.bulletImage 
 
 class Bullet(util.Block):
     spd = 5

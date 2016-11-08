@@ -1,12 +1,13 @@
 import util
 import pygame
 import math
+import images
 
 class Particles(util.Block):
 
     lifetime = 100
 
-    def __init__(self, x, y, n=10, lifetime=10, imgname='objects/particleR.png'):
+    def __init__(self, x, y, n=10, lifetime=10, imgname=images.particleDefault):
         super().__init__(x, y, imgname)
         self.particles_xyd = list() # координаты и скорости частицы (x, y, dx, dy)
         spd = 2

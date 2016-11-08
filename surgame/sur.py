@@ -1,9 +1,8 @@
 import pygame
 import sys
-sys.path += ["../modules",'./']
+sys.path += ["lib",'./']
 from stateSystem import *
-import pyganim
-import roomGenerator as rg
+#import roomGenerator as rg
 import random
 from menu import *
 from player import *
@@ -15,6 +14,8 @@ import gameObjects
 import gameInventory
 import enemy
 import bullet
+import images
+import datafiles
 
 Sprite = pygame.sprite.Sprite
 
@@ -26,7 +27,6 @@ screen = 0
 collided = list()
 enemies = list()
 cam = Camera(400, 300)
-#http://www.pygame.org/docs/ref/key.html
 entities = None
 textLayer = None
 
@@ -64,7 +64,7 @@ def keyDown(k, d):
         player.kick()
     if k == pygame.K_i:
         changeState('inventory')
-    keyfuncs = {
+    keyfuncs = { #TODO refactor other upper
         pygame.K_x: player.shoot,
             }
     fun = keyfuncs.get(k, False)
@@ -202,7 +202,7 @@ def loadMap(mapname):
     eFactory = enemy.EnemyFactory(screen, globmap)
 
     for i in range(10):
-        enemies.append(enemy.Enemy(100+i*20,100,screen, globmap))
+        enemies.append(eFactory.create('poringb', 100*i, 120))
         enemies.append(eFactory.create('poringp', 200*i, 120))
 
 def stateInit():
@@ -219,14 +219,14 @@ def stateInit():
 def bgInit():
     global bgSurface
     bgSurface = pygame.sprite.Sprite()
-    bgSurface.image = pygame.image.load('nightSky0.png').convert()
+    bgSurface.image = pygame.image.load(images.bg).convert()
     #bgSurface.image = pygame.Surface([800,1000])
     #bgSurface.image.fill((0,0,0))
 
 def mainInit():
     stateInit()
     bgInit()
-    loadMap('map.map')
+    loadMap(datafiles.defmap)
 
     global Layers, textLayer
     entities = list()

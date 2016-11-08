@@ -1,10 +1,11 @@
 import pygame
 import inventory
+import images
 from util import Font
 #TODO отображение. переключение в него, управление.
 class GInventory(inventory.Inventory):
-    backgroundImg = 'objects/inventoryBG.png'
-    cellImg = 'objects/inventoryCell.png'
+    backgroundImg = images.inventoryBG 
+    cellImg = images.cellImg 
     x = y = 10
     panx = pany = 10
 
@@ -20,6 +21,7 @@ class GInventory(inventory.Inventory):
         self.font = Font(22, (100, 255, 255))
         self.cellRect = self.cell.get_rect()
 
+    #TODO
     def refactored_draw(self):
         self._draw_bg()
         w,h, *_ = self.getTabSize()

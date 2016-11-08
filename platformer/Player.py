@@ -1,6 +1,6 @@
 from pygletUtil import *
 class Player(HasSprite):
-    health = 100
+    health = 10
     spd = 300
     moving = False
 
