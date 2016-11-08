@@ -46,6 +46,15 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     faceat = 0 # UP LEFT RIGHT
     inventory = None
 
+    UP = 0
+    DOWN = 1
+    RIGHT = 2
+    LEFT = 3
+    MOVEUP = -1
+    MOVEDOWN = 1
+    MOVERIGHT = 1
+    MOVELEFT = -1
+
     def __init__(self, x, y, screen, map):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(images.none).convert()
@@ -98,8 +107,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         if self.faceat == self.DOWN:
             dy = -1
 
-        dy -= self.movingud
-        dx -= self.moving
+        dy += self.movingud
+        dx += self.moving
         self.bullets.append(bullet.Bullet(self.rect.x, self.rect.y, dx, dy))
 
     def drawBullets(self, cam):
@@ -166,11 +175,23 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             if p in self.particles:
                 self.particles.remove(p)
 
+    def movingUp(self):
+        self.movingud = self.MOVEUP
 
-    UP = 0
-    DOWN = 1
-    RIGHT = 2
-    LEFT = 3
+    def movingDown(self):
+        self.movingud = self.MOVEDOWN
+
+    def movingLeft(self):
+        self.moving = self.MOVELEFT
+
+    def movingRight(self):
+        self.moving = self.MOVERIGHT
+
+    def stop(self):
+        self.moving = 0
+        self.movingud = 0
+
+
     def moveSide(self, dt, platforms, enemies):
         self.step()
         self.allstep(enemies, platforms)
@@ -201,8 +222,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                 self.changeAnim(self.AnimKickL)
             self.kicking -= 1
         
-        self.dx = - self.moving * self.spd
-        self.dy = - self.movingud * self.spd
+        self.dx = self.moving * self.spd
+        self.dy = self.movingud * self.spd
 
         
         self.rect.x += self.dx

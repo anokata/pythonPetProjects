@@ -46,26 +46,25 @@ def mechanic(dt):
     r = handleEvent('mechanic', dt)
     return r
 
+def toInventory():
+    player.stop()
+    changeState('inventory')
+
+def toMenu():
+    player.stop()
+    runMenu('men1')
+
 def keyDown(k, d):
     global player
-    if k == pygame.K_RIGHT:
-        player.moving = -1
-    if k == pygame.K_LEFT:
-        player.moving = 1
-    if k == pygame.K_SPACE:
-        player.moving = 0
-        player.movingud = 0
-        runMenu('men1')
-    if k == pygame.K_UP:
-        player.movingud = 1
-    if k == pygame.K_DOWN:
-        player.movingud = -1
-    if k == pygame.K_z:
-        player.kick()
-    if k == pygame.K_i:
-        changeState('inventory')
-    keyfuncs = { #TODO refactor other upper
+    keyfuncs = {
+        pygame.K_RIGHT: player.movingRight,
+        pygame.K_LEFT: player.movingLeft,
+        pygame.K_UP: player.movingUp,
+        pygame.K_DOWN: player.movingDown,
         pygame.K_x: player.shoot,
+        pygame.K_z: player.kick,
+        pygame.K_i: toInventory,
+        pygame.K_SPACE: toMenu,
             }
     fun = keyfuncs.get(k, False)
     if fun:
@@ -73,16 +72,15 @@ def keyDown(k, d):
 
 def keyUp(k, d):
     global player
-    if k == pygame.K_RIGHT:
-        player.moving = 0
-    elif k == pygame.K_LEFT:
-        player.moving = 0
-    if k == pygame.K_SPACE:
-        pass
-    if k == pygame.K_UP:
-        player.movingud = 0
-    if k == pygame.K_DOWN:
-        player.movingud = 0
+    keyfuncs = {
+        pygame.K_RIGHT: player.stop,
+        pygame.K_LEFT: player.stop,
+        pygame.K_UP: player.stop,
+        pygame.K_DOWN: player.stop,
+        }
+    fun = keyfuncs.get(k, False)
+    if fun:
+        fun()
 
 class Hud():
     items = []
