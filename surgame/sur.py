@@ -20,6 +20,7 @@ import datafiles
 Sprite = pygame.sprite.Sprite
 
 #TODO: наделать много вещей. коллекционирование. инвентарь. иконки.
+#TODO: Систему событий с очередью. (звуки)
 
 # Globals
 bgSurface = None
@@ -54,14 +55,25 @@ def toMenu():
     player.stop()
     runMenu('men1')
 
+def shoot():
+    global snd
+    snd.pou.play()
+    player.shoot()
+
+def plrMoveRight():
+    global snd
+    #snd.add(snd.step)
+    snd.step.play(loops=-1)
+    player.movingRight()
+
 def keyDown(k, d):
     global player
     keyfuncs = {
-        pygame.K_RIGHT: player.movingRight,
+        pygame.K_RIGHT: plrMoveRight,
         pygame.K_LEFT: player.movingLeft,
         pygame.K_UP: player.movingUp,
         pygame.K_DOWN: player.movingDown,
-        pygame.K_x: player.shoot,
+        pygame.K_x: shoot,
         pygame.K_z: player.kick,
         pygame.K_i: toInventory,
         pygame.K_SPACE: toMenu,
@@ -70,10 +82,16 @@ def keyDown(k, d):
     if fun:
         fun()
 
+def playerStop():
+    global snd
+    #snd.stop(snd.step)
+    snd.step.stop()
+    player.stop()
+
 def keyUp(k, d):
     global player
     keyfuncs = {
-        pygame.K_RIGHT: player.stop,
+        pygame.K_RIGHT: playerStop,
         pygame.K_LEFT: player.stop,
         pygame.K_UP: player.stop,
         pygame.K_DOWN: player.stop,
@@ -156,6 +174,8 @@ def drawInventory():
     pygame.display.flip()
 
 def mainMechanic(d, p, e):
+    global snd
+    snd.mech()
     r = player.moveSide(d, p, e)
     collideObjects()
     for e in enemies:
@@ -175,8 +195,38 @@ def collideObjects():
             elif p.obj.typ == PORTAL:
                 loadMap(p.obj.baseObject.mapname)
 
+class Sounds():
+    def __init__(self):
+        self.que = list()
+        try:
+            pygame.mixer.pre_init(44100, -16, 8, 1024)
+            pygame.mixer.init()
+            #snd = pygame.mixer.Sound('yabc.wav')
+            #snd.set_volume(0.3)
+            #snd.play()
+            sndpou = pygame.mixer.Sound('pau.wav')
+            self.pou = sndpou
+            self.step = pygame.mixer.Sound('step.wav')
+        except Exception(e):
+            print(e)
+    
+    def add(self,s):
+        if s not in self.que:
+            self.que.append(s)
+
+    def stop(self,s):
+        self.que.remove(s)
+
+    def mech(self):
+        for s in self.que:
+            s.play()
+
+snd = 0
 def main():
+    global snd
+    snd = Sounds()
     pygame.init()
+
     global screen
     screen = pygame.display.set_mode(Display)
     pygame.display.set_caption("/SurGame/")

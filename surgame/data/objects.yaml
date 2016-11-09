@@ -27,6 +27,14 @@ stonewall:
     takeable: False
     collided: True
 
+wtf:
+    typ: MAPWALL
+    imagename: objects/wtf.png 
+    mapchar: w
+    passable: False
+    takeable: False
+    collided: True
+
 stolb:
     typ: MAPWALL
     imagename: objects/stolb.png 

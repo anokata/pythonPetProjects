@@ -165,7 +165,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.particlesStep()
 
     def particlesStep(self):
-        particles_to_remove = list() ## PATTERN TODO
+        particles_to_remove = list() ## PATTERN TODO filter it!
         for p in self.particles:
             r = p.step()
             if not r:
