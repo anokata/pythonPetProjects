@@ -123,10 +123,12 @@ class Hud():
         i.append(self.hp)
 
         self.hpBarBg = pygame.Surface((100, self.H))
-        self.hpBarBg.fill((255, 255, 50))
-        self.hpRect = pygame.Rect(x, y+self.H, 100, self.H)
-        self.hpBar = pygame.Surface((self.HP_W - self.HP_PAD*2, self.H//1.8))
-        self.hpBar.fill(self.HP_COLOR)
+        self.hpBarBg = pygame.image.load(images.hpbarrectimg)
+        #self.hpBarBg.fill((255, 255, 50))
+        self.hpRect = pygame.Rect(x, y+self.H, 0, 0)
+        #self.hpBar = pygame.Surface((self.HP_W - self.HP_PAD*2, self.H//1.8))
+        self.hpBar = pygame.image.load(images.hpbarimg)
+        #self.hpBar.fill(self.HP_COLOR)
         self.hpbarRect = pygame.Rect(x+self.HP_PAD, y+self.H//0.8, 0, 0)
         self.refresh()
 
@@ -134,8 +136,9 @@ class Hud():
         self.layer[self.id] = list()
         y = self.y
         if player.health > 0:
-            self.hpBar = pygame.Surface((int(self.HP_W*abs(player.health/100.0)*0.8), self.H//1.8))
-            self.hpBar.fill(self.HP_COLOR)
+            #self.hpBar = pygame.Surface((int(self.HP_W*abs(player.health/100.0)*0.8), self.H//1.8))
+            self.hpBar = pygame.transform.scale(self.hpBar, (int(self.HP_W*abs(player.health/100.0)*1.0), int(self.H//1.8)))
+
         for x in self.items:
             #t = self.font.render(x % player.energy)
             t = self.font.render(x % player.health)
@@ -304,7 +307,7 @@ def mainInit():
     # menu
     global menu, hud
     menu = createMenu('men1', ['it0','it2','end'])
-    hud = Hud(textLayer, WindowW-150, WindowH-50)
+    hud = Hud(textLayer, WindowW-170, WindowH-70)
 
 def mainLoop():
     clock = pygame.time.Clock()

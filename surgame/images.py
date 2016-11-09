@@ -6,6 +6,8 @@ particleBlood = 'objects/particleBlood.png'
 none = 'objects/none.png'
 defaultBlock = 'objects/block1.png'
 bg = 'objects/nightSky0.png'
+hpbarimg = 'objects/hpbar.png'
+hpbarrectimg = 'objects/hpbarrect.png'
 
 playerAnimRight = ['objects/walkmanR0.png','objects/walkmanR1.png','objects/walkmanR2.png']
 playerAnimLeft = ['objects/walkmanL0.png','objects/walkmanL1.png','objects/walkmanL2.png']
