@@ -100,25 +100,42 @@ def keyUp(k, d):
     if fun:
         fun()
 
+#TODO Health Bar Progress!
 class Hud():
     items = []
     enrg = 'Energy: %.2f'
     hp = 'HP: %d'
 
-    def __init__(self, layer, x=0, y=10):
+    hpBarBg = None
+    H = 24
+    HP_W = 100
+    HP_PAD = 10
+    HP_COLOR = (244, 40, 40)
+
+    def __init__(self, layer, x=0, y=30):
         self.layer = layer
         i = self.items = list()
         self.id = 'hud'
         self.rect = pygame.Rect(0,0,0,0)
-        self.font = Font(24, (250, 250, 90))
+        self.font = Font(self.H, (250, 20, 90))
         self.x = x
         self.y = y
         i.append(self.hp)
+
+        self.hpBarBg = pygame.Surface((100, self.H))
+        self.hpBarBg.fill((255, 255, 50))
+        self.hpRect = pygame.Rect(x, y+self.H, 100, self.H)
+        self.hpBar = pygame.Surface((self.HP_W - self.HP_PAD*2, self.H//1.8))
+        self.hpBar.fill(self.HP_COLOR)
+        self.hpbarRect = pygame.Rect(x+self.HP_PAD, y+self.H//0.8, 0, 0)
         self.refresh()
 
     def refresh(self):
         self.layer[self.id] = list()
         y = self.y
+        if player.health > 0:
+            self.hpBar = pygame.Surface((int(self.HP_W*abs(player.health/100.0)*0.8), self.H//1.8))
+            self.hpBar.fill(self.HP_COLOR)
         for x in self.items:
             #t = self.font.render(x % player.energy)
             t = self.font.render(x % player.health)
@@ -127,6 +144,12 @@ class Hud():
             self.rect.left = self.x
             y += self.font.h // 1.5
             self.layer[self.id].append((t, self.rect))
+
+    def draw(self, screen):
+        screen.blit(self.hpBarBg, self.hpRect) 
+        screen.blit(self.hpBar, self.hpbarRect) 
+        for (e, r) in self.layer[self.id]:
+            screen.blit(e, r)
 
 
 def createMenu(id, lst): # add обработчик выбора, обработчик 
@@ -158,8 +181,7 @@ def drawMain():
     
     globmap.draw(cam) 
     #screen.blit(player.image, player.getRect(cam))
-    for (e, r) in textLayer['hud']:
-        screen.blit(e, r)
+    hud.draw(screen)
     player.draw(cam)
     for e in enemies:
         screen.blit(e.image, e.getRect(cam))
@@ -282,7 +304,7 @@ def mainInit():
     # menu
     global menu, hud
     menu = createMenu('men1', ['it0','it2','end'])
-    hud = Hud(textLayer, WindowW-150, WindowH-30)
+    hud = Hud(textLayer, WindowW-150, WindowH-50)
 
 def mainLoop():
     clock = pygame.time.Clock()
