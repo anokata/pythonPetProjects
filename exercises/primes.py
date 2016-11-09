@@ -1,6 +1,14 @@
 import math
+import pickle
+
+N = 10
 primes = [2,3,5,7,11,13,17,19,23]
 primed = {2,3,5,7,11,13,17,19,23}
+a = pickle.load(open('primes.pkl', 'rb'))
+primes = a['s']
+primed = a['d']
+N = a['n']
+
 def primeList(n):
     m = int(math.sqrt(n)) + 2
     for p in primes:
@@ -23,14 +31,21 @@ def primeis(n):
     return n in primed
 
 def genprimes(n):
-    for x in range(23,n):
+    global N
+    if n <= N:
+        print('already generated. loaded')
+        return
+    np = n // 100
+    for x in range(N,n):
         p = primeList(x)
         if p:
             primes.append(x)
             primed.add(x)
-        if x % 100000==0:
-            print(x)
+        if x % np ==0:
+            print(str(x//np)+'%')
     print('prime generated')
+    pickle.dump({'s':primes, 'd':primed, 'n':n}, open('primes.pkl', 'wb'))
+    N = n
 
 def justPrime(n):
     m = int(math.sqrt(n)) + 2
