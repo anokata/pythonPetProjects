@@ -221,6 +221,7 @@ def mainMechanic(d, p, e):
     collideObjects()
     for e in enemies:
         e.randomMove(d, p, e)
+        e.go(d, p, e)
     hud.refresh()
     return r
 
@@ -317,7 +318,9 @@ def loadMap(mapname):
 
     for (x, y), (name, count) in globmap.enemies.items():
         for i in range(count):
-            enemies.append(eFactory.create(name, x, y))
+            e = eFactory.create(name, x, y)
+            e.hunt(player)
+            enemies.append(e)
 
 def stateInit():
     addState('mainRun')

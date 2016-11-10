@@ -5,7 +5,6 @@ enemy_poringp:
     collided: False
     count: 3
     name: poringp
-    view_distance: 300
 
 enemy_poringb:
     typ: ENEMY
@@ -14,7 +13,6 @@ enemy_poringb:
     collided: False
     count: 3
     name: poringb
-    view_distance: 100
 
 apple:
     typ: FOOD

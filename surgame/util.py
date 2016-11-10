@@ -1,5 +1,14 @@
 import pygame
 import images
+
+def distance(r1, r2):
+    return distance4(r1.x, r1.y, r2.x, r2.y)
+
+def distance4(x, y, a, b):
+    """ Вычисление расстояния между двумя точками. """
+    from math import hypot
+    return hypot(x-a, y-b)
+
 def makeSpriteXY(imgname, x, y):
     s = pygame.sprite.Sprite()
     s.image = img = pygame.image.load(imgname).convert()

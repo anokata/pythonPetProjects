@@ -3,6 +3,7 @@ import random
 import pygame
 import yaml
 import datafiles
+import util
 
 class Enemy(player.pgPlayer):
 
@@ -40,6 +41,25 @@ class Enemy(player.pgPlayer):
             self.moving = random.randint(-1,1)
             self.movingud = random.randint(-1,1)
         self.moveSide(0, platforms, [])
+
+    def hunt(self, who):
+        self.target = who
+
+    def go(self, dt, platforms, enemies):
+        distance = util.distance(self.target.rect, self.rect) 
+        if distance < self.view_distance:
+            #print('view',distance)
+            x_dist = self.target.rect.x - self.rect.x
+            y_dist = self.target.rect.y - self.rect.y
+            if x_dist > 0:
+                self.moving = 1
+            else: 
+                self.moving = -1
+
+            if y_dist > 0:
+                self.movingud = 1
+            else: 
+                self.movingud = -1
 
     def wound(self, damage):
         self.health -= damage
