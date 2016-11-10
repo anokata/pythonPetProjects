@@ -52,6 +52,7 @@ class Map():
                     o.draw(a, b, cam, self.screen)
 
     def load(self, mapname):
+        self.blockers = list()
         self.layers = layers = list() 
         with open(mapname, 'rt') as fin:
             line = 'trash'

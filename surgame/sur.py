@@ -233,6 +233,7 @@ def collideObjects():
                     #надо убрать объект с карты
                     globmap.removeObject(p)
             elif p.obj.typ == PORTAL:
+                #TODO надо очищать
                 loadMap(p.obj.baseObject.mapname)
 
 class Sounds():
@@ -305,9 +306,11 @@ def loadMap(mapname):
     global globmap
     global screen
     global collided, player, enemies
+    enemies = list()
     globmap = Map(mapname, screen)
     collided = globmap.blockers # CHG
     #globmap.save()
+    #TODO игрока пересоздавать не надо, либо загружать
     player = pgPlayer(globmap.px, globmap.py, screen, globmap)
     eFactory = enemy.EnemyFactory(screen, globmap)
 

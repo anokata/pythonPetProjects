@@ -89,5 +89,13 @@ portal:
     passable: True
     takeable: False
     collided: True
-    mapname: data/map.map
+    mapname: data/cave1.map
 
+portalMap:
+    typ: PORTAL
+    imagename: objects/portal.png
+    mapchar: P
+    passable: True
+    takeable: False
+    collided: True
+    mapname: data/map.map
