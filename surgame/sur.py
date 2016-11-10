@@ -85,6 +85,7 @@ def keyDown(k, d):
         pygame.K_z: (player.kick, None),
         pygame.K_i: (toInventory, None),
         pygame.K_SPACE: (toMenu, None),
+        pygame.K_e: (player.eat, None)
             }
     fun, arg = keyfuncs.get(k, (False, None))
     if fun and arg != None:
@@ -124,7 +125,7 @@ class Hud():
     H = 24
     HP_W = 100
     HP_PAD = 10
-    HP_COLOR = (244, 40, 40)
+    HP_COLOR = (255, 4, 0)
 
     def __init__(self, layer, x=0, y=30):
         self.layer = layer
@@ -140,9 +141,9 @@ class Hud():
         self.hpBarBg = pygame.image.load(images.hpbarrectimg)
         #self.hpBarBg.fill((255, 255, 50))
         self.hpRect = pygame.Rect(x, y+self.H, 0, 0)
-        #self.hpBar = pygame.Surface((self.HP_W - self.HP_PAD*2, self.H//1.8))
-        self.hpBar = pygame.image.load(images.hpbarimg)
-        #self.hpBar.fill(self.HP_COLOR)
+        self.hpBar = pygame.Surface((self.HP_W - self.HP_PAD*2, self.H//1.8))
+        #self.hpBar = pygame.image.load(images.hpbarimg)
+        self.hpBar.fill(self.HP_COLOR)
         self.hpbarRect = pygame.Rect(x+self.HP_PAD, y+self.H//0.8, 0, 0)
         self.refresh()
 

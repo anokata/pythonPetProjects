@@ -1,5 +1,5 @@
 from objectTypes import *
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 
 Size = namedtuple("InventorySize", "w,h,len,current")
 
@@ -28,25 +28,62 @@ class Inventory():
     def getTabSize(self):
         return self.sizes[self.activeCategory]
 
-    def getEmptyCell(self, typ):
+    def takeEmptyCell(self, typ):
         w,h,max,count = self.sizes[typ]
         if max == count:
             return None
         self.sizes[typ] = (w,h,max,count+1)
-        return count
+        for x in range(max):
+            isBusy = self.categorys[typ].get(x, False)
+            if not isBusy:
+                break
+        if isBusy:
+            return None
+        return x
 
     def getStored(self, obj):
         for n, x in self.categorys[obj.typ].items():
-            if x.obj == obj:
+            if x and x.obj == obj:
                 return x
         return False
+
+    def getFood(self):
+        w, h, max, count = self.sizes[FOOD]
+        if count != 0:
+            for x in range(max):
+                food = self.food.get(x, False)
+                if food:
+                    break
+            return food
+        return False
+
+    
+    def eat(self, food):
+        hpGain = food.obj.baseObject.hpGain
+        self.drop(food)
+        return hpGain
+
+    def drop(self, obj):
+        key = self.getKey(obj)
+        foodPack = self.categorys[obj.obj.typ].get(key)
+        if foodPack.count > 1:
+            foodPack.eatOne()
+        else:
+            self.categorys[obj.obj.typ].pop(key)
+            w, h, max, count = self.sizes[obj.obj.typ]
+            self.sizes[obj.obj.typ] = Size(w, h, max, count-1)
+
+    def getKey(self, obj):
+        cat = self.categorys[obj.obj.typ]
+        return list(cat.keys())[list(cat.values()).index(obj)]
+
 
     def add(self, obj):
         if obj.typ == FOOD:
             # find existed
             inventoryObj = self.getStored(obj)
             if not inventoryObj:
-                cellIndex = self.getEmptyCell(FOOD)
+                cellIndex = self.takeEmptyCell(FOOD)
                 if cellIndex != None:
                     self.food[cellIndex] = obj.pack()
                     return True

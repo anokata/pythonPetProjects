@@ -100,6 +100,12 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         a.blit(self.image, (0, 0))
         #self.image.scroll(dy=20)
 
+    def eat(self):
+        food = self.inventory.getFood()
+        if food:
+            hpGain = self.inventory.eat(food)
+            self.health += hpGain
+
     def startShoot(self):
         self.shootTick = self.shootInterval
         self.send('shoot', 'P')

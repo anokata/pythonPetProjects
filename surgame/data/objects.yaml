@@ -5,6 +5,7 @@ enemy_poringp:
     collided: False
     count: 3
     name: poringp
+    view_distance: 300
 
 enemy_poringb:
     typ: ENEMY
@@ -13,6 +14,7 @@ enemy_poringb:
     collided: False
     count: 3
     name: poringb
+    view_distance: 100
 
 apple:
     typ: FOOD
@@ -24,6 +26,8 @@ apple:
     collided: True
     passable: True
     mapchar: A
+    hpGain: 1
+
 cherry:
     typ: FOOD
     basePrice: 2
@@ -34,6 +38,7 @@ cherry:
     mapchar: C
     takeable: True
     collided: True
+    hpGain: 1
 
 stonewall:
     typ: MAPWALL
@@ -52,12 +57,13 @@ block1Brown:
     collided: True
 
 wtf:
-    typ: MAPWALL
+    typ: FOOD
     imagename: objects/wtf.png 
     mapchar: w
-    passable: False
-    takeable: False
+    passable: True
+    takeable: True
     collided: True
+    hpGain: 0
 
 stolb:
     typ: MAPWALL
@@ -101,6 +107,7 @@ wood:
     passable: True
     mapchar: W
     collided: True
+    hpGain: 0
 
 fish:
     typ: FOOD
@@ -112,6 +119,7 @@ fish:
     passable: True
     mapchar: F
     collided: True
+    hpGain: 2
 
 
 portal:

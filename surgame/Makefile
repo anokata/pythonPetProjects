@@ -1,4 +1,4 @@
 run:
 	python3 sur.py
 test:
-	python3 test.py
+	python3 tests.py
