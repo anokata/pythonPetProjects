@@ -46,6 +46,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     kicking = 0
     faceat = 0 # UP LEFT RIGHT
     inventory = None
+    shootSpd = 10
 
     UP = 0
     DOWN = 1
@@ -96,6 +97,14 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.image.fill(pygame.Color('#000000'))
         a.blit(self.image, (0, 0))
         #self.image.scroll(dy=20)
+
+    def startShoot(self):
+        self.shootTick = self.shootSpd
+
+    def shooting(self):
+        if self.shootTick != 0:
+            self.shootTick -= 1
+            self.shoot()
 
     def shoot(self):
         dx = 0
