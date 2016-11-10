@@ -91,20 +91,22 @@ def keyDown(k, d):
     elif fun:
         fun()
 
-def playerStop():
+def playerStop(x):
     player.send('playerStop', 'w')
-    player.stop()
+    player.stop(x)
 
 def keyUp(k, d):
     global player
     keyfuncs = {
-        pygame.K_RIGHT: playerStop,
-        pygame.K_LEFT: playerStop,
-        pygame.K_UP: playerStop,
-        pygame.K_DOWN: playerStop,
+        pygame.K_RIGHT: (playerStop, True),
+        pygame.K_LEFT: (playerStop, True),
+        pygame.K_UP: (playerStop, False),
+        pygame.K_DOWN: (playerStop, False),
         }
-    fun = keyfuncs.get(k, False)
-    if fun:
+    fun, arg = keyfuncs.get(k, (False, None))
+    if fun and arg != None:
+        fun(arg)
+    elif fun:
         fun()
 
 #TODO Health Bar Progress!

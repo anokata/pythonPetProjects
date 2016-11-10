@@ -192,9 +192,11 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def movingRight(self):
         self.moving = self.MOVERIGHT
 
-    def stop(self):
-        self.moving = 0
-        self.movingud = 0
+    def stop(self, mix):
+        if mix:
+            self.moving = 0
+        else:
+            self.movingud = 0
 
 
     def moveSide(self, dt, platforms, enemies):
