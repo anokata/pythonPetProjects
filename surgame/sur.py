@@ -16,6 +16,7 @@ import enemy
 import bullet
 import images
 import datafiles
+import eventSystem
 
 Sprite = pygame.sprite.Sprite
 
@@ -200,6 +201,7 @@ def drawInventory():
 
 def mainMechanic(d, p, e):
     global snd
+    mainSubsriber.process()
     snd.mech()
     r = player.moveSide(d, p, e)
     collideObjects()
@@ -229,9 +231,10 @@ class Sounds():
             #snd = pygame.mixer.Sound('yabc.wav')
             #snd.set_volume(0.3)
             #snd.play()
-            sndpou = pygame.mixer.Sound('pau.wav')
+            sndpou = pygame.mixer.Sound('sounds/pau.wav')
             self.pou = sndpou
-            self.step = pygame.mixer.Sound('step.wav')
+            self.step = pygame.mixer.Sound('sounds/step.wav')
+            self.bulletWall = pygame.mixer.Sound('sounds/pau.wav')
         except Exception(e):
             print(e)
     
@@ -247,10 +250,17 @@ class Sounds():
             s.play()
 
 snd = 0
+mainSubsriber = eventSystem.Subscriber()
+
+def bulletEvent(e):
+    snd.bulletWall.play()
+    print(e.data, e.theme)
+
 def main():
     global snd
     snd = Sounds()
     pygame.init()
+    mainSubsriber.register('bullet', bulletEvent)
 
     global screen
     screen = pygame.display.set_mode(Display)

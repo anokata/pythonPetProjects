@@ -9,8 +9,9 @@ from objectTypes import *
 import bullet
 import particles
 import images
+import eventSystem
 
-class Player():
+class Player(eventSystem.Publisher):
     health = 100
     spd = 4.0
     spdj = 5.0
@@ -22,8 +23,8 @@ class Player():
     canPickUp = True
 
     def __init__(self):
-        pass
-    
+        super().__init__()
+
     def step(self):
         self.energy -= 0.01
 
@@ -56,6 +57,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     MOVELEFT = -1
 
     def __init__(self, x, y, screen, map):
+        super().__init__()
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(images.none).convert()
         size = self.image.get_rect().size
@@ -154,6 +156,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         for b in bullet_to_remove:
             if b in self.bullets:
                 self.bullets.remove(b)
+                self.send(eventSystem.Event('bullet', 'wall'))
+
         for e in enemies_to_wound:
             killed = e.wound(1)
             if killed:
