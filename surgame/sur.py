@@ -236,8 +236,9 @@ def collideObjects():
                     globmap.removeObject(p)
             elif p.obj.typ == PORTAL:
                 #TODO надо очищать
-                loadMap(p.obj.baseObject.mapname)
+                player.send('teleport', p.obj.baseObject.mapname)
 
+#TODO звуковой модуль
 class Sounds():
     def __init__(self):
         self.que = list()
@@ -282,15 +283,26 @@ def walkStopEvent(e):
 def killEvent(e):
     snd.explosion.play()
 
+def dieEvent(e):
+    loadMap(currentMap)
+
+def mapChange(e):
+    global currentMap
+    currentMap = e.data
+    loadMap(currentMap)
+
+#TODO Прибраться, сгруппировать, выделить модули.
 def main():
     global snd
     snd = Sounds()
     pygame.init()
-    mainSubsriber.register('bullet', bulletEvent)
+    mainSubsriber.register('bullet', bulletEvent) # TODO имена событий отдельно
     mainSubsriber.register('playerMove', walkEvent)
     mainSubsriber.register('playerStop', walkStopEvent)
     mainSubsriber.register('killed', killEvent)
     mainSubsriber.register('shoot', shootEvent)
+    mainSubsriber.register('die', dieEvent)
+    mainSubsriber.register('teleport', mapChange)
 
     global screen
     screen = pygame.display.set_mode(Display)
@@ -303,6 +315,7 @@ player = None
 menu = None
 hud = None
 globmap = 0
+currentMap = 'data/map.map'
 
 def loadMap(mapname):
     global globmap

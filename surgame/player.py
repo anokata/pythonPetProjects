@@ -275,6 +275,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                 self.health -= 1
                 if self.health < 0:
                     self.health = 0
+                    self.send('die', 0)
                 self.particles.append(particles.Particles(self.rect.x, self.rect.y, n=3, imgname=images.particleBlood))
 
 
