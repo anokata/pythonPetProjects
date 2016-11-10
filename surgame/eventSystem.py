@@ -1,3 +1,4 @@
+# TODO: Скрывать! _
 class Event():
     theme = ''
 
