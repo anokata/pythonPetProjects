@@ -47,6 +47,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     faceat = 0 # UP LEFT RIGHT
     inventory = None
     shootSpd = 10
+    shootTick = 0
+    shootInterval = 100000
 
     UP = 0
     DOWN = 1
@@ -99,12 +101,19 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         #self.image.scroll(dy=20)
 
     def startShoot(self):
-        self.shootTick = self.shootSpd
+        self.shootTick = self.shootInterval
+        self.send('shoot', 'P')
+        self.shoot()
+    
+    def stopShoot(self):
+        self.shootTick = 0
 
     def shooting(self):
         if self.shootTick != 0:
             self.shootTick -= 1
-            self.shoot()
+            if self.shootTick % self.shootSpd == 0:
+                self.send('shoot', 'P')
+                self.shoot()
 
     def shoot(self):
         dx = 0
@@ -177,6 +186,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                 enemies.remove(e)
 
         self.particlesStep()
+        self.shooting()
 
     def particlesStep(self):
         particles_to_remove = list() ## PATTERN TODO filter it!
@@ -201,12 +211,14 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def movingRight(self):
         self.moving = self.MOVERIGHT
 
-    def stop(self, mix):
+    def stop(self, mix=None):
         if mix:
             self.moving = 0
+        elif not mix:
+            self.movingud = 0
         else:
             self.movingud = 0
-
+            self.moving = 0
 
     def moveSide(self, dt, platforms, enemies):
         self.step()

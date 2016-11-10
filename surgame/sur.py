@@ -57,9 +57,10 @@ def toMenu():
     runMenu('men1')
 
 def shoot():
-    global snd
+    player.startShoot()
+
+def shootEvent(e):
     snd.pou.play()
-    player.shoot()
 
 def playerMove(k):
     player.send('playerMove', 'R')
@@ -95,6 +96,9 @@ def playerStop(x):
     player.send('playerStop', 'w')
     player.stop(x)
 
+def playerStopShoot():
+    player.stopShoot()
+
 def keyUp(k, d):
     global player
     keyfuncs = {
@@ -102,6 +106,7 @@ def keyUp(k, d):
         pygame.K_LEFT: (playerStop, True),
         pygame.K_UP: (playerStop, False),
         pygame.K_DOWN: (playerStop, False),
+        pygame.K_x: (playerStopShoot, None),
         }
     fun, arg = keyfuncs.get(k, (False, None))
     if fun and arg != None:
@@ -282,6 +287,7 @@ def main():
     mainSubsriber.register('playerMove', walkEvent)
     mainSubsriber.register('playerStop', walkStopEvent)
     mainSubsriber.register('killed', killEvent)
+    mainSubsriber.register('shoot', shootEvent)
 
     global screen
     screen = pygame.display.set_mode(Display)
