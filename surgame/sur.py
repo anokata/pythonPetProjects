@@ -61,41 +61,47 @@ def shoot():
     snd.pou.play()
     player.shoot()
 
-def plrMoveRight():
-    global snd
-    #snd.add(snd.step)
-    snd.step.play(loops=-1)
-    player.movingRight()
-
-def keyDown(k, d):
-    global player
+def playerMove(k):
+    player.send('playerMove', 'R')
     keyfuncs = {
-        pygame.K_RIGHT: plrMoveRight,
+        pygame.K_RIGHT: player.movingRight,
         pygame.K_LEFT: player.movingLeft,
         pygame.K_UP: player.movingUp,
         pygame.K_DOWN: player.movingDown,
-        pygame.K_x: shoot,
-        pygame.K_z: player.kick,
-        pygame.K_i: toInventory,
-        pygame.K_SPACE: toMenu,
             }
     fun = keyfuncs.get(k, False)
     if fun:
         fun()
 
+def keyDown(k, d):
+    global player
+    keyfuncs = {
+        pygame.K_RIGHT: (playerMove, k),
+        pygame.K_LEFT: (playerMove, k),
+        pygame.K_UP: (playerMove, k),
+        pygame.K_DOWN: (playerMove, k),
+        pygame.K_x: (shoot, None),
+        pygame.K_z: (player.kick, None),
+        pygame.K_i: (toInventory, None),
+        pygame.K_SPACE: (toMenu, None),
+            }
+    fun, arg = keyfuncs.get(k, (False, None))
+    if fun and arg != None:
+        fun(arg)
+    elif fun:
+        fun()
+
 def playerStop():
-    global snd
-    #snd.stop(snd.step)
-    snd.step.stop()
+    player.send('playerStop', 'w')
     player.stop()
 
 def keyUp(k, d):
     global player
     keyfuncs = {
         pygame.K_RIGHT: playerStop,
-        pygame.K_LEFT: player.stop,
-        pygame.K_UP: player.stop,
-        pygame.K_DOWN: player.stop,
+        pygame.K_LEFT: playerStop,
+        pygame.K_UP: playerStop,
+        pygame.K_DOWN: playerStop,
         }
     fun = keyfuncs.get(k, False)
     if fun:
@@ -231,10 +237,12 @@ class Sounds():
             #snd = pygame.mixer.Sound('yabc.wav')
             #snd.set_volume(0.3)
             #snd.play()
-            sndpou = pygame.mixer.Sound('sounds/pau.wav')
+            sndpou = pygame.mixer.Sound('sounds/piu2.wav')
             self.pou = sndpou
             self.step = pygame.mixer.Sound('sounds/step.wav')
-            self.bulletWall = pygame.mixer.Sound('sounds/pau.wav')
+            self.step.set_volume(0.3)
+            self.bulletWall = pygame.mixer.Sound('sounds/bom.wav')
+            self.explosion = pygame.mixer.Sound('sounds/expl.wav')
         except Exception(e):
             print(e)
     
@@ -254,13 +262,24 @@ mainSubsriber = eventSystem.Subscriber()
 
 def bulletEvent(e):
     snd.bulletWall.play()
-    print(e.data, e.theme)
+
+def walkEvent(e):
+    snd.step.play(loops=-1)
+
+def walkStopEvent(e):
+    snd.step.stop()
+
+def killEvent(e):
+    snd.explosion.play()
 
 def main():
     global snd
     snd = Sounds()
     pygame.init()
     mainSubsriber.register('bullet', bulletEvent)
+    mainSubsriber.register('playerMove', walkEvent)
+    mainSubsriber.register('playerStop', walkStopEvent)
+    mainSubsriber.register('killed', killEvent)
 
     global screen
     screen = pygame.display.set_mode(Display)

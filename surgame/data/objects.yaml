@@ -89,5 +89,5 @@ portal:
     passable: True
     takeable: False
     collided: True
-    mapname: map.map
+    mapname: data/map.map
 

@@ -12,7 +12,10 @@ class Publisher():
     def __init__(self):
         self.reigster(EventBox)
 
-    def send(self, event):
+    def send(self, theme, data):
+        self.sendEvent(Event(theme, data))
+
+    def sendEvent(self, event):
         self.box.append(event)
 
     def reigster(self, box):

@@ -152,16 +152,17 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             if smashed:
                 bullet_to_remove.append(b)
                 self.particles.append(particles.Particles(b.rect.x, b.rect.y))
+                self.send('bullet', 'wall')
 
         for b in bullet_to_remove:
             if b in self.bullets:
                 self.bullets.remove(b)
-                self.send(eventSystem.Event('bullet', 'wall'))
 
         for e in enemies_to_wound:
             killed = e.wound(1)
             if killed:
                 enemies_to_kill.append(e)
+                self.send('killed', 'P')
         for e in enemies_to_kill:
             if e in enemies:
                 enemies.remove(e)
