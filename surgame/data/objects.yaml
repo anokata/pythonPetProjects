@@ -95,6 +95,22 @@ ground1Brown:
     takeable: False
     collided: False
 
+shrub:
+    typ: MAPGROUND
+    imagename: objects/shrub.png
+    mapchar: S
+    passable: False
+    takeable: False
+    collided: True
+
+grass:
+    typ: MAPGROUND
+    imagename: objects/grass0.png
+    mapchar: _
+    passable: True
+    takeable: False
+    collided: False
+
 wood:
     typ: FOOD
     basePrice: 1
@@ -119,6 +135,14 @@ fish:
     collided: True
     hpGain: 2
 
+trailportal:
+    typ: PORTAL
+    imagename: objects/portal.png
+    mapchar: T
+    passable: True
+    takeable: False
+    collided: True
+    mapname: data/trail.map
 
 portal:
     typ: PORTAL

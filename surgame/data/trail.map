@@ -10,20 +10,21 @@ __________________________
 __________________________
 __________________________
 
-xxxxxxxxxxxxxxxxxxxxxxxxxx
+SSSSSSSSSSSSSSSSSSSSSSSSSS
 x________________________x
 x_____A__P~_|____________x
+x____A___________________x
 x________________________x
 x________________________x
-x________________BB______x
-x________________BB______x
 x________________________x
-x_T___GGG_GGG____________x
-xxxxxxxxxxxxxxxxxxxxxxxxxx
+x________________________x
+x________________________x
+SSSSSSSSSSSSSSSSSSSSSSSSSS
 
 apple
 block1Brown
-ground1Brown
+grass
+shrub
 fish
 cherry
 wood
@@ -33,6 +34,5 @@ stolb
 wtf
 enemy_poringp
 enemy_poringb
-trailportal
 endObjectNames
 

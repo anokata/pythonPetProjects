@@ -22,6 +22,9 @@ class Player(eventSystem.Publisher):
     energy = 100.0
     canPickUp = True
 
+    exp = 0
+    lv = 0
+
     def __init__(self):
         super().__init__()
 

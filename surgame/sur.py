@@ -373,10 +373,12 @@ def mainLoop():
     while not isExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                print('QUIT')
                 isExit = True
                 break
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    print('Key ESQ')
                     isExit = True
                     break
                 handleEvent('keyDown', event.key, event)
@@ -387,6 +389,7 @@ def mainLoop():
         clock.tick()
         pygame.display.set_caption("fps: " + str(int(clock.get_fps())))
         handleEvent('draw')
+    print('exit')
     pygame.quit()
     exit()
 
