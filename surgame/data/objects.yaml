@@ -43,6 +43,14 @@ stonewall:
     takeable: False
     collided: True
 
+block1Brown:
+    typ: MAPWALL
+    imagename: objects/block1Brown.png 
+    mapchar: x
+    passable: False
+    takeable: False
+    collided: True
+
 wtf:
     typ: MAPWALL
     imagename: objects/wtf.png 
@@ -70,6 +78,14 @@ tree:
 ground0:
     typ: MAPGROUND
     imagename: objects/ground1.png
+    mapchar: _
+    passable: True
+    takeable: False
+    collided: False
+
+ground1Brown:
+    typ: MAPGROUND
+    imagename: objects/ground1Brown.png
     mapchar: _
     passable: True
     takeable: False
