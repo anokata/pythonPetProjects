@@ -308,15 +308,15 @@ def loadMap(mapname):
     global collided, player, enemies
     enemies = list()
     globmap = Map(mapname, screen)
-    collided = globmap.blockers # CHG
+    collided = globmap.blockers # CHG TODO возвращать словарь?
     #globmap.save()
     #TODO игрока пересоздавать не надо, либо загружать
     player = pgPlayer(globmap.px, globmap.py, screen, globmap)
     eFactory = enemy.EnemyFactory(screen, globmap)
 
-    for i in range(10):
-        enemies.append(eFactory.create('poringb', 100*i, 120))
-        enemies.append(eFactory.create('poringp', 200*i, 120))
+    for (x, y), (name, count) in globmap.enemies.items():
+        for i in range(count):
+            enemies.append(eFactory.create(name, x, y))
 
 def stateInit():
     addState('mainRun')

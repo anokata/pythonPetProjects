@@ -1,6 +1,7 @@
 import pygame
 import gameObjects
 from util import Block
+import objectTypes
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # Свойства объектов, проходимые, непроходимые, поднимаемые...
 # TODO: map сделать редактор, добавление новых блоков. выбор блоков.
@@ -84,6 +85,8 @@ class Map():
         i = 0
         self.layersDim = list()
         self.tiles = list()
+        self.enemies = dict()
+
         for lev in self.layers:
             w = len(lev[0])
             h = len(lev) 
@@ -103,7 +106,12 @@ class Map():
                         self.py = y * self.blockW
                     char = lev[y][x]
                     if char in mapObjects:
-                        self.tiles[i][x,y] += [mapObjects[char]]
+                        obj = mapObjects[char]
+                        self.tiles[i][x,y] += [obj]
+
+                        if obj.typ == objectTypes.ENEMY:
+                            self.enemies[(x*self.blockW, y*self.blockW)] = (obj.baseObject.name, obj.baseObject.count)
+
                         if mapObjects[char].baseObject.collided:
                             obj = mapObjects[char]
                             a, b = (x-0) * self.blockW, (y-0) * self.blockH

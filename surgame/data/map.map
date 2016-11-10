@@ -21,11 +21,11 @@ ______________________________________________
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xD_cwrr___xx_______x____x____________________x
 xW_A_bb___x_x______x___k_____________________x
-xBSFAAAAc_x_____c______k_____________________x
+x_SFAAAAc_x_____c______k_____________________x
 xggWFCWFCxxx___xxxxx___k_____________________x
 x_g____A__x_R===L_ss___k_____________________x
-x______A__xx|x_E/_ssssskx____________________x
-x_~___l__P__|__________kx____________________x
+x___B__A__xx|x_E/_ssssskx____________________x
+x___G_l_~P__|__________kx____________________x
 x_E===TTT===/_x____x___k_____________________x
 x_x__x|||_x____xxxxx___k_____________________x
 xx______l_x____________k_____________________x
@@ -46,5 +46,7 @@ portal
 tree
 stolb
 wtf
+enemy_poringp
+enemy_poringb
 endObjectNames
 

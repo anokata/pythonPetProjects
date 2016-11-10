@@ -1,3 +1,19 @@
+enemy_poringp:
+    typ: ENEMY
+    imagename: objects/none.png
+    mapchar: G
+    collided: False
+    count: 3
+    name: poringp
+
+enemy_poringb:
+    typ: ENEMY
+    imagename: objects/none.png
+    mapchar: B
+    collided: False
+    count: 3
+    name: poringb
+
 apple:
     typ: FOOD
     basePrice: 1
