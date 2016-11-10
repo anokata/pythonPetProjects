@@ -243,7 +243,8 @@ class Sounds():
     def __init__(self):
         self.que = list()
         try:
-            pygame.mixer.pre_init(44100, -16, 8, 1024)
+            #pygame.mixer.pre_init(44100, -16, 8, 1024)
+            pygame.mixer.pre_init(22050, -16, 1, 256)
             pygame.mixer.init()
             #snd = pygame.mixer.Sound('yabc.wav')
             #snd.set_volume(0.3)
@@ -373,12 +374,10 @@ def mainLoop():
     while not isExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print('QUIT')
                 isExit = True
                 break
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    print('Key ESQ')
                     isExit = True
                     break
                 handleEvent('keyDown', event.key, event)
@@ -389,7 +388,7 @@ def mainLoop():
         clock.tick()
         pygame.display.set_caption("fps: " + str(int(clock.get_fps())))
         handleEvent('draw')
-    print('exit')
+    print('last event: ', pygame.event.poll())
     pygame.quit()
     exit()
 
