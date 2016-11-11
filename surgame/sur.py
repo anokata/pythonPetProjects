@@ -388,6 +388,11 @@ def mainLoop():
         clock.tick()
         pygame.display.set_caption("fps: " + str(int(clock.get_fps())))
         handleEvent('draw')
+    e = -1
+    while e != 0:
+        e = pygame.event.poll()
+        print(e.type)
+        e = e.type
     print('last event: ', pygame.event.poll())
     pygame.quit()
     exit()

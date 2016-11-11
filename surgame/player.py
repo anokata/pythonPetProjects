@@ -50,6 +50,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     faceat = 0 # UP LEFT RIGHT
     inventory = None
     shootSpd = 10
+    bulletSpd = 3
     shootTick = 0
     shootInterval = 100000
 
@@ -135,9 +136,11 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             dy = 1
         if self.faceat == self.DOWN:
             dy = -1
-
-        dy += self.movingud
-        dx += self.moving
+        
+        dx *= self.bulletSpd
+        dy *= self.bulletSpd
+        #dy += self.movingud
+        #dx += self.moving
         self.bullets.append(bullet.Bullet(self.rect.x, self.rect.y, dx, dy))
 
     def drawBullets(self, cam):
