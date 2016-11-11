@@ -14,6 +14,7 @@ import eventSystem
 import datafiles
 import yaml
 import inspect
+import util
 class Stats():
     exp = 0
     health = 10
@@ -74,18 +75,7 @@ class Player(eventSystem.Publisher):
     def expGain(self, amount):
         self.stats.exp += amount
 
-# Player anim
-AnimDelay = 0.1 # скорость смены кадров
-AnimRight = images.playerAnimRight 
-AnimLeft = images.playerAnimLeft 
-AnimUp = images.playerAnimUp 
-AnimStand = images.playerAnimStand 
-AnimStandR = images.playerAnimStandR 
-AnimStandL = images.playerAnimStandL 
-AnimKickL = images.playerAnimKickL 
-AnimKickR = images.playerAnimKickR 
 wallInpact = 15
-
 class pgPlayer(Player, pygame.sprite.Sprite):
     rect = pygame.Rect(0,0,0,0)
     rectImg = pygame.Rect(0,0,0,0)
@@ -117,15 +107,15 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.rectImg = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
-        self.AnimRight = self.animLoad(AnimRight) 
-        self.AnimLeft = self.animLoad(AnimLeft) 
-        self.AnimStand = self.animLoad(AnimStand) 
-        self.AnimUp = self.animLoad(AnimUp) 
-        self.AnimStandR = self.animLoad(AnimStandR) 
-        self.AnimStandL = self.animLoad(AnimStandL) 
+        self.AnimRight = self.animLoad(images.playerAnimRight) 
+        self.AnimLeft = self.animLoad(images.playerAnimLeft) 
+        self.AnimStand = self.animLoad(images.playerAnimStand) 
+        self.AnimUp = self.animLoad(images.playerAnimUp) 
+        self.AnimStandR = self.animLoad(images.playerAnimStandR) 
+        self.AnimStandL = self.animLoad(images.playerAnimStandL) 
 
-        self.AnimKickL = self.animLoad(AnimKickL)
-        self.AnimKickR = self.animLoad(AnimKickR)
+        self.AnimKickL = self.animLoad(images.playerAnimKickL)
+        self.AnimKickR = self.animLoad(images.playerAnimKickR)
         self.AnimKickTicks = 10
 
         self.changeAnim(self.AnimStand)
@@ -137,6 +127,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.particles = list()
 
     def animLoad(self, animlist):
+        AnimDelay = 0.1 # скорость смены кадров
         animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))
         ranim = pyganim.PygAnimation(animlistdelay)
         ranim.play()

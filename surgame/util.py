@@ -1,6 +1,15 @@
 import pygame
 import images
 
+def geomRange(start, count, coeff):
+    """ Генератор геометрической прогрессии. """
+    x = start
+    c = 0
+    while c < count:
+        x = x * coeff
+        c += 1
+        yield int(x)
+
 def distance(r1, r2):
     return distance4(r1.x, r1.y, r2.x, r2.y)
 
