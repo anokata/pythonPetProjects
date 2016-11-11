@@ -329,7 +329,10 @@ def loadMap(mapname):
     collided = globmap.blockers # CHG TODO возвращать словарь?
     #globmap.save()
     #TODO игрока пересоздавать не надо, либо загружать
+    if player != None:
+        player.save()
     player = pgPlayer(globmap.px, globmap.py, screen, globmap)
+    player.load()
     eFactory = enemy.EnemyFactory(screen, globmap)
 
     for (x, y), (name, count) in globmap.enemies.items():

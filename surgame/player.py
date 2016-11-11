@@ -318,12 +318,16 @@ class pgPlayer(Player, pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self, e):
                 self.wound()
                 self.particles.append(particles.Particles(self.rect.x, self.rect.y, n=3, imgname=images.particleBlood))
+        self.handleDead()
 
-    def wound(self):
-        self.addHealth(-1)
+    def handleDead(self):
         if self.stats.health < 0:
             self.stats.health = 0
             self.send('die', 0)
+            self.stats.health = self.stats.maxHealth
+
+    def wound(self):
+        self.addHealth(-1)
 
 
     def collide(self, dx, dy, platforms):
