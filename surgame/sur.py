@@ -121,7 +121,8 @@ def keyUp(k, d):
 class Hud():
     items = []
     enrg = 'Energy: %.2f'
-    hp = 'HP: %d'
+    hp = ('HP: %d', 'health')
+    exp = ('Exp: %d', 'exp')
 
     hpBarBg = None
     H = 24
@@ -134,10 +135,11 @@ class Hud():
         i = self.items = list()
         self.id = 'hud'
         self.rect = pygame.Rect(0,0,0,0)
-        self.font = Font(self.H, (250, 20, 90))
+        self.font = Font(self.H, (0, 200, 90))
         self.x = x
         self.y = y
         i.append(self.hp)
+        i.append(self.exp)
 
         self.hpBarBg = pygame.Surface((100, self.H))
         self.hpBarBg = pygame.image.load(images.hpbarrectimg)
@@ -156,12 +158,12 @@ class Hud():
             #self.hpBar = pygame.Surface((int(self.HP_W*abs(player.getHealth()/100.0)*0.8), self.H//1.8))
             self.hpBar = pygame.transform.scale(self.hpBar, (int(self.HP_W*abs(player.getHealth()/100.0)*1.0), int(self.H//1.8)))
 
-        for x in self.items:
-            #t = self.font.render(x % player.energy)
-            t = self.font.render(x % player.getHealth())
+        stats = player.getStatDict()
+        for (text_format, statname) in self.items:
+            t = self.font.render(text_format % stats[statname])
             self.rect = t.get_rect()
             self.rect.top = y
-            self.rect.left = self.x
+            self.rect.left = 0
             y += self.font.h // 1.5
             self.layer[self.id].append((t, self.rect))
 
@@ -201,11 +203,11 @@ def drawMain():
     
     globmap.draw(cam) 
     #screen.blit(player.image, player.getRect(cam))
-    hud.draw(screen)
     player.draw(cam)
     for e in enemies:
         screen.blit(e.image, e.getRect(cam))
 
+    hud.draw(screen)
     pygame.display.flip()
 
 def drawInventory():
@@ -222,7 +224,7 @@ def mainMechanic(d, p, e):
     r = player.moveSide(d, p, e)
     collideObjects()
     for e in enemies:
-        e.randomMove(d, p, e)
+        #e.randomMove(d, p, e)
         e.go(d, p, e)
     hud.refresh()
     return r

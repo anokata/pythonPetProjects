@@ -4,7 +4,9 @@ poringb:
         - objects/poringb1.png
         - objects/poringb2.png
     health: 2
-    view_distance: 300
+    view_distance: 200
+    exp: 2
+
 poringp:
     animStand: 
         - objects/poringp0.png
@@ -12,3 +14,4 @@ poringp:
         - objects/poringp2.png
     health: 1
     view_distance: 100
+    exp: 1

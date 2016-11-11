@@ -8,7 +8,7 @@ import util
 class Enemy(player.pgPlayer):
 
     ticks = 0
-    maxticks = 30
+    maxticks = 1
     spd = 1
     health = 2
     canPickUp = False
@@ -35,12 +35,8 @@ class Enemy(player.pgPlayer):
 
 
     def randomMove(self, dt, platforms, enemies):
-        self.ticks += 1
-        if self.ticks > self.maxticks:
-            self.ticks = 0
-            self.moving = random.randint(-1,1)
-            self.movingud = random.randint(-1,1)
-        self.moveSide(0, platforms, [])
+        self.moving = random.randint(-1,1)
+        self.movingud = random.randint(-1,1)
 
     def hunt(self, who):
         self.target = who
@@ -60,11 +56,18 @@ class Enemy(player.pgPlayer):
                 self.movingud = 1
             else: 
                 self.movingud = -1
+        else:
+            self.randomMove(dt, platforms, enemies)
+
+        self.ticks += 1
+        if self.ticks > self.maxticks:
+            self.ticks = 0
+            self.moveSide(0, platforms, [])
 
     def wound(self, damage):
         self.health -= damage
         if self.health <= 0:
-            return True
+            return self.exp
         return False
 
 class EnemyFactory():

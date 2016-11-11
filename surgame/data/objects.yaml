@@ -3,7 +3,7 @@ enemy_poringp:
     imagename: objects/none.png
     mapchar: G
     collided: False
-    count: 3
+    count: 1
     name: poringp
 
 enemy_poringb:
@@ -11,7 +11,7 @@ enemy_poringb:
     imagename: objects/none.png
     mapchar: B
     collided: False
-    count: 3
+    count: 1
     name: poringb
 
 apple:

@@ -18,6 +18,8 @@ class Stats():
     exp = 0
     health = 10
     maxHealth = 100
+    dmg = 1
+    lv = 0
 
 
 class Player(eventSystem.Publisher):
@@ -68,6 +70,9 @@ class Player(eventSystem.Publisher):
             self.stats.health = self.stats.maxHealth
         else:
             self.stats.health += amount
+
+    def expGain(self, amount):
+        self.stats.exp += amount
 
 # Player anim
 AnimDelay = 0.1 # скорость смены кадров
@@ -227,9 +232,10 @@ class pgPlayer(Player, pygame.sprite.Sprite):
                 self.bullets.remove(b)
 
         for e in enemies_to_wound:
-            killed = e.wound(1)
+            killed = e.wound(self.stats.dmg)
             if killed:
                 enemies_to_kill.append(e)
+                self.expGain(killed)
                 self.send('killed', 'P')
         for e in enemies_to_kill:
             if e in enemies:
@@ -305,9 +311,11 @@ class pgPlayer(Player, pygame.sprite.Sprite):
 
         
         self.rect.x += self.dx
+        self.rect.x = int(self.rect.x)
         self.collide(self.dx, 0, platforms)
 
         self.rect.y += self.dy
+        self.rect.y = int(self.rect.y)
         self.collide(0, self.dy, platforms)
 
         self.collideEnemies(enemies)
