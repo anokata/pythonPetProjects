@@ -24,7 +24,7 @@ apple:
     collided: True
     passable: True
     mapchar: A
-    hpGain: 1
+    hpGain: 20
 
 cherry:
     typ: FOOD

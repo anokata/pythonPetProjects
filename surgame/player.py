@@ -11,25 +11,63 @@ import particles
 import images
 import eventSystem
 
+import datafiles
+import yaml
+import inspect
+class Stats():
+    exp = 0
+    health = 10
+    maxHealth = 100
+
+
 class Player(eventSystem.Publisher):
-    health = 100
-    spd = 4.0
-    spdj = 5.0
     moving = 0
     movingud = 0
     dy = 0
     dx = 0.0
-    energy = 100.0
     canPickUp = True
 
-    exp = 0
-    lv = 0
+    spd = 4.0
+    stats = None
 
     def __init__(self):
         super().__init__()
+        self.stats = Stats()
 
     def step(self):
-        self.energy -= 0.01
+        pass
+
+    def load(self):
+        data = yaml.load(open(datafiles.playerStats))
+        print(data)
+        self.setStatDict(data)
+
+    def setStatDict(self, data):
+        self.stats = Stats()
+        for name, value in data.items():
+            setattr(self.stats, name, value)
+
+    def getStatDict(self):
+        d = dict()
+        for (name, value) in inspect.getmembers(self.stats):
+            if not name.startswith('_'):
+                d[name] = value
+        return d
+
+    def save(self):
+        data = self.getStatDict()
+        # TODO inventory save
+        with open(datafiles.playerStats, 'w') as fout:
+                yaml.dump(data, fout, default_flow_style=True)
+
+    def getHealth(self):
+        return self.stats.health
+
+    def addHealth(self, amount):
+        if self.stats.health + amount > self.stats.maxHealth:
+            self.stats.health = self.stats.maxHealth
+        else:
+            self.stats.health += amount
 
 # Player anim
 AnimDelay = 0.1 # скорость смены кадров
@@ -108,7 +146,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         food = self.inventory.getFood()
         if food:
             hpGain = self.inventory.eat(food)
-            self.health += hpGain
+            self.addHealth(hpGain)
 
     def startShoot(self):
         self.shootTick = self.shootInterval
@@ -273,16 +311,19 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.collide(0, self.dy, platforms)
 
         self.collideEnemies(enemies)
-        return self. health >= 0
+        return self.stats.health >= 0
 
     def collideEnemies(self, enemies):
         for e in enemies:
             if pygame.sprite.collide_rect(self, e):
-                self.health -= 1
-                if self.health < 0:
-                    self.health = 0
-                    self.send('die', 0)
+                self.wound()
                 self.particles.append(particles.Particles(self.rect.x, self.rect.y, n=3, imgname=images.particleBlood))
+
+    def wound(self):
+        self.addHealth(-1)
+        if self.stats.health < 0:
+            self.stats.health = 0
+            self.send('die', 0)
 
 
     def collide(self, dx, dy, platforms):

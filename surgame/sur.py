@@ -85,7 +85,9 @@ def keyDown(k, d):
         pygame.K_z: (player.kick, None),
         pygame.K_i: (toInventory, None),
         pygame.K_SPACE: (toMenu, None),
-        pygame.K_e: (player.eat, None)
+        pygame.K_e: (player.eat, None),
+        pygame.K_s: (player.save, None),
+        pygame.K_l: (player.load, None),
             }
     fun, arg = keyfuncs.get(k, (False, None))
     if fun and arg != None:
@@ -150,13 +152,13 @@ class Hud():
     def refresh(self):
         self.layer[self.id] = list()
         y = self.y
-        if player.health > 0:
-            #self.hpBar = pygame.Surface((int(self.HP_W*abs(player.health/100.0)*0.8), self.H//1.8))
-            self.hpBar = pygame.transform.scale(self.hpBar, (int(self.HP_W*abs(player.health/100.0)*1.0), int(self.H//1.8)))
+        if player.getHealth() > 0:
+            #self.hpBar = pygame.Surface((int(self.HP_W*abs(player.getHealth()/100.0)*0.8), self.H//1.8))
+            self.hpBar = pygame.transform.scale(self.hpBar, (int(self.HP_W*abs(player.getHealth()/100.0)*1.0), int(self.H//1.8)))
 
         for x in self.items:
             #t = self.font.render(x % player.energy)
-            t = self.font.render(x % player.health)
+            t = self.font.render(x % player.getHealth())
             self.rect = t.get_rect()
             self.rect.top = y
             self.rect.left = self.x
