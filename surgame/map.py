@@ -92,7 +92,8 @@ class Map():
             p = cam.calc(player)
             d = distance(p, r)
             if d < 200:
-                self.screen.blit(e.image, e.getRect(cam))
+                e.draw(cam)
+                #self.screen.blit(e.image, e.getRect(cam))
 
     def mechanic(self, d, p, e):
         for e in self.enemiesInstances:

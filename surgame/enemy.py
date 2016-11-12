@@ -45,6 +45,11 @@ class Enemy(player.pgPlayer):
         distance = util.distance(self.target.rect, self.rect) 
         if distance < self.view_distance:
             #print('view',distance)
+
+            if random.randint(0,20) == 0:
+                #self.faceat = random.randint(0,4)
+                self.shoot()
+
             x_dist = self.target.rect.x - self.rect.x
             y_dist = self.target.rect.y - self.rect.y
             if x_dist > 0:

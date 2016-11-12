@@ -98,6 +98,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         super().__init__()
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(images.none).convert()
+        self.shadow = pygame.image.load('objects/shadow.png').convert_alpha()
         size = self.image.get_rect().size
         self.rect = pygame.Rect(x, y, size[0], size[1])
         self.rect.height -= wallInpact
@@ -125,8 +126,11 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.particles = list()
 
     def changeAnim(self, a):
+        self.anim = a
+
+    def drawAnim(self):
         self.image.fill(pygame.Color('#000000'))
-        a.blit(self.image, (0, 0))
+        self.anim.blit(self.image, (0, 0))
 
     def eat(self):
         food = self.inventory.getFood()
@@ -146,7 +150,6 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         if self.shootTick != 0:
             self.shootTick -= 1
             if self.shootTick % self.shootSpd == 0:
-                self.send('shoot', 'P')
                 self.shoot()
 
     def shoot(self):
@@ -166,13 +169,16 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         #dy += self.movingud
         #dx += self.moving
         self.bullets.append(bullet.Bullet(self.rect.x, self.rect.y, dx, dy))
+        self.send('shoot', 'P')
 
     def drawBullets(self, cam):
         for b in self.bullets:
             b.draw(b.rect.x, b.rect.y, cam, self.screen)
 
     def draw(self, cam):
+        self.drawAnim()
         self.screen.blit(self.image, self.getRect(cam))
+        #self.screen.blit(self.shadow, self.getRect(cam))
         self.drawBullets(cam)
         self.drawParticles(cam)
 

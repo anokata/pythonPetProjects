@@ -48,7 +48,6 @@ class Block(pygame.sprite.Sprite): # base class for sprites?
         self.anim = False
         if isinstance(imgname, list):
             self.anim = animLoad(imgname)
-            print(self.anim, imgname)
             self.image = pygame.image.load(imgname[0]).convert_alpha()
             self.image.fill(pygame.Color(0,0,0,0))
             self.anim.blit(self.image, (0, 0))
