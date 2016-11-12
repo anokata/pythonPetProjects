@@ -104,6 +104,31 @@ ground1Brown:
     takeable: False
     collided: False
 
+rock:
+    typ: MAPGROUND
+    imagename: objects/rockL.png
+    mapchar: R
+    passable: False
+    takeable: False
+    collided: True
+
+rocka:
+    typ: MAPGROUND
+    imagename: objects/rockA.png
+    mapchar: a
+    passable: False
+    takeable: False
+    collided: True
+
+rock_portal:
+    typ: PORTAL
+    mapname: data/cave1.map
+    imagename: objects/rock_portal.png
+    mapchar: b
+    passable: True
+    takeable: False
+    collided: True
+
 shrub:
     typ: MAPGROUND
     imagename: objects/shrub.png
