@@ -15,3 +15,12 @@ poringp:
     health: 1
     view_distance: 100
     exp: 1
+
+crab:
+    animStand: 
+        - objects/crab0.png
+        - objects/crab1.png
+        - objects/crab2.png
+    health: 10
+    view_distance: 150
+    exp: 4

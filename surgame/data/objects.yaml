@@ -1,3 +1,12 @@
+
+enemy_crab:
+    typ: ENEMY
+    imagename: objects/none.png
+    mapchar: c
+    collided: False
+    count: 1
+    name: crab
+        
 enemy_poringp:
     typ: ENEMY
     imagename: objects/none.png
