@@ -5,7 +5,7 @@ particleDefault = 'objects/particleR.png'
 particleBlood = 'objects/particleBlood.png'
 none = 'objects/none.png'
 defaultBlock = 'objects/block1.png'
-bg = 'objects/nightSky0.png'
+bg = 'objects/nightSky1.png'
 hpbarimg = 'objects/hpbar.png'
 hpbarrectimg = 'objects/hpbarrect.png'
 

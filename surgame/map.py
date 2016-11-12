@@ -1,6 +1,6 @@
 import pygame
 import gameObjects
-from util import Block
+from util import Block, distance
 import objectTypes
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # Свойства объектов, проходимые, непроходимые, поднимаемые...
@@ -21,6 +21,7 @@ class Map():
     tiles = 0
     w = h = 0
     blockers = 0
+    lights = None
     px = py = 0
 
     def __init__(self, mapname, screen):
@@ -44,13 +45,45 @@ class Map():
         self.blockers.remove(phisObj)
         #remove from phis objs
     
-    def draw(self, cam):
+    def draw(self, cam, prect):
         for lay in self.tiles:
             for (x,y), o in lay.items():
                 if o:
-                    o = o[0]
-                    a, b = x * self.blockW, y * self.blockH
-                    o.draw(a, b, cam, self.screen)
+                    r = cam.calcXY(x*GRIDH, y*GRIDH)
+                    p = cam.calcXY(prect.x, prect.y)
+                    d = distance(p, r)
+
+                    if d < 300:
+                        o = o[0]
+                        a, b = x * self.blockW, y * self.blockH
+                        o.draw(a, b, cam, self.screen)
+
+        self.drawShadow(cam, prect)
+
+    def drawShadow(self, cam, prect):
+        shadow0 = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
+        shadow0.fill((0,0,0,255))
+        shadow = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
+        shadow.fill((0,0,0,200))
+        shadow2 = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
+        shadow2.fill((0,0,0,150))
+        shadow3 = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
+        shadow3.fill((0,0,0,100))
+        for x in range(self.w):
+            for y in range(self.h):
+                #if (x, y) not in self.lights.keys():
+                    r = cam.calcXY(x*GRIDH, y*GRIDH)
+                    p = cam.calcXY(prect.x, prect.y)
+                    d = distance(p, r)
+                    if d > 300:
+                        self.screen.blit(shadow0, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
+                    elif d > 200:
+                        self.screen.blit(shadow, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
+                    elif d > 150:
+                        self.screen.blit(shadow2, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
+                    elif d > 100:
+                        self.screen.blit(shadow3, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
+
 
     def load(self, mapname):
         self.blockers = list()
@@ -86,6 +119,7 @@ class Map():
         self.layersDim = list()
         self.tiles = list()
         self.enemies = dict()
+        self.lights = dict()
 
         for lev in self.layers:
             w = len(lev[0])
@@ -104,6 +138,8 @@ class Map():
                     if lev[y][x] == '~':
                         self.px = x * self.blockW
                         self.py = y * self.blockW
+                        self.lights[(x, y)] = 3
+                        
                     char = lev[y][x]
                     if char in mapObjects:
                         obj = mapObjects[char]

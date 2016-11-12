@@ -201,11 +201,15 @@ def drawMain():
     global cam, player, textLayer, globmap, enemies
     cam.stalkAt(player)
     
-    globmap.draw(cam) 
+    globmap.draw(cam, player.rect) 
     #screen.blit(player.image, player.getRect(cam))
     player.draw(cam)
-    for e in enemies:
-        screen.blit(e.image, e.getRect(cam))
+    for e in enemies: # TODO extract method (of who?)
+        r = e.getRect(cam)
+        p = cam.calc(player)
+        d = util.distance(p, r)
+        if d < 200:
+            screen.blit(e.image, e.getRect(cam))
 
     hud.draw(screen)
     pygame.display.flip()
