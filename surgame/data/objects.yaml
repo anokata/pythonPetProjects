@@ -87,6 +87,16 @@ tree:
     passable: False
     takeable: False
     collided: True
+        
+fire:
+    typ: MAPWALL
+    imagename: 
+        - objects/fire0.png 
+        - objects/fire1.png 
+    mapchar: F
+    passable: False
+    takeable: False
+    collided: True
 
 ground0:
     typ: MAPGROUND

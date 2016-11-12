@@ -1,8 +1,6 @@
 import pygame
 import sys
 sys.path += ["lib",'./']
-import pyganim
-from itertools import repeat
 import gameInventory
 from objectTypes import *
 # TODO: отдельные ректы для рисования и физики. останавливаться когда бьёт?
@@ -107,15 +105,15 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.rectImg = pygame.Rect(x, y, self.image.get_rect().size[0],
                          self.image.get_rect().size[1])
 
-        self.AnimRight = self.animLoad(images.playerAnimRight) 
-        self.AnimLeft = self.animLoad(images.playerAnimLeft) 
-        self.AnimStand = self.animLoad(images.playerAnimStand) 
-        self.AnimUp = self.animLoad(images.playerAnimUp) 
-        self.AnimStandR = self.animLoad(images.playerAnimStandR) 
-        self.AnimStandL = self.animLoad(images.playerAnimStandL) 
+        self.AnimRight = util.animLoad(images.playerAnimRight) 
+        self.AnimLeft = util.animLoad(images.playerAnimLeft) 
+        self.AnimStand = util.animLoad(images.playerAnimStand) 
+        self.AnimUp = util.animLoad(images.playerAnimUp) 
+        self.AnimStandR = util.animLoad(images.playerAnimStandR) 
+        self.AnimStandL = util.animLoad(images.playerAnimStandL) 
 
-        self.AnimKickL = self.animLoad(images.playerAnimKickL)
-        self.AnimKickR = self.animLoad(images.playerAnimKickR)
+        self.AnimKickL = util.animLoad(images.playerAnimKickL)
+        self.AnimKickR = util.animLoad(images.playerAnimKickR)
         self.AnimKickTicks = 10
 
         self.changeAnim(self.AnimStand)
@@ -126,17 +124,9 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.bullets = list()
         self.particles = list()
 
-    def animLoad(self, animlist):
-        AnimDelay = 0.1 # скорость смены кадров
-        animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))
-        ranim = pyganim.PygAnimation(animlistdelay)
-        ranim.play()
-        return ranim
-
     def changeAnim(self, a):
         self.image.fill(pygame.Color('#000000'))
         a.blit(self.image, (0, 0))
-        #self.image.scroll(dy=20)
 
     def eat(self):
         food = self.inventory.getFood()

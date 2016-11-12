@@ -1,5 +1,9 @@
 import pygame
 import images
+import sys
+sys.path += ["lib",'./']
+import pyganim
+from itertools import repeat
 
 def geomRange(start, count, coeff):
     """ Генератор геометрической прогрессии. """
@@ -30,16 +34,35 @@ def makeSpriteXY(imgname, x, y):
 
 Sprite = pygame.sprite.Sprite
 
+def animLoad(animlist):
+    AnimDelay = 0.1 # скорость смены кадров
+    animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))
+    ranim = pyganim.PygAnimation(animlistdelay)
+    ranim.play()
+    return ranim
+
 class Block(pygame.sprite.Sprite): # base class for sprites?
     rect = 0
     def __init__(self, x=0, y=0, imgname=images.defaultBlock):
         Sprite.__init__(self)
-        self.image = pygame.image.load(imgname).convert()
-        size = self.image.get_rect().size
-        #print(x,y, self.image, imgname, size, pygame.Rect)
-        self.rect = pygame.Rect(x, y, size[0], size[1])
+        self.anim = False
+        if isinstance(imgname, list):
+            self.anim = animLoad(imgname)
+            print(self.anim, imgname)
+            self.image = pygame.image.load(imgname[0]).convert_alpha()
+            self.image.fill(pygame.Color(0,0,0,0))
+            self.anim.blit(self.image, (0, 0))
+            size = self.image.get_rect().size
+            self.rect = pygame.Rect(x, y, size[0], size[1])
+        else:
+            self.image = pygame.image.load(imgname).convert_alpha()
+            size = self.image.get_rect().size
+            self.rect = pygame.Rect(x, y, size[0], size[1])
 
     def draw(self, x, y, cam, screen):
+        if self.anim:
+            self.image.fill(pygame.Color(0,0,0,0))
+            self.anim.blit(self.image, (0, 0))
         screen.blit(self.image, cam.calcXY(x, y)) 
     def simpleDraw(self, screen):
         screen.blit(self.image, (self.rect.left, self.rect.top))
