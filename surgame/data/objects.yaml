@@ -98,6 +98,14 @@ fire:
     takeable: False
     collided: True
 
+stone_floor:
+    typ: MAPGROUND
+    imagename: objects/stone_floor.png
+    mapchar: _
+    passable: True
+    takeable: False
+    collided: False
+
 ground0:
     typ: MAPGROUND
     imagename: objects/ground1.png
