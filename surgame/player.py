@@ -98,7 +98,6 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         super().__init__()
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(images.none).convert()
-        self.shadow = pygame.image.load('objects/shadow.png').convert_alpha()
         size = self.image.get_rect().size
         self.rect = pygame.Rect(x, y, size[0], size[1])
         self.rect.height -= wallInpact
@@ -178,7 +177,6 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def draw(self, cam):
         self.drawAnim()
         self.screen.blit(self.image, self.getRect(cam))
-        #self.screen.blit(self.shadow, self.getRect(cam))
         self.drawBullets(cam)
         self.drawParticles(cam)
 
