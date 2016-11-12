@@ -2,6 +2,7 @@ import pygame
 import gameObjects
 from util import Block, distance
 import objectTypes
+import enemy
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # Свойства объектов, проходимые, непроходимые, поднимаемые...
 # TODO: map сделать редактор, добавление новых блоков. выбор блоков.
@@ -58,6 +59,7 @@ class Map():
                         a, b = x * self.blockW, y * self.blockH
                         o.draw(a, b, cam, self.screen)
 
+        self.drawEnemies(self.player, cam)
         self.drawShadow(cam, prect)
 
     def drawShadow(self, cam, prect):
@@ -84,6 +86,17 @@ class Map():
                     elif d > 100:
                         self.screen.blit(shadow3, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
 
+    def drawEnemies(self, player, cam):
+        for e in self.enemiesInstances: 
+            r = e.getRect(cam)
+            p = cam.calc(player)
+            d = distance(p, r)
+            if d < 200:
+                self.screen.blit(e.image, e.getRect(cam))
+
+    def mechanic(self, d, p, e):
+        for e in self.enemiesInstances:
+            e.go(d, p, e)
 
     def load(self, mapname):
         self.blockers = list()
@@ -153,6 +166,16 @@ class Map():
                             a, b = (x-0) * self.blockW, (y-0) * self.blockH
                             self.blockers.append(PhisycBlock(a, b, obj.rect.width, obj))
             i += 1
+
+    def loadEnemies(self, player):
+        eFactory = enemy.EnemyFactory(self.screen, self)
+        self.enemiesInstances = list()
+        for (x, y), (name, count) in self.enemies.items():
+            for i in range(count):
+                e = eFactory.create(name, x, y)
+                e.hunt(player)
+                self.enemiesInstances.append(e)
+
 
     def save(self, mapname):
         with open(mapname, 'wt') as fout:

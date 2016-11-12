@@ -27,7 +27,6 @@ Sprite = pygame.sprite.Sprite
 bgSurface = None
 screen = 0
 collided = list()
-enemies = list()
 cam = Camera(400, 300)
 entities = None
 textLayer = None
@@ -198,18 +197,12 @@ def drawMenu():
 def drawMain():
     #screen.set_colorkey((0,0,0))
     screen.blit(bgSurface.image, (0, 0))
-    global cam, player, textLayer, globmap, enemies
+    global cam, player, textLayer, globmap
     cam.stalkAt(player)
     
     globmap.draw(cam, player.rect) 
     #screen.blit(player.image, player.getRect(cam))
     player.draw(cam)
-    for e in enemies: # TODO extract method (of who?)
-        r = e.getRect(cam)
-        p = cam.calc(player)
-        d = util.distance(p, r)
-        if d < 200:
-            screen.blit(e.image, e.getRect(cam))
 
     hud.draw(screen)
     pygame.display.flip()
@@ -227,9 +220,7 @@ def mainMechanic(d, p, e):
     snd.mech()
     r = player.moveSide(d, p, e)
     collideObjects()
-    for e in enemies:
-        #e.randomMove(d, p, e)
-        e.go(d, p, e)
+    globmap.mechanic(d, p, e)
     hud.refresh()
     return r
 
@@ -329,8 +320,7 @@ currentMap = 'data/map.map'
 def loadMap(mapname):
     global globmap
     global screen
-    global collided, player, enemies
-    enemies = list()
+    global collided, player
     globmap = Map(mapname, screen)
     collided = globmap.blockers # CHG TODO возвращать словарь?
     #globmap.save()
@@ -339,13 +329,9 @@ def loadMap(mapname):
         player.save()
     player = pgPlayer(globmap.px, globmap.py, screen, globmap)
     player.load()
-    eFactory = enemy.EnemyFactory(screen, globmap)
+    globmap.player = player
 
-    for (x, y), (name, count) in globmap.enemies.items():
-        for i in range(count):
-            e = eFactory.create(name, x, y)
-            e.hunt(player)
-            enemies.append(e)
+    globmap.loadEnemies(player)
 
 def stateInit():
     addState('mainRun')
@@ -395,7 +381,7 @@ def mainLoop():
             if event.type == pygame.KEYUP:
                 handleEvent('keyUp', event.key, event)
             if event.type == pygame.USEREVENT + 1:
-                handleEvent('mechanic', 1, collided, enemies)
+                handleEvent('mechanic', 1, collided, globmap.enemiesInstances)
         clock.tick()
         pygame.display.set_caption("fps: " + str(int(clock.get_fps())))
         handleEvent('draw')
