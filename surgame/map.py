@@ -29,6 +29,7 @@ class Map():
         self.blockers = list()
         self.load(mapname)
         self.screen = screen
+        self.makeShadows(8)
 
     def __setitem__(self, k, v):
         self.tiles[k] = v
@@ -62,29 +63,39 @@ class Map():
         self.drawEnemies(self.player, cam)
         self.drawShadow(cam, prect)
 
+    def makeShadows(self, n, maxdist=400, mindist=100):
+        from collections import OrderedDict
+        self.shadows = OrderedDict()
+        start = 100
+        end = 255
+        leng = end - start
+        step = leng // n
+        step_dist = (maxdist - mindist) // n
+        for i in range(n):
+            shadow = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
+            shadow.fill((0,0,0, start + i * step))
+            dist = i * step_dist
+            self.shadows[dist] = shadow
+
+    def getShadowDist(self, dist):
+        for d in self.shadows.keys():
+            if d > dist:
+                return d
+        return list(self.shadows.keys())[-1]
+
+    def getShadow(self, dist):
+        return self.shadows[self.getShadowDist(dist)]
+
     def drawShadow(self, cam, prect):
-        shadow0 = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
-        shadow0.fill((0,0,0,255))
-        shadow = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
-        shadow.fill((0,0,0,200))
-        shadow2 = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
-        shadow2.fill((0,0,0,150))
-        shadow3 = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
-        shadow3.fill((0,0,0,100))
         for x in range(self.w):
             for y in range(self.h):
                 #if (x, y) not in self.lights.keys():
                     r = cam.calcXY(x*GRIDH, y*GRIDH)
                     p = cam.calcXY(prect.x, prect.y)
                     d = distance(p, r)
-                    if d > 300:
-                        self.screen.blit(shadow0, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
-                    elif d > 200:
+                    if d > 100:
+                        shadow = self.getShadow(d)
                         self.screen.blit(shadow, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
-                    elif d > 150:
-                        self.screen.blit(shadow2, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
-                    elif d > 100:
-                        self.screen.blit(shadow3, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
 
     def drawEnemies(self, player, cam):
         for e in self.enemiesInstances: 
