@@ -242,7 +242,11 @@ trailportal:
 
 portal:
     typ: PORTAL
-    imagename: objects/portal.png
+    imagename: 
+        - objects/portal_1.png
+        - objects/portal_2.png
+        - objects/portal_3.png
+        - objects/portal_4.png
     mapchar: P
     passable: True
     takeable: False
@@ -260,7 +264,11 @@ portalMap:
 
 portal_meadow:
     typ: PORTAL
-    imagename: objects/portal.png
+    imagename: 
+        - objects/portal_1.png
+        - objects/portal_2.png
+        - objects/portal_3.png
+        - objects/portal_4.png
     mapchar: P
     passable: True
     takeable: False
