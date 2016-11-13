@@ -49,7 +49,11 @@ cherry:
 
 stonewall:
     typ: MAPWALL
-    imagename: objects/block1.png 
+    imagename: 
+        - objects/block1.png 
+        - objects/block11.png 
+        - objects/block12.png 
+        - objects/block13.png 
     mapchar: x
     passable: False
     takeable: False
