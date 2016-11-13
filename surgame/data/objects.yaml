@@ -118,6 +118,46 @@ ground0:
     takeable: False
     collided: False
 
+ground_sand:
+    typ: MAPGROUND
+    imagename: objects/ground0.png
+    mapchar: _
+    passable: True
+    takeable: False
+    collided: False
+
+water:
+    typ: MAPGROUND
+    imagename: objects/water.png
+    mapchar: w
+    passable: False
+    takeable: False
+    collided: True
+
+water_sand:
+    typ: MAPGROUND
+    imagename: objects/ground_water.png
+    mapchar: s
+    passable: True
+    takeable: False
+    collided: False
+
+void:
+    typ: MAPGROUND
+    imagename: objects/void.png
+    mapchar: V
+    passable: False
+    takeable: False
+    collided: True
+
+sand_void:
+    typ: MAPGROUND
+    imagename: objects/ground_void.png
+    mapchar: v
+    passable: True
+    takeable: False
+    collided: False
+
 ground1Brown:
     typ: MAPGROUND
     imagename: objects/ground1Brown.png
@@ -217,3 +257,12 @@ portalMap:
     takeable: False
     collided: True
     mapname: data/map.map
+
+portal_meadow:
+    typ: PORTAL
+    imagename: objects/portal.png
+    mapchar: P
+    passable: True
+    takeable: False
+    collided: True
+    mapname: data/meadow.map
