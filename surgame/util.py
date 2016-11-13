@@ -4,6 +4,7 @@ import sys
 sys.path += ["lib",'./']
 import pyganim
 from itertools import repeat
+from math import hypot
 
 def geomRange(start, count, coeff):
     """ Генератор геометрической прогрессии. """
@@ -15,11 +16,11 @@ def geomRange(start, count, coeff):
         yield int(x)
 
 def distance(r1, r2):
-    return distance4(r1.x, r1.y, r2.x, r2.y)
+    #return (r1.x-r2.x)*(r1.x-r2.x)+(r1.y-r2.y)*(r1.y-r2.y)
+    return hypot(r1.x-r2.x, r1.y-r2.y)
 
 def distance4(x, y, a, b):
     """ Вычисление расстояния между двумя точками. """
-    from math import hypot
     return hypot(x-a, y-b)
 
 def makeSpriteXY(imgname, x, y):

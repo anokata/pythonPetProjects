@@ -15,10 +15,9 @@ class Camera():
         self.rect.bottom = max(self.rect.bottom, p.rect.bottom)
 
     def calcXY(self, x, y):
-        """ пересчитать координаты объекта на экран """
         r = pygame.Rect(0, 0, 0, 0)
-        r.left = x - self.rect.left #- WindowH//2
-        r.top = y - self.rect.top #+ WindowW//2
+        r.left = x - self.rect.left 
+        r.top = y - self.rect.top 
         return r
 
     def calc(self, o):

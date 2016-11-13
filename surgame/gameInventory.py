@@ -11,8 +11,8 @@ class GInventory(inventory.Inventory):
 
     def __init__(self, screen):
         super().__init__()
-        self.bg = pygame.image.load(self.backgroundImg)
-        self.cell = pygame.image.load(self.cellImg)
+        self.bg = pygame.image.load(self.backgroundImg).convert_alpha()
+        self.cell = pygame.image.load(self.cellImg).convert_alpha()
         self.screen = screen
 
         self.bgRect = self.bg.get_rect()

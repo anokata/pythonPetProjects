@@ -141,11 +141,11 @@ class Hud():
         i.append(self.exp)
 
         self.hpBarBg = pygame.Surface((100, self.H))
-        self.hpBarBg = pygame.image.load(images.hpbarrectimg)
+        self.hpBarBg = pygame.image.load(images.hpbarrectimg).convert_alpha()
         #self.hpBarBg.fill((255, 255, 50))
         self.hpRect = pygame.Rect(x, y+self.H, 0, 0)
         self.hpBar = pygame.Surface((self.HP_W - self.HP_PAD*2, self.H//1.8))
-        #self.hpBar = pygame.image.load(images.hpbarimg)
+        #self.hpBar = pygame.image.load(images.hpbarimg).convert_alpha()
         self.hpBar.fill(self.HP_COLOR)
         self.hpbarRect = pygame.Rect(x+self.HP_PAD, y+self.H//0.8, 0, 0)
         self.refresh()
@@ -305,7 +305,7 @@ def main():
     mainSubsriber.register('teleport', mapChange)
 
     global screen
-    screen = pygame.display.set_mode(Display)
+    screen = pygame.display.set_mode(Display, pygame.DOUBLEBUF)
     pygame.display.set_caption("/SurGame/")
     mainInit()
     mainLoop()

@@ -95,7 +95,7 @@ class Map():
                     d = distance(p, r)
                     if d > 100:
                         shadow = self.getShadow(d)
-                        self.screen.blit(shadow, pygame.Rect(r.x, r.y, GRIDH, GRIDH))
+                        self.screen.blit(shadow, r)
 
     def drawEnemies(self, player, cam):
         for e in self.enemiesInstances: 
