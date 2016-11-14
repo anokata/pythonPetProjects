@@ -8,7 +8,7 @@ INIT = 4
 
 DrawChars = {
         WALL: 'x',
-        FLOOR: '.',
+        FLOOR: 'f',
         PLAYER: '~',
         TELEPORT: 'T',
         INIT: 'o',

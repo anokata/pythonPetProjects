@@ -161,10 +161,18 @@ sand_void:
 floor:
     typ: MAPGROUND
     imagename: objects/floor.png
-    mapchar: .
+    mapchar: f
     passable: True
     takeable: False
     collided: False
+
+ground:
+    typ: MAPGROUND
+    imagename: objects/ground.png
+    mapchar: x
+    passable: False
+    takeable: False
+    collided: True
 
 ground1Brown:
     typ: MAPGROUND
@@ -282,3 +290,16 @@ portal_meadow:
     takeable: False
     collided: True
     mapname: data/meadow.map
+
+test_portal:
+    typ: PORTAL
+    imagename: 
+        - objects/portal_1.png
+        - objects/portal_2.png
+        - objects/portal_3.png
+        - objects/portal_4.png
+    mapchar: z
+    passable: True
+    takeable: False
+    collided: True
+    mapname: data/cavegen.map
