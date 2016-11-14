@@ -1,11 +1,9 @@
 from PIL import Image, ImageDraw
 import random
-w = 100
+w = 200
 img = Image.new("RGB", (w*3, w*3), 'black')
 draw = ImageDraw.Draw(img)
-def init_matrix(w):
-    m = [[0 for x in range(w)] for y in range(w)]
-    return m
+
 
 def drawm(m, h=3):
     for x in range(0, len(m)):
@@ -51,10 +49,12 @@ def step_life(m):
                 n[x][y] = 1
     return n
 
+
+
 def stepn(m):
     BL = 4
     DL = 3
-    n = [[0 for x in range(w)] for y in range(w)]
+    n = [[0 for x in range(len(m))] for y in range(len(m))]
     for x in range(1, len(m) - 2):
         for y in range(1, len(m) - 2):
             ne = calcNei(m, x, y)
@@ -79,13 +79,11 @@ def calcNei(m, x, y):
     r += m[x][y+1]
     return r
 
+def init_matrix(w):
+    m = [[0 for x in range(w)] for y in range(w)]
+    return m
 
-
-
-
-
-def objects_generate(m):
-    TL = 4
+def objects_generate(m, TL=4):
     for x in range(1, len(m)-1):
         for y in range(1, len(m)-1):
             ne = calcNei(m, x, y)
@@ -100,21 +98,34 @@ def randomize(m, chance=55):
                 m[x][y] = 1
     return m
 
-def gen():
+def gen(w=100, steps=3):
     m = init_matrix(w)
     m = randomize(m)
-    for i in range(3):
+    for i in range(steps):
         m = stepn(m)
     objects_generate(m)
     #floodFill(m, 20, 20, m[20][20], 2)
     return m
 
+def drawString(m):
+    r = str()
+    for x in range(0, len(m)):
+        for y in range(0, len(m)):
+            if m[x][y] == 1:
+                r += '.'
+            elif m[x][y] == 2:
+                r += '#'
+            elif m[x][y] == 3:
+                r += 'T'
+            else:
+                r += 'x'
+        r += '\n'
+    return r
 
-m = gen()
-drawm(m)
-img.show()
-
-
+m = gen(30, 5)
+#drawm(m, 12)
+print(drawString(m))
+#img.show()
 
 
 

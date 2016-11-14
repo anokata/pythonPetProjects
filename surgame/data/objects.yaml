@@ -158,6 +158,14 @@ sand_void:
     takeable: False
     collided: False
 
+floor:
+    typ: MAPGROUND
+    imagename: objects/floor.png
+    mapchar: .
+    passable: True
+    takeable: False
+    collided: False
+
 ground1Brown:
     typ: MAPGROUND
     imagename: objects/ground1Brown.png
