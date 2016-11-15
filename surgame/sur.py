@@ -391,6 +391,8 @@ def mainLoop():
         print(e.type)
         e = e.type
     print('last event: ', pygame.event.poll())
+    import pdb
+    pdb.set_trace()
     pygame.quit()
     exit()
 
