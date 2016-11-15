@@ -1,4 +1,4 @@
 run:
-	python3 sur.py
+	python3 src/sur.py
 test:
-	python3 tests.py
+	python3 src/tests.py
