@@ -224,6 +224,11 @@ portal_meadow:
     mapchar: P
     mapname: data/meadow.yaml
 
+gen_portal:
+    <<: *portal
+    mapchar: g
+    mapname: generate
+
 test_portal:
     <<: *portal
     imagename: 

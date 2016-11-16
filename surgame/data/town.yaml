@@ -29,7 +29,7 @@ layers:
         VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
         FvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvRa
         F                               Ra
-        F             G                 Ra
+        F       g     G                 Ra
         F     ~       A                 Ra
         F       z                       Ra
         F     I       ID...             Ra
@@ -54,6 +54,7 @@ layers:
         wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
         wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 objects:
+    - gen_portal
     - test_portal
     - apple
     - enemy_poringp
