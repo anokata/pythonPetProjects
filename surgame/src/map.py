@@ -64,13 +64,15 @@ class Map():
                         o.draw(a, b, cam, self.screen)
 
         self.drawEnemies(self.player, cam)
-        self.drawBullets(cam)
+        self.drawPlayerBullets(cam)
         self.drawShadow(cam, prect)
 
-    def drawBullets(self, cam):
-        for b in self.player.bullets:
-            b.draw(b.rect.x, b.rect.y, cam, self.screen)
+    def drawPlayerBullets(self, cam):
+        self.drawBullets(self.player.bullets, cam)
 
+    def drawBullets(self, buls, cam):
+        for b in buls:
+            b.draw(b.rect.x, b.rect.y, cam, self.screen)
 
     def makeShadows(self, n):
         maxdist = self.view_dist_shadow
@@ -115,8 +117,7 @@ class Map():
             d = distance(p, r)
             if d < self.view_dist:
                 e.draw(cam)
-                for b in e.bullets:
-                    b.draw(b.rect.x, b.rect.y, cam, self.screen)
+                self.drawBullets(e.bullets, cam)
 
     def mechanic(self, d, p, e):
         for e in self.enemiesInstances:
