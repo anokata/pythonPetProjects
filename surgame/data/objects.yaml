@@ -303,3 +303,52 @@ test_portal:
     takeable: False
     collided: True
     mapname: data/cavegen.map
+
+town_H_fence:
+    typ: MAPGROUND
+    imagename: objects/town_H_fence.png
+    mapchar: F
+    passable: False
+    takeable: False
+    collided: True
+
+town_brick_wall:
+    typ: MAPGROUND
+    imagename: objects/town_brick_wall.png
+    mapchar: B
+    passable: False
+    takeable: False
+    collided: True
+
+town_roof_center:
+    typ: MAPGROUND
+    imagename: objects/town_roof_center.png
+    mapchar: r
+    passable: False
+    takeable: False
+    collided: True
+
+town_big_roof:
+    typ: MAPGROUND
+    imagename: objects/town_big_roof.png
+    mapchar: D
+    passable: False
+    takeable: False
+    collided: True
+
+town_road_H:
+    typ: MAPGROUND
+    imagename: objects/town_road_H.png
+    mapchar: h
+    passable: True
+    takeable: False
+    collided: True
+
+town_road_V:
+    typ: MAPGROUND
+    imagename: objects/town_road_V.png
+    mapchar: I
+    passable: True
+    takeable: False
+    collided: True
+
