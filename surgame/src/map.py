@@ -30,7 +30,7 @@ class Map():
     px = py = 0
     view_dist_shadow = 350
     view_dist = 250
-    view_dist_in_cells = 10
+    view_dist_in_cells = 13
 
     def __init__(self, mapname, screen):
         self.blockers = list()
