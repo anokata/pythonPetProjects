@@ -10,7 +10,7 @@ import path
 
 #TODO Переделать загрузку объектов
 # Обработка коллизий с нужными объектами
-GRIDH = 42
+GRIDH = 24
 ObjectLayer = 1
 class PhisycBlock():
     rect = 0
@@ -25,12 +25,14 @@ class Map():
     blockers = 0
     lights = None
     px = py = 0
+    view_dist_shadow = 350
+    view_dist = 250
 
     def __init__(self, mapname, screen):
         self.blockers = list()
         self.load(mapname)
         self.screen = screen
-        self.makeShadows(8)
+        self.makeShadows(15)
 
     def __setitem__(self, k, v):
         self.tiles[k] = v
@@ -56,7 +58,7 @@ class Map():
                     p = cam.calcXY(prect.x, prect.y)
                     d = distance(p, r)
 
-                    if d < 300:
+                    if d < self.view_dist_shadow:
                         o = o[0]
                         a, b = x * self.blockW, y * self.blockH
                         o.draw(a, b, cam, self.screen)
@@ -64,18 +66,20 @@ class Map():
         self.drawEnemies(self.player, cam)
         self.drawShadow(cam, prect)
 
-    def makeShadows(self, n, maxdist=400, mindist=100):
+    def makeShadows(self, n):
+        maxdist = self.view_dist_shadow
+        mindist = self.view_dist
         from collections import OrderedDict
         self.shadows = OrderedDict()
-        start = 100
+        start = 50
         end = 255
         leng = end - start
         step = leng // n
-        step_dist = (maxdist - mindist) // n
+        step_dist = abs(maxdist - mindist) // n
         for i in range(n):
             shadow = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
+            dist = mindist + i * step_dist
             shadow.fill((0,0,0, start + i * step))
-            dist = i * step_dist
             self.shadows[dist] = shadow
 
     def getShadowDist(self, dist):
@@ -94,7 +98,7 @@ class Map():
                     r = cam.calcXY(x*GRIDH, y*GRIDH)
                     p = cam.calcXY(prect.x, prect.y)
                     d = distance(p, r)
-                    if d > 100:
+                    if d > self.view_dist:
                         shadow = self.getShadow(d)
                         self.screen.blit(shadow, r)
 
@@ -103,7 +107,7 @@ class Map():
             r = e.getRect(cam)
             p = cam.calc(player)
             d = distance(p, r)
-            if d < 200:
+            if d < self.view_dist:
                 e.draw(cam)
                 #self.screen.blit(e.image, e.getRect(cam))
 
