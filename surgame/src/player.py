@@ -171,14 +171,9 @@ class pgPlayer(Player, pygame.sprite.Sprite):
         self.bullets.append(bullet.Bullet(self.rect.x, self.rect.y, dx, dy))
         self.send('shoot', 'P')
 
-    def drawBullets(self, cam):
-        for b in self.bullets:
-            b.draw(b.rect.x, b.rect.y, cam, self.screen)
-
     def draw(self, cam):
         self.drawAnim()
         self.screen.blit(self.image, self.getRect(cam))
-        self.drawBullets(cam)
         self.drawParticles(cam)
 
     def drawParticles(self, cam):

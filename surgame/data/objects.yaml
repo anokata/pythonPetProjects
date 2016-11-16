@@ -342,7 +342,7 @@ town_road_H:
     mapchar: h
     passable: True
     takeable: False
-    collided: True
+    collided: False
 
 town_road_V:
     typ: MAPGROUND
@@ -350,5 +350,5 @@ town_road_V:
     mapchar: I
     passable: True
     takeable: False
-    collided: True
+    collided: False
 
