@@ -1,0 +1,77 @@
+layers_count: 2
+layers: 
+    -|   
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+__________________________________
+
+    -|   
+VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+FvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvRa
+F                               Ra
+F             G                 Ra
+F     ~       A                 Ra
+F                               Ra
+F     I       ID...             Ra
+F     I       I....             Ra
+F     I       I....             Ra
+F     I       I....             Ra
+F     I       Ihhhhhhh          Ra
+F rrrrI   rrrrI                 Ra
+F rrrrI   rrrrI                 Ra
+F BBBBI   BBBBI                 Ra
+F hhhhhhhhhhhhI                 Ra
+F     I      hhhhhhhhhhhhhhhhhh ba
+F     I     rrrI                Ra
+F rrrrI     rrrI                Ra
+F rrrrI     BBBI                Ra
+F BBBBI        I                Ra
+F     I        I                Ra
+F     I        I                Ra
+F     I        I                Ra
+F                               Ra
+Fsssssssssssssssssssssssssssssssaa
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+objects:
+    - apple
+    - enemy_poringp
+    - town_H_fence
+    - town_brick_wall
+    - town_roof_center
+    - town_road_H
+    - town_road_V
+    - town_big_roof
+    - block1Brown
+    - ground_sand
+    - portalMap
+    - water
+    - water_sand
+    - sand_void
+    - void
+    - rock
+    - rocka
+    - rock_portal
+
