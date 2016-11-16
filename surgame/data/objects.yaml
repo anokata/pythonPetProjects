@@ -1,227 +1,183 @@
 
-enemy_crab:
-    typ: ENEMY
-    imagename: objects/none.png
-    mapchar: c
-    collided: False
-    count: 1
-    name: crab
-        
-enemy_poringp:
-    typ: ENEMY
-    imagename: objects/none.png
-    mapchar: G
-    collided: False
-    count: 1
-    name: poringp
+_portal: &portal
+    typ: PORTAL
+    imagename: objects/portal.png
+    passable: True
+    takeable: False
+    collided: True
 
-enemy_poringb:
+_floor: &floor
+    imagename: objects/block0.png
+    typ: MAPGROUND
+    passable: True
+    takeable: False
+    collided: False
+
+_block: &block
+    imagename: objects/block0.png
+    typ: MAPWALL
+    passable: False
+    takeable: False
+    collided: True
+
+_enemy: &enemy
     typ: ENEMY
     imagename: objects/none.png
-    mapchar: B
     collided: False
     count: 1
-    name: poringb
 
-apple:
+_food: &food
+    imagename: objects/block0.png
     typ: FOOD
     basePrice: 1
-    imagename: objects/apple.png
     material: bio
     weight: 100
     takeable: True
     collided: True
     passable: True
+
+enemy_crab:
+    <<: *enemy 
+    mapchar: c
+    name: crab
+        
+enemy_poringp:
+    <<: *enemy 
+    mapchar: G
+    name: poringp
+
+enemy_poringb:
+    <<: *enemy 
+    mapchar: B
+    name: poringb
+
+apple:
+    <<: *food
+    imagename: objects/apple.png
     mapchar: A
     hpGain: 20
 
 cherry:
-    typ: FOOD
+    <<: *food
     basePrice: 2
     imagename: objects/cherry.png
-    material: bio
     weight: 20
-    passable: True
     mapchar: C
-    takeable: True
-    collided: True
     hpGain: 1
 
+fish:
+    <<: *food
+    imagename: objects/fish.png
+    mapchar: F
+    hpGain: 2
+
 stonewall:
-    typ: MAPWALL
+    <<: *block
     imagename: 
         - objects/block1.png 
         - objects/block11.png 
         - objects/block12.png 
         - objects/block13.png 
     mapchar: x
-    passable: False
-    takeable: False
-    collided: True
 
 block1Brown:
-    typ: MAPWALL
+    <<: *block
     imagename: objects/block1Brown.png 
     mapchar: x
-    passable: False
-    takeable: False
-    collided: True
-
-wtf:
-    typ: FOOD
-    imagename: objects/wtf.png 
-    mapchar: w
-    passable: True
-    takeable: True
-    collided: True
-    hpGain: 0
 
 stolb:
-    typ: MAPWALL
+    <<: *block
     imagename: objects/stolb.png 
     mapchar: l
-    passable: False
-    takeable: False
-    collided: True
 
 tree:
-    typ: MAPWALL
+    <<: *block
     imagename: objects/tree.png 
     mapchar: T
-    passable: False
-    takeable: False
-    collided: True
         
 fire:
-    typ: MAPWALL
+    <<: *block
     imagename: 
         - objects/fire0.png 
         - objects/fire1.png 
     mapchar: F
-    passable: False
-    takeable: False
-    collided: True
 
 stone_floor:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/stone_floor.png
     mapchar: _
-    passable: True
-    takeable: False
-    collided: False
 
 ground0:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/ground1.png
     mapchar: _
-    passable: True
-    takeable: False
-    collided: False
 
 ground_sand:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/ground0.png
     mapchar: _
-    passable: True
-    takeable: False
-    collided: False
 
 water:
-    typ: MAPGROUND
+    <<: *block
     imagename: objects/water.png
     mapchar: w
-    passable: False
-    takeable: False
-    collided: True
 
 water_sand:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/ground_water.png
     mapchar: s
-    passable: True
-    takeable: False
-    collided: False
 
 void:
-    typ: MAPGROUND
+    <<: *block
     imagename: objects/void.png
     mapchar: V
-    passable: False
-    takeable: False
-    collided: True
 
 sand_void:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/ground_void.png
     mapchar: v
-    passable: True
-    takeable: False
-    collided: False
 
 floor:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/floor.png
     mapchar: f
-    passable: True
-    takeable: False
-    collided: False
 
 ground:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/ground.png
     mapchar: x
-    passable: False
-    takeable: False
-    collided: True
 
 ground1Brown:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/ground1Brown.png
     mapchar: _
-    passable: True
-    takeable: False
-    collided: False
 
 rock:
-    typ: MAPGROUND
+    <<: *block
     imagename: objects/rockL.png
     mapchar: R
-    passable: False
-    takeable: False
-    collided: True
 
 rocka:
-    typ: MAPGROUND
+    <<: *block
     imagename: objects/rockA.png
     mapchar: a
-    passable: False
-    takeable: False
-    collided: True
+
 
 rock_portal:
-    typ: PORTAL
+    <<: *portal
     mapname: data/cave1.map
     imagename: objects/rock_portal.png
     mapchar: b
-    passable: True
-    takeable: False
-    collided: True
 
 shrub:
-    typ: MAPGROUND
+    <<: *block
     imagename: objects/shrub.png
     mapchar: S
-    passable: False
-    takeable: False
-    collided: True
 
 grass:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/grass0.png
     mapchar: _
-    passable: True
-    takeable: False
-    collided: False
 
 wood:
     typ: FOOD
@@ -235,120 +191,78 @@ wood:
     collided: True
     hpGain: 0
 
-fish:
-    typ: FOOD
-    basePrice: 1
-    imagename: objects/fish.png
-    material: bio
-    weight: 100
-    takeable: True
-    passable: True
-    mapchar: F
-    collided: True
-    hpGain: 2
 
 trailportal:
-    typ: PORTAL
+    <<: *portal
     imagename: objects/portal.png
     mapchar: T
-    passable: True
-    takeable: False
-    collided: True
     mapname: data/trail.map
 
 portal:
-    typ: PORTAL
+    <<: *portal
     imagename: 
         - objects/portal_1.png
         - objects/portal_2.png
         - objects/portal_3.png
         - objects/portal_4.png
     mapchar: P
-    passable: True
-    takeable: False
-    collided: True
     mapname: data/cave1.map
 
 portalMap:
-    typ: PORTAL
+    <<: *portal
     imagename: objects/portal.png
     mapchar: P
-    passable: True
-    takeable: False
-    collided: True
     mapname: data/map.map
 
 portal_meadow:
-    typ: PORTAL
+    <<: *portal
     imagename: 
         - objects/portal_1.png
         - objects/portal_2.png
         - objects/portal_3.png
         - objects/portal_4.png
     mapchar: P
-    passable: True
-    takeable: False
-    collided: True
     mapname: data/meadow.map
 
 test_portal:
-    typ: PORTAL
+    <<: *portal
     imagename: 
         - objects/portal_1.png
         - objects/portal_2.png
         - objects/portal_3.png
         - objects/portal_4.png
     mapchar: z
-    passable: True
-    takeable: False
-    collided: True
     mapname: data/cavegen.map
 
 town_H_fence:
-    typ: MAPGROUND
+    <<: *block
     imagename: objects/town_H_fence.png
     mapchar: F
-    passable: False
-    takeable: False
-    collided: True
 
 town_brick_wall:
-    typ: MAPGROUND
+    <<: *block
     imagename: objects/town_brick_wall.png
     mapchar: B
-    passable: False
-    takeable: False
-    collided: True
 
 town_roof_center:
+    <<: *block
     typ: MAPGROUND
     imagename: objects/town_roof_center.png
     mapchar: r
-    passable: False
-    takeable: False
-    collided: True
 
 town_big_roof:
-    typ: MAPGROUND
+    <<: *block
     imagename: objects/town_big_roof.png
     mapchar: D
-    passable: False
-    takeable: False
-    collided: True
 
 town_road_H:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/town_road_H.png
     mapchar: h
-    passable: True
-    takeable: False
-    collided: False
 
 town_road_V:
-    typ: MAPGROUND
+    <<: *floor
     imagename: objects/town_road_V.png
     mapchar: I
-    passable: True
-    takeable: False
-    collided: False
+
 

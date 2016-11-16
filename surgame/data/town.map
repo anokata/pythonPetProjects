@@ -27,8 +27,8 @@ __________________________________
 VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 FvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvRa
 F                               Ra
-F                               Ra
-F     ~                         Ra
+F             G                 Ra
+F     ~       A                 Ra
 F                               Ra
 F     I       ID...             Ra
 F     I       I....             Ra
@@ -52,6 +52,8 @@ Fsssssssssssssssssssssssssssssssaa
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
+apple
+enemy_poringp
 town_H_fence
 town_brick_wall
 town_roof_center

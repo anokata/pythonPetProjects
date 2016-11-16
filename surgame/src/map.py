@@ -79,7 +79,7 @@ class Map():
         mindist = self.view_dist
         from collections import OrderedDict
         self.shadows = OrderedDict()
-        start = 50
+        start = 10
         end = 255
         leng = end - start
         step = leng // n
