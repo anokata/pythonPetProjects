@@ -17,6 +17,7 @@ import bullet
 import images
 import datafiles
 import eventSystem
+import mapGenerator
 
 Sprite = pygame.sprite.Sprite
 
@@ -289,7 +290,11 @@ def dieEvent(e):
 def mapChange(e):
     global currentMap
     currentMap = e.data
-    loadMap(currentMap)
+    if currentMap == 'generate':
+        new_map = mapGenerator.genMap()
+        loadMap(new_map)
+    else:
+        loadMap(currentMap)
 
 #TODO Прибраться, сгруппировать, выделить модули.
 def main():

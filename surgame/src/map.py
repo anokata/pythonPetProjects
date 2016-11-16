@@ -100,17 +100,21 @@ class Map():
         for e in self.enemiesInstances:
             e.go(d, p, e)
 
-    def load(self, mapname):
+    def load_from_file(self, mapname):
         mapname = path.getPath(mapname)
-        self.blockers = list()
-        self.layers = layers = list() 
         map_data = yaml.load(open(mapname))
+        return map_data
 
+    def load(self, mapname):
+        self.layers = layers = list() 
+        if isinstance(mapname, str):
+            map_data = self.load_from_file(mapname)
+        else:
+            map_data = mapname
         layersCount = int(map_data['layers_count'])
         self.layersCount = layersCount
         for l in map_data['layers']:
             layers.append(l.split('\n')[:-1])
-
         objectNames = map_data['objects']
         self.objectNames = objectNames 
         self.blockW = self.blockH = GRIDH # CHG REad
@@ -119,8 +123,9 @@ class Map():
         for objectName in objectNames:
             obj = gameObjects.GObject(objectName)
             mapObjects[obj.baseObject.mapchar] = obj
-
+            
         i = 0
+        self.blockers = list()
         self.layersDim = list()
         self.tiles = list()
         self.enemies = dict()
