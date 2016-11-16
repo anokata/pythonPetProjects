@@ -31,7 +31,7 @@ layers:
         F                               Ra
         F             G                 Ra
         F     ~       A                 Ra
-        F                               Ra
+        F       z                       Ra
         F     I       ID...             Ra
         F     I       I....             Ra
         F     I       I....             Ra
@@ -54,6 +54,7 @@ layers:
         wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
         wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 objects:
+    - test_portal
     - apple
     - enemy_poringp
     - town_H_fence

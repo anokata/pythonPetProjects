@@ -1,66 +1,207 @@
-2
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
-ffffffffffffffffffffffffffffff
+layers:
+- 'ffffffffffffffffffffffffffffffffffffffffffffffffff
 
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-xxxxx        xxxxxxT Txxxxxxxx
-xxxx         Txxxxx   xxxxxxxx
-xx           xxxxxxxxxx Txxxxx
-x           xxxxxxxxxx   xxxxx
-xT          xxxxxxxxxx   xxxxx
-xxx         xxxxxT Txx    xxxx
-xxxx        xxxxx   xxx    Txx
-xxxxxxx      xxxx   xxx     xx
-xxxxxxxxx      xxT xxxx     xx
-xxxxx   x      TxxxxxxxT   Txx
-xxxx           xxxxxxxxxxxxxxx
-xxx       ~    xxxxxxxxxxxxxxx
-xxxT xxx        xxTxxxxTxxxxxx
-xxxxxxxxx           xx     Txx
-xxxxxxxxxx          xxx     xx
-xxxxxxxxxx          xxx    xxx
-xxxxxxxxx            x     xxx
-xxxxxxxT                    xx
-xxT xxx                     xx
-xx  Txx                     xx
-xx  xxx                     xx
-x  xxx                      xx
-xT xxxT                     xx
-xxxxxxxxxx            xxx  xxx
-xxxxxxxxxxx         xxxxxxxxxx
-xxxxxxxxxxxx        xxxxxxxxxx
-xxxxxxxxxxxxxx     Txxxxxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
 
-floor
-ground
-endObjectNames
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  ffffffffffffffffffffffffffffffffffffffffffffffffff
+
+  '
+- 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+  xxxxxxxxxfffffffTxxxxxTffffffffTxxxxxxxxxfffxxxxxx
+
+  xxTfxxxxfffffffffxxxxxffffffffffxxxxxxxxfffffTxxxx
+
+  xxfffxxxfffxxfffxxxxxxxxfffffffxxxxxxxxfffffffxxxx
+
+  xxffffxxxTxxxxffxxxxxxxxxffffffxxTfxxxxfffffffxxxx
+
+  xxffffxxxxxxxxfffxxxxxxxffffffxxxfffTxxxfffffTxxxx
+
+  xffffTxxxxxxxxffffxxxxxxffffffxxxffffxxxxfffxxxxxx
+
+  xfffxxxxxxxxxfffffxxxxxxfffffxxxxxfffxxxxxxxxxxxxx
+
+  xffxxxxxxxxTffffffxxxxxxffffxxxxxxfffxxxxxxxxxxxxx
+
+  xTfxxxxxxxxfffffffxxxxxxTffxxxxxxfffffxxxxxxxxxxxx
+
+  xxxxxxxxxxxffffffxxxxxxxxxxxxxxxfffffffxxxTffffTxx
+
+  xxxxxxxxxxfffffffxxxxxxxxxxTffffffffffffxxffffffxx
+
+  xTffxxxxxxffffffffxxxxxxxxxfffffffffffffxxxxxffTxx
+
+  xfffTxxxxxfffffffffffffxxxfffffffffffffffxxxxxxxxx
+
+  xfffxxxxxxfffffffffffffTxxffffffffffffffffxxxxxxxx
+
+  xxfTxxfTxxxffffffffffffxxxfffffffxxfffffffxxxTfxxx
+
+  xxxxxfffxxxfffxxxffffffxxxxffffffxxfffffffxxxffxxx
+
+  xxxxTffxxxfffxxxxxxxfffxxxffffffTxxffffffffxxxxxxx
+
+  xxxxxfxxxxfffxxxxxxxxfffxfffffxxxxxxTxxfffffxxxxxx
+
+  xxxxxxxxxxfffxxxxxxxxfffxfffffxxTxxxxxxxfffffxxxxx
+
+  xxxxxxxxxxffffxxxxxxxxTxxxfffffffffffxxffffffxxxxx
+
+  xxxffTxxxxxffffxxxxxxxxxxfffffffffffffffffffffxxxx
+
+  xxffffxxxxxxfffxxxxxxxxxfffffffxxxfffffffffffffTxx
+
+  xxffffxxxxxxxfffxxxxxxxxffffffxxxxxfffffffffffffxx
+
+  xxxfffxxxxxxxxfffxxxxxxxffffffxxxxxffffffffffffxxx
+
+  xxxxfTxxxffxxxxfTxxxxxxxffffffxxxxfffxffffffffxxxx
+
+  xxxxxxxxffffxxxxxxxxxxxxfffffTxxxxTfxxxffffffxxxxx
+
+  xxxxxxxxfffffxxxTxxxxxxxffffxxxxxxxxxxxffffffxxxxx
+
+  xxxxxxxxffffTxxfffxxxxxffffxxxxxxxxxxxffffffffxxxx
+
+  xxxTfxxffffxxxfffffxxxfffffxxxxxxxTxxfffffffffxxxx
+
+  xxxfffffffxxxxfffffffffffffxxxxxxfffffffffffffxxxx
+
+  xxxxffffffxxxxxfffffffffffffxxxxffffff~fffxxTxxxxx
+
+  xxxxxffffffxxxxxffffffffffffffffffffffffxxxxxxxxxx
+
+  xxxxxxfffffffxxfffffffffffffffffxxfffffxxxxxxxTfxx
+
+  xTfxxxfffffffffffffxfffffffffffxxxxffxxxxxxxxxffxx
+
+  xffxxxfffffffffffffxxffffffffffxxxxxxxxxxxxxxxffxx
+
+  xfffxxxffffffffffffxfffffffffffxxxTfxxxfTxxxxxfxxx
+
+  xTffffffffffffffffffffffffxffffxxxfffffffxxxxffxxx
+
+  xxxffffffffffffffffffffffxxfffffxxfffffffxxxxffxxx
+
+  xxxxfffffffffffffffffffffffffffffxxfffffffxxxffxxx
+
+  xxxxffffffffffxxffffxxxffffffffffxxxffffffxxxfffxx
+
+  xxxxffffffffffxxxxxxxxxxffffffffffxxxxffffxxffffxx
+
+  xxxxTfffffffffxxxxxxxxxxxffffffffTxxxxxffxxxfffTxx
+
+  xxxxxxxxxxfffffxxxxxxxxxxxffffffxxxxxxxxxxxxTfxxxx
+
+  xxxxxxxxxxffffffxxxxxxxxxxfffffxxxxTfxxxxxxxxxxxxx
+
+  xTfxxxxxxfffffffxxxxxxxxxxTfffxxxxxffxxxxxxxxxxxxx
+
+  xffxxxxxxfffffffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxTfTxx
+
+  xxxxxxxxxTfffffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxfffxx
+
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+  '
+layers_count: 2
+objects:
+- floor
+- ground
