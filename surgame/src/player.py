@@ -8,6 +8,7 @@ import bullet
 import particles
 import images
 import eventSystem
+import path
 
 import datafiles
 import yaml
@@ -39,7 +40,7 @@ class Player(eventSystem.Publisher):
         pass
 
     def load(self):
-        data = yaml.load(open(datafiles.playerStats))
+        data = yaml.load(open(path.getPath(datafiles.playerStats)))
         print(data)
         self.setStatDict(data)
 
@@ -58,7 +59,7 @@ class Player(eventSystem.Publisher):
     def save(self):
         data = self.getStatDict()
         # TODO inventory save
-        with open(datafiles.playerStats, 'w') as fout:
+        with open(path.getPath(datafiles.playerStats), 'w') as fout:
                 yaml.dump(data, fout, default_flow_style=True)
 
     def getHealth(self):
@@ -97,7 +98,7 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def __init__(self, x, y, screen, map):
         super().__init__()
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(images.none).convert()
+        self.image = util.imgLoadN(images.none)
         size = self.image.get_rect().size
         self.rect = pygame.Rect(x, y, size[0], size[1])
         self.rect.height -= wallInpact

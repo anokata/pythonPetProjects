@@ -1,6 +1,6 @@
 import pygame
-import sys
-sys.path += ["lib",'./']
+import path
+import util
 from stateSystem import *
 #import roomGenerator as rg
 import random
@@ -141,11 +141,11 @@ class Hud():
         i.append(self.exp)
 
         self.hpBarBg = pygame.Surface((100, self.H))
-        self.hpBarBg = pygame.image.load(images.hpbarrectimg).convert_alpha()
+        self.hpBarBg = util.imgLoad(images.hpbarrectimg)
         #self.hpBarBg.fill((255, 255, 50))
         self.hpRect = pygame.Rect(x, y+self.H, 0, 0)
         self.hpBar = pygame.Surface((self.HP_W - self.HP_PAD*2, self.H//1.8))
-        #self.hpBar = pygame.image.load(images.hpbarimg).convert_alpha()
+        #self.hpBar = util.imgLoad(images.hpbarimg)
         self.hpBar.fill(self.HP_COLOR)
         self.hpbarRect = pygame.Rect(x+self.HP_PAD, y+self.H//0.8, 0, 0)
         self.refresh()
@@ -248,14 +248,14 @@ class Sounds():
             #snd = pygame.mixer.Sound('yabc.wav')
             #snd.set_volume(0.3)
             #snd.play()
-            sndpou = pygame.mixer.Sound('sounds/piu2.wav')
+            sndpou = pygame.mixer.Sound('../sounds/piu2.wav')
             self.pou = sndpou
-            self.step = pygame.mixer.Sound('sounds/step.wav')
+            self.step = pygame.mixer.Sound('../sounds/step.wav')
             self.step.set_volume(0.3)
-            self.bulletWall = pygame.mixer.Sound('sounds/bom.wav')
-            self.explosion = pygame.mixer.Sound('sounds/expl.wav')
-        except Exception(e):
-            print(e)
+            self.bulletWall = pygame.mixer.Sound('../sounds/bom.wav')
+            self.explosion = pygame.mixer.Sound('../sounds/expl.wav')
+        except: 
+            print('sound error')
     
     def add(self,s):
         if s not in self.que:
@@ -347,7 +347,7 @@ def stateInit():
 def bgInit():
     global bgSurface
     bgSurface = pygame.sprite.Sprite()
-    bgSurface.image = pygame.image.load(images.bg).convert()
+    bgSurface.image = util.imgLoad(images.bg)
     #bgSurface.image = pygame.Surface([800,1000])
     #bgSurface.image.fill((0,0,0))
 

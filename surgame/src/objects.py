@@ -1,6 +1,7 @@
 import yaml
 import objectTypes
 import datafiles
+import path
 
 class AnObject():
     typ = 0
@@ -17,7 +18,7 @@ class ObjectsFactory():
 
     def load(self):
         """ Load objects prototypes. """
-        self.objetcsPrototypes = yaml.load(open(self.objectsFilename))
+        self.objetcsPrototypes = yaml.load(open(path.getPath(self.objectsFilename)))
 
     def createObject(self, name):
         if name in self.objetcsPrototypes:

@@ -4,6 +4,7 @@ import pygame
 import yaml
 import datafiles
 import util
+import path
 
 class Enemy(player.pgPlayer):
 
@@ -20,7 +21,7 @@ class Enemy(player.pgPlayer):
 
     def load(self, x, y):
         AnimStand = self.animStand
-        self.image = pygame.image.load(AnimStand[0]).convert()
+        self.image = util.imgLoadN(AnimStand[0])
         self.AnimStand = util.animLoad(AnimStand) 
         self.changeAnim(self.AnimStand)
         size = self.image.get_rect().size
@@ -84,7 +85,7 @@ class EnemyFactory():
         self.load()
 
     def load(self):
-        self.prototypes = yaml.load(open(self.enemiesFileName))
+        self.prototypes = yaml.load(open(path.getPath(self.enemiesFileName)))
 
     def create(self, name, x, y):
         e = False

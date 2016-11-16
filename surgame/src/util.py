@@ -1,10 +1,9 @@
 import pygame
 import images
-import sys
-sys.path += ["lib",'./']
-import pyganim
 from itertools import repeat
 from math import hypot
+import path
+import pyganim
 
 def geomRange(start, count, coeff):
     """ Генератор геометрической прогрессии. """
@@ -36,11 +35,18 @@ def makeSpriteXY(imgname, x, y):
 Sprite = pygame.sprite.Sprite
 
 def animLoad(animlist):
+    animlist = path.getPaths(animlist)
     AnimDelay = 0.1 # скорость смены кадров
     animlistdelay = list(zip(animlist, list(repeat(AnimDelay, len(animlist)))))
     ranim = pyganim.PygAnimation(animlistdelay)
     ranim.play()
     return ranim
+
+def imgLoad(img):
+    return pygame.image.load(path.getPath(img)).convert_alpha()
+
+def imgLoadN(img):
+    return pygame.image.load(path.getPath(img)).convert()
 
 class Block(pygame.sprite.Sprite): # base class for sprites?
     rect = 0
@@ -49,13 +55,13 @@ class Block(pygame.sprite.Sprite): # base class for sprites?
         self.anim = False
         if isinstance(imgname, list):
             self.anim = animLoad(imgname)
-            self.image = pygame.image.load(imgname[0]).convert_alpha()
+            self.image = pygame.image.load(path.getPath(imgname[0])).convert_alpha()
             self.image.fill(pygame.Color(0,0,0,0))
             self.anim.blit(self.image, (0, 0))
             size = self.image.get_rect().size
             self.rect = pygame.Rect(x, y, size[0], size[1])
         else:
-            self.image = pygame.image.load(imgname).convert_alpha()
+            self.image = pygame.image.load(path.getPath(imgname)).convert_alpha()
             size = self.image.get_rect().size
             self.rect = pygame.Rect(x, y, size[0], size[1])
 

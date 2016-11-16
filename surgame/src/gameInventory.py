@@ -2,6 +2,7 @@ import pygame
 import inventory
 import images
 from util import Font
+import util
 #TODO отображение. переключение в него, управление.
 class GInventory(inventory.Inventory):
     backgroundImg = images.inventoryBG 
@@ -11,8 +12,8 @@ class GInventory(inventory.Inventory):
 
     def __init__(self, screen):
         super().__init__()
-        self.bg = pygame.image.load(self.backgroundImg).convert_alpha()
-        self.cell = pygame.image.load(self.cellImg).convert_alpha()
+        self.bg = util.imgLoad(self.backgroundImg)
+        self.cell = util.imgLoad(self.cellImg)
         self.screen = screen
 
         self.bgRect = self.bg.get_rect()

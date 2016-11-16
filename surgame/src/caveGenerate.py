@@ -2,6 +2,7 @@ import random
 
 WALL = 0
 FLOOR = 1
+SPACE = 2
 PLAYER = 8
 TELEPORT = 3
 INIT = 4
@@ -9,6 +10,7 @@ INIT = 4
 DrawChars = {
         WALL: 'x',
         FLOOR: 'f',
+        SPACE: ' ',
         PLAYER: '~',
         TELEPORT: 'T',
         INIT: 'o',
@@ -64,8 +66,8 @@ def calcNei(m, x, y):
     r += m[x][y+1]
     return r
 
-def init_matrix(w):
-    m = [[WALL for x in range(w)] for y in range(w)]
+def init_matrix(w, val=WALL):
+    m = [[val for x in range(w)] for y in range(w)]
     return m
 
 def objects_generate(m, TL=4):
@@ -121,8 +123,18 @@ def drawString(m):
         r += '\n'
     return r
 
+def changeTile(m, old, new):
+    for x in range(0, len(m)):
+        for y in range(0, len(m)):
+            if m[x][y] == old:
+                m[x][y] = new
+
+
 m = gen(30, 5)
+changeTile(m, FLOOR, SPACE)
+floor = init_matrix(30, FLOOR)
 if __name__ == '__main__':
     print(drawString(m))
+    print(drawString(floor))
 
 

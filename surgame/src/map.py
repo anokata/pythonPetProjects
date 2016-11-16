@@ -3,6 +3,7 @@ import gameObjects
 from util import Block, distance
 import objectTypes
 import enemy
+import path
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # Свойства объектов, проходимые, непроходимые, поднимаемые...
 # TODO: map сделать редактор, добавление новых блоков. выбор блоков.
@@ -111,6 +112,7 @@ class Map():
             e.go(d, p, e)
 
     def load(self, mapname):
+        mapname = path.getPath(mapname)
         self.blockers = list()
         self.layers = layers = list() 
         with open(mapname, 'rt') as fin:
