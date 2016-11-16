@@ -43,7 +43,7 @@ class Inventory():
 
     def getStored(self, obj):
         for n, x in self.categorys[obj.typ].items():
-            if x and x.obj == obj:
+            if x and x == obj:
                 return x
         return False
 
@@ -59,22 +59,22 @@ class Inventory():
 
     
     def eat(self, food):
-        hpGain = food.obj.baseObject.hpGain
+        hpGain = food.baseObject.hpGain
         self.drop(food)
         return hpGain
 
     def drop(self, obj):
         key = self.getKey(obj)
-        foodPack = self.categorys[obj.obj.typ].get(key)
+        foodPack = self.categorys[obj.typ].get(key)
         if foodPack.count > 1:
             foodPack.eatOne()
         else:
-            self.categorys[obj.obj.typ].pop(key)
-            w, h, max, count = self.sizes[obj.obj.typ]
-            self.sizes[obj.obj.typ] = Size(w, h, max, count-1)
+            self.categorys[obj.typ].pop(key)
+            w, h, max, count = self.sizes[obj.typ]
+            self.sizes[obj.typ] = Size(w, h, max, count-1)
 
     def getKey(self, obj):
-        cat = self.categorys[obj.obj.typ]
+        cat = self.categorys[obj.typ]
         return list(cat.keys())[list(cat.values()).index(obj)]
 
 
@@ -85,7 +85,7 @@ class Inventory():
             if not inventoryObj:
                 cellIndex = self.takeEmptyCell(FOOD)
                 if cellIndex != None:
-                    self.food[cellIndex] = obj.pack()
+                    self.food[cellIndex] = obj
                     return True
             else:
                 inventoryObj.add()
