@@ -6,6 +6,7 @@ SPACE = 2
 PLAYER = 8
 TELEPORT = 3
 INIT = 4
+lastId = 9
 
 DrawChars = {
         WALL: 'x',
@@ -129,12 +130,21 @@ def changeTile(m, old, new):
             if m[x][y] == old:
                 m[x][y] = new
 
+def addObjectsRandom(m, obj, count):
+    global lastId
+    idd = lastId
+    DrawChars.update({lastId:obj})
+    lastId += 1
+    for i in range(count):
+        x, y = getRandomFreePoint(m)
+        m[x][y] = idd
 
 m = gen(30, 5)
 changeTile(m, FLOOR, SPACE)
+#addObjectsRandom(m, 'G', 10)
 floor = init_matrix(30, FLOOR)
 if __name__ == '__main__':
     print(drawString(m))
-    print(drawString(floor))
+    #print(drawString(floor))
 
 

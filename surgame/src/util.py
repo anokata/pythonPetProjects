@@ -4,6 +4,33 @@ from itertools import repeat
 from math import hypot
 import path
 import pyganim
+import consts
+
+def getKeyByVal(dct, val):
+    return list(dct.keys())[list(dct.values()).index(val)]
+
+def getListNearFromDict(dct, obj):
+    px = obj.rect.x // consts.GRIDH
+    py = obj.rect.y // consts.GRIDH
+    k = dct.keys()
+    area = 1
+    r = list()
+    for x in range(px - area, px + area + 1):
+        for y in range(py - area, py + area + 1):
+            if (x, y) not in k:
+                continue
+            r.append(dct[(x, y)])
+    return r
+
+def iomapListInAreaFromDict(fun, dct, area, px, py, *args):
+    k = dct.keys()
+    r = 0
+    for x in range(px - area, px + area + 1):
+        for y in range(py - area, py + area + 1):
+            if (x, y) not in k:
+                continue
+            r = fun(dct[(x, y)], args)
+    return r
 
 def geomRange(start, count, coeff):
     """ Генератор геометрической прогрессии. """

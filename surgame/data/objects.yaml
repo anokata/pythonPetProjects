@@ -114,7 +114,7 @@ ground0:
 
 ground_sand:
     <<: *floor
-    imagename: objects/ground0.png
+    imagename: objects/pack0/grass.png
     mapchar: _
 
 water:

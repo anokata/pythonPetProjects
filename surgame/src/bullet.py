@@ -24,7 +24,7 @@ class Bullet(util.Block):
         return False
 
     def smash(self, platforms):
-        for p in platforms:
+        for p in util.getListNearFromDict(platforms, self):
             if pygame.sprite.collide_rect(self, p):
                 return True
         return False

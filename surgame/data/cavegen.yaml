@@ -102,99 +102,99 @@ layers:
   '
 - 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-  xxxxxxxxxfffffffTxxxxxTffffffffTxxxxxxxxxfffxxxxxx
+  xxxxxxxxTffffffffffffxxxxxxxxxxxxxxfTxxxxxTffffxxx
 
-  xxTfxxxxfffffffffxxxxxffffffffffxxxxxxxxfffffTxxxx
+  xxxxxxxxfffGffffffffBfxxfffxxxxxxxfffxxxxxfAffffxx
 
-  xxfffxxxfffxxfffxxxxxxxxfffffffxxxxxxxxfffffffxxxx
+  xxBxxxxxxffffGfffffffBfffffffffxxffffxxxxxffffffxx
 
-  xxffffxxxTxxxxffxxxxxxxxxffffffxxTfxxxxfffffffxxxx
+  xTfTxxxxxfffffxfffffffffffffffffTxfffxxxxxfffffxxx
 
-  xxffffxxxxxxxxfffxxxxxxxffffffxxxfffTxxxfffffTxxxx
+  xfffxxxxxxffAxxxffffffffffffffffxxxfffxxxxxffffxxx
 
-  xffffTxxxxxxxxffffxxxxxxffffffxxxffffxxxxfffxxxxxx
+  xxxxxxxxxxfffTxffffBfBffffffffffxxxffffxxxxxffxxxx
 
-  xfffxxxxxxxxxfffffxxxxxxfffffxxxxxfffxxxxxxxxxxxxx
+  xxxxxxxxxTxxxxffffffffffffxxxfffxxxfffffxxxxxxxxxx
 
-  xffxxxxxxxxTffffffxxxxxxffffxxxxxxfffxxxxxxxxxxxxx
+  xxxxfffxfCxxxxxfffffffffffxxxTfxxxxffffffxxxxxxxxx
 
-  xTfxxxxxxxxfffffffxxxxxxTffxxxxxxfffffxxxxxxxxxxxx
+  xxxfffffxTxxxxxxxffffffffxxxxxxxxxfffffBfffffTxxxx
 
-  xxxxxxxxxxxffffffxxxxxxxxxxxxxxxfffffffxxxTffffTxx
+  xxfffffxxxfxxxxxxxfBffffxxxxxxxxxffxxxxffffffAxxxx
 
-  xxxxxxxxxxfffffffxxxxxxxxxxTffffffffffffxxffffffxx
+  xffffffxxxffxxxxxxxffffxxxTCTxxxfffxxxxxfffffffxxx
 
-  xTffxxxxxxffffffffxxxxxxxxxfffffffffffffxxxxxffTxx
+  xffffffxxxfffxxxxxxxfffxxxCffxxffffxxxxxxfffffffxx
 
-  xfffTxxxxxfffffffffffffxxxfffffffffffffffxxxxxxxxx
+  xfffffffxxfAffxxxxxxfffxxxffxxxfffffffxxffffffffxx
 
-  xfffxxxxxxfffffffffffffTxxffffffffffffffffxxxxxxxx
+  xffffffffffGffxxxxxxTfTxxxffxxxxfffffffffAfGfffTxx
 
-  xxfTxxfTxxxffffffffffffxxxfffffffxxfffffffxxxTfxxx
+  xfffffffffGffxxxxxxxxxxxxffffxxxxffffffffffffxxxxx
 
-  xxxxxfffxxxfffxxxffffffxxxxffffffxxfffffffxxxffxxx
+  xffffffffffffxxxxxxxxxffffffffxxxxfffxxfffAfxxxxxx
 
-  xxxxTffxxxfffxxxxxxxfffxxxffffffTxxffffffffxxxxxxx
+  xxfBfBfffffffffTxxxxxfffffCfffxxxxxxxxxxffffxxxxxx
 
-  xxxxxfxxxxfffxxxxxxxxfffxfffffxxxxxxTxxfffffxxxxxx
+  xxffffffffffffffxxxxffffffffffxxxTfxxxxxxfffxxTxxx
 
-  xxxxxxxxxxfffxxxxxxxxfffxfffffxxTxxxxxxxfffffxxxxx
+  xfffAffffffffffxxxxfffffffffffxxxffxxxxxxxTxxfffxx
 
-  xxxxxxxxxxffffxxxxxxxxTxxxfffffffffffxxffffffxxxxx
+  xTfffffffAfffffxxxfffffffGffffxxxxxxxTfxxxxxxxfTxx
 
-  xxxffTxxxxxffffxxxxxxxxxxfffffffffffffffffffffxxxx
+  xxxxfffGffffffffffffffffffffffTxxxxxxffffxxxxxxxxx
 
-  xxffffxxxxxxfffxxxxxxxxxfffffffxxxfffffffffffffTxx
+  xxxxxxffffffffffffffffffGffGCfxxxxxxxfffffffxxxxxx
 
-  xxffffxxxxxxxfffxxxxxxxxffffffxxxxxfffffffffffffxx
+  xxxxxxxfffffffffffffffffffffffxxxxxffxxxfffffxxxxx
 
-  xxxfffxxxxxxxxfffxxxxxxxffffffxxxxxffffffffffffxxx
+  xxxxxxxxfffxfffffffffffffffffffxxxfAfxxxxfffffxxxx
 
-  xxxxfTxxxffxxxxfTxxxxxxxffffffxxxxfffxffffffffxxxx
+  xxxxxxxxffxxxfffffffffffxxxxffffxxTfxxxxxffffffxxx
 
-  xxxxxxxxffffxxxxxxxxxxxxfffffTxxxxTfxxxffffffxxxxx
+  xxxxxxxxffxxxfBffffffffxxxxxfffffxxxxxxxffffffffxx
 
-  xxxxxxxxfffffxxxTxxxxxxxffffxxxxxxxxxxxffffffxxxxx
+  xxxxxxxxffxxxfAfffffffxxxxxffffffxxxxxxfffffffffxx
 
-  xxxxxxxxffffTxxfffxxxxxffffxxxxxxxxxxxffffffffxxxx
+  xxxxxxxxTfxxxxCfffCffxxxxxfffBfffxxxxxffffffffffxx
 
-  xxxTfxxffffxxxfffffxxxfffffxxxxxxxTxxfffffffffxxxx
+  xxxxxxxxxxxxxxxffffxxxxxxffffffffxxxfffffxxxxfffxx
 
-  xxxfffffffxxxxfffffffffffffxxxxxxfffffffffffffxxxx
+  xTfxxxxxxxxxxxxfffxxxxffffffffffffffffffxxxxxxffxx
 
-  xxxxffffffxxxxxfffffffffffffxxxxffffff~fffxxTxxxxx
+  xffxxxxxxxxxxxxTfTxxxffffffffffffffffffxxxxxxxffxx
 
-  xxxxxffffffxxxxxffffffffffffffffffffffffxxxxxxxxxx
+  xffxxxxxxxxxxxxxxxxTffffffffffffGffffffxxxxxxfffxx
 
-  xxxxxxfffffffxxfffffffffffffffffxxfffffxxxxxxxTfxx
+  xfffxxxxxxxxxxxxxxxfffffffffffffffffffffxxxxffffxx
 
-  xTfxxxfffffffffffffxfffffffffffxxxxffxxxxxxxxxffxx
+  xffffxxxxxxxxxxxxxxffCffffffffffffxxfffffxxxffffxx
 
-  xffxxxfffffffffffffxxffffffffffxxxxxxxxxxxxxxxffxx
+  xffffffTxxxxxxxxxxffffffCCffffBffxxxxxxffTxfffffxx
 
-  xfffxxxffffffffffffxfffffffffffxxxTfxxxfTxxxxxfxxx
+  xfACffffxxxxxxxxxxfCffffffGfffffxxxxxxxxxxfffCffxx
 
-  xTffffffffffffffffffffffffxffffxxxfffffffxxxxffxxx
+  xffffffxxxxxxxxxxxffCffffffxxfffxxxxxxxxxxfBffffxx
 
-  xxxffffffffffffffffffffffxxfffffxxfffffffxxxxffxxx
+  xxfffffxxxxxxxxxxxxffffAffxxxxTxxxxfffxxxfffffffxx
 
-  xxxxfffffffffffffffffffffffffffffxxfffffffxxxffxxx
+  xxxxfffxxxxxxxxxxxxxffffffxxxxxxxxffffffffffffffxx
 
-  xxxxffffffffffxxffffxxxffffffffffxxxffffffxxxfffxx
+  xxxxxffxxxxxxxxTxxxxffAfffxxxxxxxxfGffffffffffffxx
 
-  xxxxffffffffffxxxxxxxxxxffffffffffxxxxffffxxffffxx
+  xxxxxffxxxffxxAffxxxxffffffxxxxxxxffffff~fffffffxx
 
-  xxxxTfffffffffxxxxxxxxxxxffffffffTxxxxxffxxxfffTxx
+  xxxxxffTBffffffGfxxxxxffAfffxxxxxxxfffffffffffffxx
 
-  xxxxxxxxxxfffffxxxxxxxxxxxffffffxxxxxxxxxxxxTfxxxx
+  xxxxxxfxxTffGffffTxxxxffffffffffTxxfffffxxfBfffTxx
 
-  xxxxxxxxxxffffffxxxxxxxxxxfffffxxxxTfxxxxxxxxxxxxx
+  xxxxxxxxxxxffGfffxxxxxfffffffffffxxxTxxxxxxfffxxxx
 
-  xTfxxxxxxfffffffxxxxxxxxxxTfffxxxxxffxxxxxxxxxxxxx
+  xxxxxxxxxxxxxTxxxxxxxxTfxxffBfxxxxxxxxxxxxxffxxxxx
 
-  xffxxxxxxfffffffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxTfTxx
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxffxxxxxxxxxxxxxxfAxxxxx
 
-  xxxxxxxxxTfffffxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxfffxx
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxTfxxxxx
 
   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -205,3 +205,7 @@ layers_count: 2
 objects:
 - floor
 - ground
+- apple
+- cherry
+- enemy_poringp
+- enemy_poringb

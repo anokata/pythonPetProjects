@@ -228,15 +228,18 @@ def mainMechanic(d, p, e):
 def collideObjects():
 #if self.canPickUp:
     global player, globmap, collided
-    for p in collided:
+    for p in util.getListNearFromDict(collided, player):
         if pygame.sprite.collide_rect(player, p):
             if p.obj.typ == FOOD:
                 if player.inventory.add(p.obj):
                     #надо убрать объект с карты
-                    globmap.removeObject(p)
+                    player.send('remove', p)
             elif p.obj.typ == PORTAL:
                 #TODO надо очищать
                 player.send('teleport', p.obj.baseObject.mapname)
+
+def removeEvent(e):
+    globmap.removeObject(e.data)
 
 #TODO звуковой модуль
 class Sounds():
@@ -308,6 +311,7 @@ def main():
     mainSubsriber.register('shoot', shootEvent)
     mainSubsriber.register('die', dieEvent)
     mainSubsriber.register('teleport', mapChange)
+    mainSubsriber.register('remove', removeEvent)
 
     global screen
     screen = pygame.display.set_mode(Display, pygame.DOUBLEBUF)

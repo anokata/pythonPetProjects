@@ -13,7 +13,7 @@ import consts
 
 #TODO Переделать загрузку объектов
 # Обработка коллизий с нужными объектами
-GRIDH = 24
+GRIDH = consts.GRIDH
 ObjectLayer = 1
 class PhisycBlock():
     rect = 0
@@ -33,7 +33,7 @@ class Map():
     view_dist_in_cells = 13
 
     def __init__(self, mapname, screen):
-        self.blockers = list()
+        self.blockers = dict()
         self.load(mapname)
         self.screen = screen
         self.makeShadows(15)
@@ -51,7 +51,8 @@ class Map():
         y = rect.top // GRIDH
         if obj in self.tiles[ObjectLayer][x,y]:
             self.tiles[ObjectLayer][x,y].remove(obj)
-        self.blockers.remove(phisObj)
+        key = util.getKeyByVal(self.blockers, phisObj)
+        self.blockers.pop(key)
         #remove from phis objs
     
     def draw(self, cam, prect):
@@ -125,7 +126,7 @@ class Map():
             mapObjects[obj.baseObject.mapchar] = obj
             
         i = 0
-        self.blockers = list()
+        self.blockers = dict()
         self.layersDim = list()
         self.tiles = list()
         self.enemies = dict()
@@ -161,7 +162,7 @@ class Map():
                         if mapObjects[char].baseObject.collided:
                             obj = mapObjects[char]
                             a, b = (x-0) * self.blockW, (y-0) * self.blockH
-                            self.blockers.append(PhisycBlock(a, b, obj.rect.width, obj))
+                            self.blockers[(x, y)] = PhisycBlock(a, b, obj.rect.width, obj)
             i += 1
 
     def loadEnemies(self, player):

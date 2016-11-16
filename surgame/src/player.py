@@ -318,24 +318,32 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def wound(self):
         self.addHealth(-1)
 
+    def collide_platforms(self, p, dx, dy):
+        if pygame.sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
+            #self.collideObject(p)
+            if p.obj.baseObject.passable:
+                return
+            if dx > 0:                      # если движется вправо
+                self.rect.right = p.rect.left # то не движется вправо
+            if dx < 0:                      # если движется влево
+                self.rect.left = p.rect.right # то не движется влево
+
+            if dy > 0:                    
+                self.rect.bottom = p.rect.top  
+
+            if dy < 0:                   
+                self.rect.top = p.rect.bottom 
+
 
     def collide(self, dx, dy, platforms):
         self.rectphistoimg()
-        for p in platforms:
-            if pygame.sprite.collide_rect(self, p): # если есть пересечение платформы с игроком
-                #self.collideObject(p)
-                if p.obj.baseObject.passable:
-                    return
-                if dx > 0:                      # если движется вправо
-                    self.rect.right = p.rect.left # то не движется вправо
-                if dx < 0:                      # если движется влево
-                    self.rect.left = p.rect.right # то не движется влево
-
-                if dy > 0:                    
-                    self.rect.bottom = p.rect.top  
-
-                if dy < 0:                   
-                    self.rect.top = p.rect.bottom 
+        px = self.rect.x // self.map.w
+        py = self.rect.y // self.map.w
+        k = platforms.keys()
+        area = 3
+        pls = util.getListNearFromDict(platforms, self)
+        for p in pls:
+            self.collide_platforms(p, dx, dy)
         self.rectphistoimg()
 
 
