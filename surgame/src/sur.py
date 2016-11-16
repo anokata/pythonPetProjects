@@ -367,7 +367,7 @@ def mainInit():
 def mainLoop():
     clock = pygame.time.Clock()
     isExit = False
-    pygame.time.set_timer(pygame.USEREVENT + 1, int(1000/90))
+    pygame.time.set_timer(pygame.USEREVENT + 1, int(1000/70))
     while not isExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -1,10 +1,12 @@
 import pygame
 import gameObjects
-from util import Block, distance
+from util import Block, distance, distance4
 import objectTypes
 import enemy
 import path
 import yaml
+import util
+import consts
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # Свойства объектов, проходимые, непроходимые, поднимаемые...
 # TODO: map сделать редактор, добавление новых блоков. выбор блоков.
@@ -28,6 +30,7 @@ class Map():
     px = py = 0
     view_dist_shadow = 350
     view_dist = 250
+    view_dist_in_cells = 10
 
     def __init__(self, mapname, screen):
         self.blockers = list()
@@ -52,21 +55,23 @@ class Map():
         #remove from phis objs
     
     def draw(self, cam, prect):
-        for lay in self.tiles:
-            for (x,y), o in lay.items():
-                if o:
-                    r = cam.calcXY(x*GRIDH, y*GRIDH)
-                    p = cam.calcXY(prect.x, prect.y)
-                    d = distance(p, r)
-
-                    if d < self.view_dist_shadow:
-                        o = o[0]
-                        a, b = x * self.blockW, y * self.blockH
-                        o.draw(a, b, cam, self.screen)
-
+        self.drawTiles(cam, prect)
         self.drawEnemies(self.player, cam)
         self.drawPlayerBullets(cam)
         self.drawShadow(cam, prect)
+
+    def drawTiles(self, cam, prect):
+        v = self.view_dist_in_cells
+        for lay in self.tiles:
+            for x in range(prect.x//GRIDH - v, prect.x//GRIDH + v):
+                for y in range(prect.y//GRIDH - v, prect.y//GRIDH + v):
+                    if (x, y) not in lay.keys():
+                        continue
+                    o = lay[(x, y)]
+                    if o:
+                        o = o[0]
+                        a, b = x * self.blockW, y * self.blockH
+                        o.draw(a, b, cam, self.screen)
 
     def drawPlayerBullets(self, cam):
         self.drawBullets(self.player.bullets, cam)
@@ -76,41 +81,12 @@ class Map():
             b.draw(b.rect.x, b.rect.y, cam, self.screen)
 
     def makeShadows(self, n):
-        maxdist = self.view_dist_shadow
-        mindist = self.view_dist
-        from collections import OrderedDict
-        self.shadows = OrderedDict()
-        start = 10
-        end = 255
-        leng = end - start
-        step = leng // n
-        step_dist = abs(maxdist - mindist) // n
-        for i in range(n):
-            shadow = pygame.Surface([GRIDH, GRIDH], flags=pygame.SRCALPHA)
-            dist = mindist + i * step_dist
-            shadow.fill((0,0,0, start + i * step))
-            self.shadows[dist] = shadow
-
-    def getShadowDist(self, dist):
-        for d in self.shadows.keys():
-            if d > dist:
-                return d
-        return list(self.shadows.keys())[-1]
-
-    def getShadow(self, dist):
-        return self.shadows[self.getShadowDist(dist)]
+        self.shadowimg = util.imgLoad('objects/shadow.png')
+        self.shadowimg = pygame.transform.scale(self.shadowimg, consts.Display)
 
     def drawShadow(self, cam, prect):
-        for x in range(self.w):
-            for y in range(self.h):
-                #if (x, y) not in self.lights.keys():
-                    r = cam.calcXY(x*GRIDH, y*GRIDH)
-                    p = cam.calcXY(prect.x, prect.y)
-                    d = distance(p, r)
-                    if d > self.view_dist:
-                        shadow = self.getShadow(d)
-                        self.screen.blit(shadow, r)
-
+        self.screen.blit(self.shadowimg, pygame.Rect(0,0,800,800))
+    
     def drawEnemies(self, player, cam):
         for e in self.enemiesInstances: 
             r = e.getRect(cam)
