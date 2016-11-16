@@ -4,6 +4,7 @@ from util import Block, distance
 import objectTypes
 import enemy
 import path
+import yaml
 # сначала всё же без генератора, сделать статичный мир. но интересный
 # Свойства объектов, проходимые, непроходимые, поднимаемые...
 # TODO: map сделать редактор, добавление новых блоков. выбор блоков.
@@ -127,29 +128,18 @@ class Map():
         mapname = path.getPath(mapname)
         self.blockers = list()
         self.layers = layers = list() 
-        with open(mapname, 'rt') as fin:
-            line = 'trash'
-            layersCount = int(fin.readline())
-            self.layersCount = layersCount
-            for i in range(layersCount):
-                layers.append(list())
-                while True:
-                    line = fin.readline()
-                    if line == '\n':
-                        break
-                    layers[i].append(line[:-1])
+        map_data = yaml.load(open(mapname))
 
-            objectNames = list()
-            while True:
-                objectName = fin.readline()[:-1]
-                if objectName == 'endObjectNames':
-                    break
-                objectNames.append(objectName)
+        layersCount = int(map_data['layers_count'])
+        self.layersCount = layersCount
+        for l in map_data['layers']:
+            layers.append(l.split('\n')[:-1])
 
+        objectNames = map_data['objects']
         self.objectNames = objectNames 
         self.blockW = self.blockH = GRIDH # CHG REad
+
         mapObjects = dict()
-        # Объекты должны быть и разные, по экземпляру каждый раз. а может и нет. Просто для множества сделать ПакОбъект. а на карте они остаются в других ячейках же.
         for objectName in objectNames:
             obj = gameObjects.GObject(objectName)
             mapObjects[obj.baseObject.mapchar] = obj
@@ -217,4 +207,6 @@ class Map():
                 fout.write('\n')
             fout.write('\n')
 
+if __name__ == '__main__':
+       Map('data/town.yaml', 0) 
 

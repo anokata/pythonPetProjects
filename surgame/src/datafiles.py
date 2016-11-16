@@ -1,4 +1,4 @@
 enemies = 'data/enemies.yaml'
 objects = 'data/objects.yaml'
-defmap = 'data/town.map'
+defmap = 'data/town.yaml'
 playerStats = 'data/playerstats.yaml'

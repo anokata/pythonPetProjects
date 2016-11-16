@@ -165,7 +165,7 @@ rocka:
 
 rock_portal:
     <<: *portal
-    mapname: data/cave1.map
+    mapname: data/cave1.yaml
     imagename: objects/rock_portal.png
     mapchar: b
 
@@ -196,7 +196,7 @@ trailportal:
     <<: *portal
     imagename: objects/portal.png
     mapchar: T
-    mapname: data/trail.map
+    mapname: data/trail.yaml
 
 portal:
     <<: *portal
@@ -206,13 +206,13 @@ portal:
         - objects/portal_3.png
         - objects/portal_4.png
     mapchar: P
-    mapname: data/cave1.map
+    mapname: data/cave1.yaml
 
 portalMap:
     <<: *portal
     imagename: objects/portal.png
     mapchar: P
-    mapname: data/map.map
+    mapname: data/map.yaml
 
 portal_meadow:
     <<: *portal
@@ -222,7 +222,7 @@ portal_meadow:
         - objects/portal_3.png
         - objects/portal_4.png
     mapchar: P
-    mapname: data/meadow.map
+    mapname: data/meadow.yaml
 
 test_portal:
     <<: *portal
@@ -232,7 +232,7 @@ test_portal:
         - objects/portal_3.png
         - objects/portal_4.png
     mapchar: z
-    mapname: data/cavegen.map
+    mapname: data/cavegen.yaml
 
 town_H_fence:
     <<: *block
