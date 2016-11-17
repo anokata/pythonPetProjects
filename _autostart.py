@@ -4,6 +4,8 @@ import os
 import subprocess
 import sys
 sys.path.append('./weather')
+sys.path.append('./lib')
+import currency
 import weather
 exc = subprocess.getoutput
 
@@ -54,6 +56,7 @@ exc('nmcli connection up atel')
 print('Подождём сек...')
 exc('sleep 2')
 pogoda()
+print('Текущий курс доллара: {}'.format(currency.getUSD_RUB()))
 print('Смотри какая сегодня погода! :)')
 exc('weather.sh')
 print('Запишем статистику')

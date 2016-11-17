@@ -37,4 +37,5 @@ if __name__=='__main__':
     #log('t_est')
     #logStart()
     print(getLog())
+    # TODO start if not started
     
