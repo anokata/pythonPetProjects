@@ -4,9 +4,15 @@ import os
 import subprocess
 exc = subprocess.getoutput
 import sys
+work_dir = sys.path[0]
+lib_dir = os.path.join(work_dir, './lib')
 sys.path.append('./weather')
+<<<<<<< HEAD
 sys.path.append('./lib')
 sys.path.append('./zametki')
+=======
+sys.path.append(lib_dir)
+>>>>>>> refs/remotes/origin/master
 import currency
 import weather
 test = len(sys.argv) > 1
