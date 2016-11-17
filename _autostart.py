@@ -2,12 +2,14 @@
 #TODO: проверять первый запуск. записывать ежедневный файл, поставить в авто запуск и смотреть есть ли запись за сегодня и предлагать уже в зависимости.
 import os
 import subprocess
+exc = subprocess.getoutput
 import sys
 sys.path.append('./weather')
 sys.path.append('./lib')
+sys.path.append('./zametki')
 import currency
 import weather
-exc = subprocess.getoutput
+test = len(sys.argv) > 1
 
 def pogoda():
     if (0,0,0) == weather.getWeather():
@@ -58,10 +60,12 @@ exc('sleep 2')
 pogoda()
 print('Текущий курс доллара: {}'.format(currency.getUSD_RUB()))
 print('Смотри какая сегодня погода! :)')
-exc('weather.sh')
+if not test:
+    exc('weather.sh')
 print('Запишем статистику')
 statistic = '?.gnumeric'
-exc('gnumeric')
+if not test:
+    exc('gnumeric')
 
 #exc('pcmanfm&')
 #r = input('Запустим браузер? [y/n]:')
