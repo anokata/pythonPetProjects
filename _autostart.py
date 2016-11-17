@@ -3,8 +3,10 @@
 import os
 import subprocess
 import sys
+work_dir = sys.path[0]
+lib_dir = os.path.join(work_dir, './lib')
 sys.path.append('./weather')
-sys.path.append('./lib')
+sys.path.append(lib_dir)
 import currency
 import weather
 exc = subprocess.getoutput
