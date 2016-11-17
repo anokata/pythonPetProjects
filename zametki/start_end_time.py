@@ -3,6 +3,7 @@ import datetime
 import optparse
 
 log_file = 'start_end.log'
+lock_file = '/var/lock/pycuslockfile_for_onestart'
 io = 0
 
 def getLog() -> io : # IO<
@@ -28,14 +29,33 @@ def logEnd() -> io : # IO<>
     log('end at: ' + getDate())
 
 def dayStart():
-    logStart()
+    if lock():
+        logStart()
 
 def dayEnd():
-    logEnd()
+    if freeLock():
+        logEnd()
+
+def isLock():
+    return os.path.exists(lock_file)
+
+def lock():
+    if not isLock():
+        with open(lock_file, 'w') as f:
+            f.write('')
+            return True
+    else:
+        return False
+
+def freeLock():
+    if isLock():
+        os.remove(lock_file)
+        return True
+    else:
+        return False
 
 if __name__=='__main__':
-    #log('t_est')
-    #logStart()
+    dayStart()
+    dayEnd()
     print(getLog())
-    # TODO start if not started
     
