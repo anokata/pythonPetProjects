@@ -56,22 +56,17 @@ exc('nmcli connection up atel')
 #exc('datamount.sh')
 #print('Подождём сек...')
 #exc('sleep 2')
-print('Подождём сек...')
-exc('sleep 2')
-pogoda()
-print('Текущий курс доллара: {}'.format(currency.getUSD_RUB()))
-print('Смотри какая сегодня погода! :)')
 if not test:
+    print('Подождём сек...')
+    exc('sleep 2')
+    pogoda()
+    print('Текущий курс доллара: {}'.format(currency.getUSD_RUB()))
+    print('Смотри какая сегодня погода! :)')
     exc('weather.sh')
-print('Запишем статистику')
-statistic = '?.gnumeric'
-if not test:
+    print('Запишем статистику')
+    statistic = '?.gnumeric'
     exc('gnumeric')
 
-#exc('pcmanfm&')
-#r = input('Запустим браузер? [y/n]:')
-#if r[0] == 'y':
-#    exc('midori&')
 
 #print('Установим обои')
 #exc('wallpaperText.py --file "/home/ksi/txthub/doings.txt" \
