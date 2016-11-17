@@ -288,7 +288,10 @@ def killEvent(e):
     snd.explosion.play()
 
 def dieEvent(e):
-    loadMap(currentMap)
+    if currentMap == 'generate':
+        loadMap(datafiles.defmap)
+    else:
+        loadMap(currentMap)
 
 def mapChange(e):
     global currentMap
