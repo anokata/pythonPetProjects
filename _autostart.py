@@ -74,4 +74,6 @@ exc('gnumeric')
     #--fontcolor "(10,100,0)"')
 #exc('qiv -z /usr/local/share/backgrounds/black-and-white-city-skyline-buildings.jpg') 
 
+exc('pday.py start')
+
 print('Удачного %s!' % daypart)
