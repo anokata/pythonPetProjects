@@ -25,18 +25,45 @@ def euler59():
     def meaning(s):
         if s.find('\0') > 0:
             return False
-        return s.find('the') > 0
+        an = list()
+        word = 'the is exis'.split()
+        for w in word:
+            an.append(s.find(w) > 0)
+        return all(an)
 
     def dexor(s, key):
-        return list(map(lambda x: x ^ key, s))
+        r = list()
+        i = 0
+        while i <= len(s)-1:
+            r.append(s[i] ^ key[i%n])
+            i += 1
+        return r
 
-    key = 0
+    def key_to_ords(key):
+        r = list()
+        s = ord('a')
+        for i in range(n):
+            key, m = divmod(key, 26)
+            r.append(m+s)
+        return r
+
+    n = 3
     s = code_to_str(data)
-    while not meaning(s) and key <= 255:
+    i = 0
+    key = 0
+    #while not meaning(s):
+    while True:
         key += 1
-        s = code_to_str(dexor(data, key))
-        print(key, s[10:20])
+        k = key_to_ords(key)
+        d = dexor(data, k)
+        s = code_to_str(d)
+        i += 1
+        if i % 1000 == 0:
+            print(key, k, s[10:20])
+        if meaning(s):
+            print(s, k)
     print(key)
-    s = code_to_str(dexor(data, key))
+    s = code_to_str(dexor(data, k))
     print(s)
 
+euler59()
