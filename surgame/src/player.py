@@ -98,7 +98,8 @@ class pgPlayer(Player, pygame.sprite.Sprite):
     def __init__(self, x, y, screen, map):
         super().__init__()
         pygame.sprite.Sprite.__init__(self)
-        self.image = util.imgLoadN(images.none)
+        self.image = util.imgLoadN(images.playerAnimRight[0])
+        self.image.set_colorkey((0,0,0))
         size = self.image.get_rect().size
         self.rect = pygame.Rect(x, y, size[0], size[1])
         self.rect.height -= wallInpact
