@@ -51,19 +51,16 @@ def euler59():
     s = code_to_str(data)
     i = 0
     key = 0
-    #while not meaning(s):
-    while True:
+    while not meaning(s):
+    #while True:
         key += 1
         k = key_to_ords(key)
         d = dexor(data, k)
         s = code_to_str(d)
         i += 1
-        if i % 1000 == 0:
-            print(key, k, s[10:20])
         if meaning(s):
-            print(s, k)
-    print(key)
-    s = code_to_str(dexor(data, k))
+            print(s, k, key)
+    s = sum(d)
     print(s)
 
 euler59()
