@@ -6,7 +6,6 @@ import random
 
 ESCAPE = b'\033'
 
-# Number of the glut window.
 window = 0
 
 def InitGL(Width, Height):              
@@ -48,9 +47,9 @@ def ReSizeGLScene(Width, Height):
     aspect = float(Width)/float(Height)
     #gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
     if Width <= Height:
-        glOrtho(0.0, window_width, 0.0, window_width/aspect, 1.0, -1.0)
+        glOrtho(0.0, window_width, 0.0, window_width/aspect, 100.0, -100.0)
     else:
-        glOrtho(0.0, window_width * aspect, 0.0, window_width, 1.0, -1.0)
+        glOrtho(0.0, window_width * aspect, 0.0, window_width, 100.0, -100.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
@@ -66,29 +65,36 @@ ic = 1.0
 def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    
-    glRotatef(0.5, 0, 1, 0)
     glDisable(GL_LIGHTING)
+    glDisable(GL_CULL_FACE)             
 
     glColor3f(0, 0, 1.0)            
     glRectf(px, py,px+1,py+1)
+    glRotatef(rotx, 1, 1, 0)
     #glEnable(GL_LIGHTING)
     glEnable(GL_BLEND)
     
+    glTranslatef(0.1, 0.1, -2.0)
     glColor4f(1.0, 1.0, 0.0, 0.5)            
-    glRectf(0.0, 0.0, 25.0, 25.0)
     for x in range(1, int(window_width), 4):
         for y in range(1, int(window_width), 4):
             glColor3f(ic/x, 10.0/y, 0.0)            
             glRectf(x, y, x+4, y+4)
 
 
-    glTranslatef(10.1, 10.1, -0.0)
-    glutSolidTeapot(40)
+    glEnable(GL_CULL_FACE)             
+    glLoadIdentity()                    
+    glTranslatef(50.1, 50.1, -8.0)
+    glColor3f(0, 0, 1.0)            
+    #glShadeModel(GL_FLAT)
+    glShadeModel(GL_SMOOTH)
+    glutSolidTeapot(8)
 
+    glLoadIdentity()                    
+    glTranslatef(50.1, 50.1, -0.1)
     glColor4f(1.0, 0.0, 0.0, 0.5)            
-    glRectf(0.0, 0.0, 2.0, -2.0)
 
-    glBegin(GL_POLYGON)                 
+    glBegin(GL_TRIANGLES)
     glColor4f(1.0, 0.0, 0.0, 0.5)            
     glVertex3f(0.0, 1.0, 0.0)           
     glColor4f(1.0, 0.0, 0.0, 0.5)            
