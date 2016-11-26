@@ -3,10 +3,12 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import sys
 import random
+from PIL import Image
 
 ESCAPE = b'\033'
-
 window = 0
+
+img = Image.open('font0.png')
 
 def InitGL(Width, Height):              
     glClearColor(0.0, 0.0, 0.0, 1.0)    
@@ -18,6 +20,7 @@ def InitGL(Width, Height):
     glLoadIdentity()                    
     gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
     glMatrixMode(GL_MODELVIEW)
+
 
 window_width = 100.0
 w = h = 0
