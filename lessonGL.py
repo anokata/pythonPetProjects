@@ -8,7 +8,6 @@ from PIL import Image
 ESCAPE = b'\033'
 window = 0
 
-img = Image.open('font0.png')
 
 def InitGL(Width, Height):              
     glClearColor(0.0, 0.0, 0.0, 1.0)    
@@ -20,6 +19,24 @@ def InitGL(Width, Height):
     glLoadIdentity()                    
     gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
     glMatrixMode(GL_MODELVIEW)
+
+    image = Image.open('font0.png')
+    ix = image.size[0]
+    iy = image.size[1]
+    image = image.tobytes("raw", "RGBX", 0, -1)
+    #conver to BMP?
+    glBindTexture(GL_TEXTURE_2D, glGenTextures(1))   # 2d texture (x and y size)
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+    glEnable(GL_TEXTURE_2D)
 
 
 window_width = 100.0
@@ -65,56 +82,87 @@ def step(d):
 
 rotx = 0.0
 ic = 1.0
+texture = 0
 def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    
     glDisable(GL_LIGHTING)
     glDisable(GL_CULL_FACE)             
+    glDisable(GL_TEXTURE_2D)
 
     glColor3f(0, 0, 1.0)            
     glRectf(px, py,px+1,py+1)
     glRotatef(rotx, 1, 1, 0)
     #glEnable(GL_LIGHTING)
-    glEnable(GL_BLEND)
+    #glEnable(GL_BLEND)
     
     glTranslatef(0.1, 0.1, -2.0)
-    glColor4f(1.0, 1.0, 0.0, 0.5)            
+    #glColor4f(1.0, 1.0, 0.0, 0.5)            
     for x in range(1, int(window_width), 4):
         for y in range(1, int(window_width), 4):
             glColor3f(ic/x, 10.0/y, 0.0)            
-            glRectf(x, y, x+4, y+4)
+            #glRectf(x, y, x+4, y+4)
 
+    glLoadIdentity()                    
+    glTranslatef(0.1, 0.1, -2.0)
+    glLineWidth(8)
+    glColor3f(0.2, 0.4, 1.0)
+    glBegin(GL_LINE_STRIP)
+    x = y = 0
+    for i in range(10):
+        x += random.random()*5
+        y += random.random()*5
+        glVertex2f(x, y)
+    glEnd()
+
+    glEnable(GL_TEXTURE_2D)
+    #glEnable (GL_BLEND)
+    #glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA)
 
     glEnable(GL_CULL_FACE)             
     glLoadIdentity()                    
     glTranslatef(50.1, 50.1, -8.0)
     glColor3f(0, 0, 1.0)            
     #glShadeModel(GL_FLAT)
-    glShadeModel(GL_SMOOTH)
-    glutSolidTeapot(8)
+    #glShadeModel(GL_SMOOTH)
+    #glutSolidTeapot(8)
 
     glLoadIdentity()                    
-    glTranslatef(50.1, 50.1, -0.1)
+    glTranslatef(50.1, 50.1, -10.1)
     glColor4f(1.0, 0.0, 0.0, 0.5)            
+    glRotatef(rotx, 1.0, 0.0, 0.0) 
 
+    glDisable(GL_CULL_FACE)             
     glBegin(GL_TRIANGLES)
     glColor4f(1.0, 0.0, 0.0, 0.5)            
-    glVertex3f(0.0, 1.0, 0.0)           
+    glTexCoord2f(0.0, 0.0)
+    glVertex3f(-10.0, -10.0, 0.0)         
     glColor4f(1.0, 0.0, 0.0, 0.5)            
-    glVertex3f(1.0, -1.0, 0.0)          
+    glTexCoord2f(1.0, 0.0)
+    glVertex3f(10.0, -10.0, 0.0)          
     glColor4f(1.0, 1.0, 0.0, 0.5)            
-    glVertex3f(-1.0, -1.0, 0.0)         
+    glTexCoord2f(1.0, 1.0)
+    glVertex3f(0.0, 10.0, 0.0)           
     glEnd()                             
-    glTranslatef(1.0, 0.0, -0.1)
-    glRotatef(rotx, 1.0, 0.0, 0.0) 
+
+    x = window_width
+    x /= 2
+    glLoadIdentity()                    
+    glTranslatef(50.0, 50.0, -0.1)
     glBegin(GL_QUADS)                   
-    glColor4f(0.0, 1.0, 0.0, 0.5)            
-    glVertex3f(-1.0, 1.0, 0.0)          
-    glVertex3f(1.0, 1.0, 0.0)           
-    glColor4f(0.0, 1.0, 1.0, 0.5)            
-    glVertex3f(1.0, -1.0, 0.0)          
-    glVertex3f(-1.0, -1.0, 0.0)         
+    glTexCoord2f(0.0, 0.0)
+    glVertex3f(-x, -x, 0.0)         
+    glTexCoord2f(0.0, 1.0)
+    glVertex3f(-x, x, 0.0)          
+    glTexCoord2f(1.0, 1.0)
+    glVertex3f(x, x, 0.0)           
+    glTexCoord2f(1.0, 0.0)
+    glVertex3f(x, -x, 0.0)          
     glEnd()                             
+
+    err = glGetError()
+    if err:
+        print(err, gluErrorString(err))
 
     glutSwapBuffers()
 
