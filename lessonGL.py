@@ -8,6 +8,26 @@ from PIL import Image
 ESCAPE = b'\033'
 window = 0
 
+def loadTexture(name):
+    image = Image.open(name)
+    ix = image.size[0]
+    iy = image.size[1]
+    image = image.tobytes("raw", "RGBX", 0, -1)
+    #conver to BMP?
+    t = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, t)   
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1)
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+    return t
+
 
 def InitGL(Width, Height):              
     glClearColor(0.0, 0.0, 0.0, 1.0)    
@@ -20,22 +40,9 @@ def InitGL(Width, Height):
     gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
     glMatrixMode(GL_MODELVIEW)
 
-    image = Image.open('font0.png')
-    ix = image.size[0]
-    iy = image.size[1]
-    image = image.tobytes("raw", "RGBX", 0, -1)
-    #conver to BMP?
-    glBindTexture(GL_TEXTURE_2D, glGenTextures(1))   # 2d texture (x and y size)
-    glPixelStorei(GL_UNPACK_ALIGNMENT,1)
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+    global texture, texturebg
+    texture = loadTexture('font0.png')
+    texturebg = loadTexture('bg.png')
     glEnable(GL_TEXTURE_2D)
 
 
@@ -83,26 +90,24 @@ def step(d):
 rotx = 0.0
 ic = 1.0
 texture = 0
+texturebg = 0
+
 def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    
     glDisable(GL_LIGHTING)
     glDisable(GL_CULL_FACE)             
     glDisable(GL_TEXTURE_2D)
+    glShadeModel(GL_SMOOTH)
+    #glAlphaFunc(GL_GEQUAL, 0.0625)
+    #glEnable(GL_ALPHA_TEST)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_COLOR, GL_ONE)
+#    glBlendFunc(GL_ONE, GL_SRC_COLOR)
 
     glColor3f(0, 0, 1.0)            
     glRectf(px, py,px+1,py+1)
-    glRotatef(rotx, 1, 1, 0)
-    #glEnable(GL_LIGHTING)
-    #glEnable(GL_BLEND)
     
-    glTranslatef(0.1, 0.1, -2.0)
-    #glColor4f(1.0, 1.0, 0.0, 0.5)            
-    for x in range(1, int(window_width), 4):
-        for y in range(1, int(window_width), 4):
-            glColor3f(ic/x, 10.0/y, 0.0)            
-            #glRectf(x, y, x+4, y+4)
-
     glLoadIdentity()                    
     glTranslatef(0.1, 0.1, -2.0)
     glLineWidth(8)
@@ -116,39 +121,13 @@ def DrawGLScene():
     glEnd()
 
     glEnable(GL_TEXTURE_2D)
-    #glEnable (GL_BLEND)
-    #glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA)
 
-    glEnable(GL_CULL_FACE)             
-    glLoadIdentity()                    
-    glTranslatef(50.1, 50.1, -8.0)
-    glColor3f(0, 0, 1.0)            
-    #glShadeModel(GL_FLAT)
-    #glShadeModel(GL_SMOOTH)
-    #glutSolidTeapot(8)
-
-    glLoadIdentity()                    
-    glTranslatef(50.1, 50.1, -10.1)
-    glColor4f(1.0, 0.0, 0.0, 0.5)            
-    glRotatef(rotx, 1.0, 0.0, 0.0) 
-
-    glDisable(GL_CULL_FACE)             
-    glBegin(GL_TRIANGLES)
-    glColor4f(1.0, 0.0, 0.0, 0.5)            
-    glTexCoord2f(0.0, 0.0)
-    glVertex3f(-10.0, -10.0, 0.0)         
-    glColor4f(1.0, 0.0, 0.0, 0.5)            
-    glTexCoord2f(1.0, 0.0)
-    glVertex3f(10.0, -10.0, 0.0)          
-    glColor4f(1.0, 1.0, 0.0, 0.5)            
-    glTexCoord2f(1.0, 1.0)
-    glVertex3f(0.0, 10.0, 0.0)           
-    glEnd()                             
-
-    x = window_width
-    x /= 2
     glLoadIdentity()                    
     glTranslatef(50.0, 50.0, -0.1)
+    glColor3f(1.0, 1.0, 1.0)
+    x = window_width
+    x /= 4
+    glBindTexture(GL_TEXTURE_2D, texture)   
     glBegin(GL_QUADS)                   
     glTexCoord2f(0.0, 0.0)
     glVertex3f(-x, -x, 0.0)         
@@ -158,13 +137,33 @@ def DrawGLScene():
     glVertex3f(x, x, 0.0)           
     glTexCoord2f(1.0, 0.0)
     glVertex3f(x, -x, 0.0)          
-    glEnd()                             
+    glEnd()
+
+    drawBg()
 
     err = glGetError()
     if err:
         print(err, gluErrorString(err))
 
     glutSwapBuffers()
+
+def drawBg():
+    x = window_width
+    x /= 2
+    glLoadIdentity()                    
+    glTranslatef(50.0, 50.0, -0.1)
+    glColor3f(1.0, 1.0, 1.0)
+    glBindTexture(GL_TEXTURE_2D, texturebg)   
+    glBegin(GL_QUADS)                   
+    glTexCoord2f(0.0, 0.0)
+    glVertex3f(-x, -x, -10.0)         
+    glTexCoord2f(0.0, 1.0)
+    glVertex3f(-x, x, -10.0)          
+    glTexCoord2f(1.0, 1.0)
+    glVertex3f(x, x, -10.0)           
+    glTexCoord2f(1.0, 0.0)
+    glVertex3f(x, -x, -10.0)          
+    glEnd()                             
 
 def keyPressed(*args):
     print(args, ESCAPE)
