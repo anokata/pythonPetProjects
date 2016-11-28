@@ -4,6 +4,21 @@ start = 1140
 end = 1150
 one_3 = 1./3.0
 
+def newton_cube_root(a):
+    x = 1
+    for n in range(1, 10):
+        x = (a/(x*x) + 2 * x)/3.0
+    return x
+
+def is_cube_q(x):
+    cube_root = newton_cube_root(x)
+    cu1 = floor(cube_root)
+    cu3 = cu1 * cu1 * cu1
+    return cu3 == x
+
+#print(newton_cube_root(12121**3))
+#exit()
+
 def is_cube(x):
     cube_root = pow(x, one_3)
     cu1 = floor(cube_root)
@@ -15,7 +30,7 @@ def is_cube_perm(x):
     return is_cube(x)
 
 def perm_to_float(p):
-    return float(''.join(p))
+    return int(''.join(p))
 
 def perm():
     for i in range(start, end):
@@ -25,10 +40,11 @@ def perm():
         #perms = map(perm_to_float, perms)
         #perms = list(filter(is_cube, perms))
         perms = list(filter(is_cube_perm, perms))
+        print(i)
         if len(perms) >= 3:
             print(i, len(perms))
             #print(perms)
-#perm()
+perm()
 #test speed of ops
 n = 1000000
 import time
