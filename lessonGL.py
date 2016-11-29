@@ -8,6 +8,9 @@ from PIL import Image
 ESCAPE = b'\033'
 window = 0
 
+def lines():
+    pass
+
 def initFont(name, w, h): # -> fontId
     image = Image.open(name)
     ix = image.size[0]
