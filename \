@@ -36,15 +36,42 @@ data.roty = 0
 data.rotz = 0
 
 def step2(d):
-    spd = 3
-    data.rotx += spd
-    data.roty += spd
-    data.rotz += spd
+    data.rotx += 10
+    data.roty += 10
+    data.rotz += 10
     for l in data.lines:
         gen_line(l, 5)
     glutTimerFunc(1, step2, 1)
     glutPostRedisplay()
 
+def glLine(x, y, e, d):
+    glBegin(GL_LINE_STRIP)
+    glVertex2f(x, y)
+    glVertex2f(e, d)
+    glEnd()
+
+def draw_axis():
+    glPushMatrix()
+    #glLoadIdentity()                    
+    glColor3f(1, 0, 0)
+    glLine(-1000, 0, 1000, 0)
+    glColor3f(0, 0, 1)
+    glLine(0, -1000, 0, 1000)
+    glColor3f(0, 1, 0)
+    glBegin(GL_LINES)
+    glVertex3f(0, 0, -1000)
+    glVertex3f(0, 0, 1000)
+    glEnd()
+    glPopMatrix()
+
+def draw_grid():
+    glColor3f(0.5, 0.5, 0.5)
+    glBegin(GL_LINES)
+    for x in range(20):
+        for y in range(20):
+            glVertex2f(x * 5, y * 5)
+
+    glEnd()
     
 
 def DrawGLScene():
@@ -55,7 +82,7 @@ def DrawGLScene():
     glRotatef(50, 1, 1, 0)
     #glRotatef(data.rotx, 1, 0, 0)
     #glRotatef(data.roty, 0, 1, 0)
-    glRotatef(data.rotz, 0, 0, 1)
+    #glRotatef(data.rotz, 0, 0, 1)
     draw_axis()
     draw_grid()
 
