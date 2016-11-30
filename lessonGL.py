@@ -8,8 +8,119 @@ from PIL import Image
 ESCAPE = b'\033'
 window = 0
 
-def lines():
-    pass
+class MutableNamedTuple():
+    def __init__(self, **kwargs):
+        self._keys = list()
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    def __str__(self):
+        s = ''
+        for k in self._keys:
+            s += str(k) + ':' + str(getattr(self, k)) + '\n'
+        return s
+
+    def add_attr(self, k, v):
+        setattr(self, k, v)
+
+    def __setattr__(self, k, v):
+        super().__setattr__(k, v)
+        if hasattr(self, '_keys'):
+            if k != '_keys' and k not in self._keys:
+                self._keys.append(k)
+
+
+#a = MutableNamedTuple(c=213, bb='a')
+
+def create_line(x=0, y=0, w=30, h=30, r=0, g=0, b=1):
+    line = list()
+    state = MutableNamedTuple()
+    state.dir = 'r'
+    state.w = w
+    state.h = h
+    state.cr = r
+    state.cg = g
+    state.cb = b
+    line.append(state)
+    line.append((x, y))
+    line.append((x+1, y))
+    return line
+
+def step_line(line):
+    direction = line[0].dir
+    state = line[0]
+    x, y = line[-1]
+    if direction == 'r':
+       x += 1 
+    if direction == 'l':
+       x -= 1 
+    if direction == 'u':
+       y += 1 
+    if direction == 'd':
+       y -= 1 
+    if x < 0:
+        x = 0
+        line[0].dir = 'r'
+    if y < 0:
+        y = 0
+        line[0].dir = 'u'
+    if x > state.w:
+        x = state.w
+        line[0].dir = 'l'
+    if y > state.h:
+        y = state.h
+        line[0].dir = 'd'
+    line[-1] = (x, y)
+    return line
+
+def turn_line(line):
+    cur_dir = line[0].dir
+    if cur_dir in {'r', 'l'}:
+        direction = random.choice(['u', 'd'])
+    else:
+        direction = random.choice(['r', 'l'])
+    x, y  = line[-1]
+    if x == 0 and direction == 'l':
+        direction = 'r'
+    if y == 0 and direction == 'd':
+        direction = 'u'
+    line[0].dir = direction
+    line.append(line[-1])
+    return line
+
+def gen_line(line, n):
+    turn_chance = 0.1
+    for i in range(n):
+        is_turn = random.random() < turn_chance
+        if is_turn:
+            turn_line(line)
+        else:
+            step_line(line)
+
+def draw_line(line):
+    glLoadIdentity()                    
+    glTranslatef(0.1, 0.1, -2.0)
+    glLineWidth(8)
+    glDisable(GL_BLEND)
+    state = line[0]
+    glColor3f(state.cr, state.cg, state.cb)
+    glBegin(GL_LINE_STRIP)
+    for x, y in line[1:-1]:
+        glVertex2f(x, y)
+    glColor3f(1.0, 1.0, 1.0)
+    x, y = line[-1]
+    glVertex2f(x, y)
+    glEnd()
+    glEnable(GL_BLEND)
+
+data = MutableNamedTuple()
+data.lines = list()
+data.lines.append(create_line(w=100,h=100, g=1, b=0))
+data.lines.append(create_line(w=100,h=100, x=100))
+data.lines.append(create_line(w=100,h=100, y=100, r=1, b=0))
+data.lines.append(create_line(w=100,h=100, y=100, x=100, r=0.4, b=0.4, g=0.4))
+#print(data.lines)
+#exit()
 
 def initFont(name, w, h): # -> fontId
     image = Image.open(name)
@@ -150,6 +261,11 @@ def ReSizeGLScene(Width, Height):
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
+def step2(d):
+    for l in data.lines:
+        gen_line(l, 5)
+    glutTimerFunc(1, step2, 1)
+
 def step(d):
     global rotx, ic
     rotx += 5.0
@@ -174,6 +290,9 @@ def DrawGLScene():
     glEnable(GL_BLEND)
     glBlendFunc(GL_SRC_COLOR, GL_ONE)
 #    glBlendFunc(GL_ONE, GL_SRC_COLOR)
+
+    for l in data.lines:
+        draw_line(l)
 
     glColor3f(0, 0, 1.0)            
     glRectf(px, py,px+1,py+1)
@@ -270,6 +389,7 @@ def main():
     glutMouseFunc(mouse)
     glutMotionFunc(motion)
     glutTimerFunc(33, step, 1)
+    glutTimerFunc(3, step2, 1)
     InitGL(640, 480)
     glutMainLoop()
 

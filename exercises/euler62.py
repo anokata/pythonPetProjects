@@ -44,7 +44,7 @@ def perm():
         if len(perms) >= 3:
             print(i, len(perms))
             #print(perms)
-perm()
+#perm()
 #test speed of ops
 n = 1000000
 import time
@@ -75,7 +75,22 @@ def test_pow3():
     for i in range(n):
         x = floor(b)
 
-cold = test_pow1()
-t1 = test_pow2()
-t2 = test_pow3()
-print(t1, t2)
+#cold = test_pow1()
+#t1 = test_pow2()
+#t2 = test_pow3()
+#print(t1, t2)
+
+cubes = {}
+def gen_cubes(n):
+    for i in range(1, n):
+        cubes[i*i*i] = 1
+gen_cubes(1000)
+
+def count_cubes(n):
+    for i in range(1, n):
+        perms = permutations(str(i*i*i))
+        perms = list(set(perms))
+        perms = list(map(lambda x: int(''.join(x)), perms))
+
+count_cubes(100)
+
