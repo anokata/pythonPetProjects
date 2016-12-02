@@ -1,0 +1,9 @@
+!!python/object:mega.MutableNamedTuple
+_keys: [name, dir1, py]
+dir1: !!python/object:mega.MutableNamedTuple
+  _keys: [name, u0, u1]
+  name: dir1
+  u0: http://u.uk
+  u1: http://u.uk
+name: url root
+py: py.org

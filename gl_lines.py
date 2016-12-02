@@ -51,11 +51,11 @@ def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    
     glShadeModel(GL_SMOOTH)
-    glTranslatef(10, 10, -10)
+    glTranslatef(50, 50, -10)
     glRotatef(50, 1, 1, 0)
     #glRotatef(data.rotx, 1, 0, 0)
     #glRotatef(data.roty, 0, 1, 0)
-    glRotatef(data.rotz, 0, 0, 1)
+    #glRotatef(data.rotz, 0, 0, 1)
     draw_axis()
     draw_grid()
 

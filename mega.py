@@ -19,3 +19,8 @@ class MutableNamedTuple():
         if hasattr(self, '_keys'):
             if k != '_keys' and k not in self._keys:
                 self._keys.append(k)
+
+    def items(self):
+        return self._keys
+
+Mega = MutableNamedTuple
