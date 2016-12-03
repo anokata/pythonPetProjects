@@ -1,8 +1,9 @@
 import requests as req
 from pystore_urls import *
+import optparse
 
 def load(name):
-    res = req.get(load_client + name)
+    res = req.post(load_client, {'name': name})
     return res.text
 
 def save(name, data):
@@ -10,4 +11,5 @@ def save(name, data):
     return res.text
 
 if __name__=='__main__':
-    print(save('a', 'b'))
+    #print(save('a', 'b'))
+    print(load('xxx'))
