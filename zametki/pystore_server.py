@@ -28,7 +28,7 @@ def get():
         res = 'no'
     return res
 
-application = default_app()
+application_store = default_app()
 
 if __name__=='__main__':
     run(host='localhost', port=8888, reloader=True)
