@@ -12,6 +12,10 @@ def load(name):
     res = req.post(load_client, {'name': name})
     return res.text
 
+def get_all():
+    res = req.get(get_all_client)
+    return res.text
+
 def save(name, data):
     #print(save_client)
     res = req.post(save_client, {'data':data, 'name':name})
@@ -26,4 +30,7 @@ if __name__=='__main__':
     if args.command == 'save' and args.n != None:
         data = input()
         save(args.n, data)
+        exit()
+    if args.command == 'all':
+        print(get_all())
         exit()

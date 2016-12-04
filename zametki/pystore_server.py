@@ -28,6 +28,13 @@ def get():
         res = 'no'
     return res
 
+@route(get_all_url, method='GET')
+def get_all():
+    al = str()
+    for k, v in st.items():
+        al += (str(k) + ' : ' + str(v) + '\n<br>')
+    return al
+
 application_store = default_app()
 
 if __name__=='__main__':
