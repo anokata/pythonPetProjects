@@ -15,7 +15,6 @@ st = pickle.load(open(pickle_file, 'rb'))
 def store():
     data = request.forms.get('data')
     name = request.forms.get('name')
-    print(request.forms, dir(request), dir(request.forms))
     st[name] = data
     pickle.dump(st, open(pickle_file, 'wb'))
     return 'ok store ' + name
@@ -34,6 +33,18 @@ def get_all():
     al = str()
     for k, v in st.items():
         al += (str(k) + ' : ' + str(v) + '\n<br>')
+    return al
+
+@route(get_books, method='GET')
+def get_bks():
+    al = str()
+    for k, v in st.items():
+        k = str(k)
+        if k.startswith('book_'):
+            try:
+                al += (str(k).split('_', 1)[1] + ' : ' + str(v).split('_', 1)[1] + '\n<br>')
+            except:
+                pass
     return al
 
 application_store = default_app()

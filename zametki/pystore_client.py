@@ -17,6 +17,10 @@ def get_all():
     res = req.get(get_all_client)
     return res.text
 
+def get_books():
+    res = req.get(get_books_client)
+    return res.text
+
 def save(name, data):
     #print(save_client)
     res = req.post(save_client, {'data':data, 'name':name})
@@ -34,4 +38,7 @@ if __name__=='__main__':
         exit()
     if args.command == 'all':
         print(get_all())
+        exit()
+    if args.command == 'books':
+        print(get_books())
         exit()
