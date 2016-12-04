@@ -1,0 +1,2 @@
+#!/bin/bash
+wget -qO- --post-data "name=book_$1&data=page_$2" http://anokata.pythonanywhere.com/store/save/ &>/dev/null

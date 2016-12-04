@@ -15,6 +15,7 @@ st = pickle.load(open(pickle_file, 'rb'))
 def store():
     data = request.forms.get('data')
     name = request.forms.get('name')
+    print(request.forms, dir(request), dir(request.forms))
     st[name] = data
     pickle.dump(st, open(pickle_file, 'wb'))
     return 'ok store ' + name

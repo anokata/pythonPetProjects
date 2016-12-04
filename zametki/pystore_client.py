@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import requests as req
 from pystore_urls import *
 import argparse
