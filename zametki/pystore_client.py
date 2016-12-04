@@ -1,21 +1,29 @@
 import requests as req
 from pystore_urls import *
-import optparse
+import argparse
 
-p = optparse.OptionParser()
-p.add_option('-s', default="")
-options, arguments = p.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument('command', help='one of: load, save')
+parser.add_argument('-n', help='name of value')
+args = parser.parse_args()
+#print(args.command, args.n)
 
 def load(name):
     res = req.post(load_client, {'name': name})
     return res.text
 
 def save(name, data):
-    print(save_client)
+    #print(save_client)
     res = req.post(save_client, {'data':data, 'name':name})
     return res.text
 
 if __name__=='__main__':
     #print(save('a', 'b'))
-    print(load('a'))
-    #print(load('xxx'))
+    #print(load('a'))
+    if args.command == 'load' and args.n != None:
+        print(load(args.n))
+        exit()
+    if args.command == 'save' and args.n != None:
+        data = input()
+        save(args.n, data)
+        exit()
