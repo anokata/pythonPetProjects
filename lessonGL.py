@@ -10,101 +10,36 @@ ESCAPE = b'\033'
 window = 0
 
 def initFont(name, w, h): # -> fontId
-    image = Image.open(name)
-    ix = image.size[0]
-    iy = image.size[1]
-    image = image.tobytes("raw", "RGBX", 0, -1)
-    tid = texture_init(image, ix, iy)
+    imagep = Image.open(name)
+    ix = imagep.size[0]
+    iy = imagep.size[1]
+    image = imagep.tobytes("raw", "RGBX", 0, -1)
     col_count = ix // w
     row_count = iy // h
-    a = b''
-    print(image[:32])
-    print(image[-32:], name)
-    for i in range(32,0,-1):
-        #a += (image[40000+i*ix*4:40000+(i+1)*ix*4])
-        a += (image[-(i+1)*ix*4:-(i)*ix*4])
-    return {'tid':tid,
+
+    char_width = w
+    char_count = 3
+    chars = dict()
+    code = 0
+
+    for y in range(0, char_count * char_width, char_width):
+        for x in range(0, char_count * char_width, char_width):
+            i = imagep.crop((x,y, x + char_width, y + char_width))
+            char_bytes = i.tobytes("raw", "RGBX", 0, -1)
+            chars[code] = char_bytes
+            code += 1
+
+    return {
+            #'tid':tid,
             'col':col_count,
             'row':row_count,
             'w':w,
             'h':h,
             'width':ix,
             'height':iy,
-            'a':a,
+            'img': image,
+            'chars':chars
             }
-
-def font_coord_to_tex_coord(fid, x, y):
-    w = fid['w'] + 1
-    h = fid['h'] + 1
-    width = fid['width']
-    height = fid['height']
-    s, t = x, y
-    x *= w
-    y *= h
-    x = x/width
-    y = 1.0 - y/height
-    s = (s+1) * w 
-    t = (t+1) * w 
-    s = s/width
-    t = 1.0 - t/height
-    return x, t, s, y
-
-def say_2dfont(font_id, msg): 
-    tid = font_id['tid']
-    col = font_id['col']
-    glColor3f(1.0, 1.0, 1.0)
-    glDisable(GL_BLEND)
-    glEnable(GL_TEXTURE_2D)
-    glBindTexture(GL_TEXTURE_2D, tid)   
-    glLoadIdentity()                    
-    glTranslatef(50.0, 50.0, -0.1)
-    x = window_width
-    x /= 30
-    y = x
-    left = -40.0
-    for char in msg:
-        code = ord(char) - ord('a')
-        xx = code % col
-        yy = code // col
-        a, b, s, t = font_coord_to_tex_coord(font_id, xx, yy)
-        #print(msg, char, code, x, a,b,s,t)
-        glBegin(GL_QUADS)                   
-        glTexCoord2f(a, b)
-        glVertex3f(left-x, -y, 0.0)         
-        glTexCoord2f(a, t)
-        glVertex3f(left - x, y, 0.0)          
-        glTexCoord2f(s, t)
-        glVertex3f(left + x, y, 0.0)           
-        glTexCoord2f(s, b)
-        glVertex3f(left + x, -y, 0.0)          
-        glEnd()
-        left += 10
-
-def texture_init(data, w, h):
-    t = glGenTextures(1)
-    glBindTexture(GL_TEXTURE_2D, t)   
-    glPixelStorei(GL_UNPACK_ALIGNMENT,1)
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
-    return t
-
-
-x = 0
-def loadTexture(name):
-    image = Image.open(name)
-    ix = image.size[0]
-    iy = image.size[1]
-    image = image.tobytes("raw", "RGBX", 0, -1)
-    #conver to BMP?
-    t = texture_init(image, ix, iy)
-    return t, image
 
 
 def InitGL(Width, Height):              
@@ -118,10 +53,8 @@ def InitGL(Width, Height):
     gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
     glMatrixMode(GL_MODELVIEW)
 
-    global texture, texturebg, font, img
-    texture, img = loadTexture('font0.png')
+    global font
     font = initFont('font0.png', 32, 32)
-    glEnable(GL_TEXTURE_2D)
 
 
 font = 0
@@ -164,9 +97,6 @@ def step(d):
     glutPostRedisplay()
     glutTimerFunc(33, step, 1)
 
-texture = 0
-texturebg = 0
-
 def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    
@@ -176,13 +106,13 @@ def DrawGLScene():
     glColor3f(0, 0, 1.0)            
     glRectf(px, py,px+1,py+1)
     
-    #say_2dfont(font, "abcde")
     glTranslatef(50.0, 50.0, -0.1)
     glRasterPos2d(-50.0, -50.0)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    glDrawPixels(128, 128, GL_RGBA, GL_UNSIGNED_BYTE, img)   
-    glRasterPos2d(0.0, 0.0)
-    glDrawPixels(32, 32, GL_RGBA, GL_UNSIGNED_BYTE, font['a'])   
+    glDrawPixels(128, 128, GL_RGBA, GL_UNSIGNED_BYTE, font['img'])   
+    glRasterPos2d(-30.0, 0.0)
+    #glPixelZoom(5.5,5.5)
+    glDrawPixels(32, 32, GL_RGBA, GL_UNSIGNED_BYTE, font['chars'][1])   
 
     err = glGetError()
     if err:
@@ -196,7 +126,6 @@ def drawBg():
     glLoadIdentity()                    
     glTranslatef(50.0, 50.0, -0.1)
     glColor3f(1.0, 1.0, 1.0)
-    glBindTexture(GL_TEXTURE_2D, texturebg)   
     glBegin(GL_QUADS)                   
     glTexCoord2f(0.0, 0.0)
     glVertex3f(-x, -x, -10.0)         
@@ -234,7 +163,6 @@ def main():
     glutInitWindowPosition(0, 0)
     window = glutCreateWindow("")
     glutDisplayFunc(DrawGLScene)
-    #glutFullScreen()
     glutIdleFunc(DrawGLScene)
     glutReshapeFunc(ReSizeGLScene)
     glutKeyboardFunc(keyPressed)
