@@ -9,38 +9,59 @@ from mega import MutableNamedTuple
 ESCAPE = b'\033'
 window = 0
 
-def initFont(name, w, h): # -> fontId
+def initFont(name, char_width, char_height): # -> fontId
     imagep = Image.open(name)
     ix = imagep.size[0]
     iy = imagep.size[1]
-    image = imagep.tobytes("raw", "RGBX", 0, -1)
-    col_count = ix // w
-    row_count = iy // h
-
-    char_width = w
-    char_count = 3
+    image = imagep.tobytes("raw", "RGBA", 0, -1)
+    col_count = ix // char_width
+    row_count = iy // char_height
     chars = dict()
     code = 0
 
-    for y in range(0, char_count * char_width, char_width):
-        for x in range(0, char_count * char_width, char_width):
-            i = imagep.crop((x,y, x + char_width, y + char_width))
-            char_bytes = i.tobytes("raw", "RGBX", 0, -1)
+    char_win_w = (char_width / ix) * window_width/0.8
+    char_win_h = (char_height / iy) * window_width/0.8
+
+    for y in range(0, row_count * char_height, char_height):
+        for x in range(0, col_count * char_width, char_width):
+            i = imagep.crop((x,y, x + char_width, y + char_height))
+            char_bytes = i.tobytes("raw", "RGBA", 0, -1)
             chars[code] = char_bytes
             code += 1
 
     return {
-            #'tid':tid,
             'col':col_count,
             'row':row_count,
-            'w':w,
-            'h':h,
+            'w':char_width,
+            'h':char_height,
             'width':ix,
             'height':iy,
             'img': image,
-            'chars':chars
+            'chars':chars,
+            'cw' : char_win_w,
+            'ch' : char_win_h,
             }
 
+def draw_char(font, code):
+    w = font['w']
+    h = font['h']
+    data = font['chars'][code]
+    glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, data)   
+
+def draw_chars(font, s, x=0, y=0):
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    w = font['w']
+    cw = font['cw']
+    ch = font['ch']
+    h = font['h']
+    y *= -ch
+    x *= cw
+    for c in s:
+        code = ord(c)
+        glRasterPos2d(x, y)
+        data = font['chars'][code]
+        glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, data)   
+        x += cw
 
 def InitGL(Width, Height):              
     glClearColor(0.3, 0.3, 0.3, 1.0)    
@@ -54,11 +75,11 @@ def InitGL(Width, Height):
     glMatrixMode(GL_MODELVIEW)
 
     global font
-    font = initFont('font0.png', 32, 32)
+    font = initFont('font1.png', 16, 16)
 
 
 font = 0
-window_width = 100.0
+window_width = 128.0
 w = h = 0
 
 def glob_xy_calc(x, y):
@@ -84,11 +105,10 @@ def ReSizeGLScene(Width, Height):
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     aspect = float(Width)/float(Height)
-    #gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
     if Width <= Height:
-        glOrtho(0.0, window_width, 0.0, window_width/aspect, 100.0, -100.0)
+        glOrtho(-window_width, window_width, -window_width/aspect, window_width/aspect, 100.0, -100.0)
     else:
-        glOrtho(0.0, window_width * aspect, 0.0, window_width, 100.0, -100.0)
+        glOrtho(-window_width * aspect, window_width * aspect, -window_width, window_width, 100.0, -100.0)
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
@@ -106,13 +126,16 @@ def DrawGLScene():
     glColor3f(0, 0, 1.0)            
     glRectf(px, py,px+1,py+1)
     
-    glTranslatef(50.0, 50.0, -0.1)
-    glRasterPos2d(-50.0, -50.0)
+    glTranslatef(-window_width, window_width, -0.1)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    glDrawPixels(128, 128, GL_RGBA, GL_UNSIGNED_BYTE, font['img'])   
-    glRasterPos2d(-30.0, 0.0)
+    #glDrawPixels(128, 128, GL_RGBA, GL_UNSIGNED_BYTE, font['img'])   
     #glPixelZoom(5.5,5.5)
-    glDrawPixels(32, 32, GL_RGBA, GL_UNSIGNED_BYTE, font['chars'][1])   
+    #glRasterPos2d(0.0, 0.0)
+    #glDrawPixels(32, 32, GL_RGBA, GL_UNSIGNED_BYTE, font['chars'][3])   
+    draw_chars(font, '\01\00\02')
+    draw_chars(font, '\00\02', y=1)
+    draw_chars(font, '\00\02', y=2, x=1)
+    draw_chars(font, '\32\28', y=4, x=1)
 
     err = glGetError()
     if err:
