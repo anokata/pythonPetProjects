@@ -5,35 +5,9 @@ import sys
 import random
 from PIL import Image
 from mega import MutableNamedTuple
-from line import *
 
 ESCAPE = b'\033'
 window = 0
-
-def draw_line(line):
-    glLoadIdentity()                    
-    glTranslatef(0.1, 0.1, -2.0)
-    glLineWidth(8)
-    glDisable(GL_BLEND)
-    state = line[0]
-    glColor3f(state.cr, state.cg, state.cb)
-    glBegin(GL_LINE_STRIP)
-    for x, y in line[1:-1]:
-        glVertex2f(x, y)
-    glColor3f(1.0, 1.0, 1.0)
-    x, y = line[-1]
-    glVertex2f(x, y)
-    glEnd()
-    glEnable(GL_BLEND)
-
-data = MutableNamedTuple()
-data.lines = list()
-data.lines.append(create_line(w=100,h=100, g=1, b=0))
-data.lines.append(create_line(w=100,h=100, x=100))
-data.lines.append(create_line(w=100,h=100, y=100, r=1, b=0))
-data.lines.append(create_line(w=100,h=100, y=100, x=100, r=0.4, b=0.4, g=0.4))
-#print(data.lines)
-#exit()
 
 def initFont(name, w, h): # -> fontId
     image = Image.open(name)
@@ -43,6 +17,12 @@ def initFont(name, w, h): # -> fontId
     tid = texture_init(image, ix, iy)
     col_count = ix // w
     row_count = iy // h
+    a = b''
+    print(image[:32])
+    print(image[-32:], name)
+    for i in range(32,0,-1):
+        #a += (image[40000+i*ix*4:40000+(i+1)*ix*4])
+        a += (image[-(i+1)*ix*4:-(i)*ix*4])
     return {'tid':tid,
             'col':col_count,
             'row':row_count,
@@ -50,6 +30,7 @@ def initFont(name, w, h): # -> fontId
             'h':h,
             'width':ix,
             'height':iy,
+            'a':a,
             }
 
 def font_coord_to_tex_coord(fid, x, y):
@@ -72,6 +53,11 @@ def say_2dfont(font_id, msg):
     tid = font_id['tid']
     col = font_id['col']
     glColor3f(1.0, 1.0, 1.0)
+    glDisable(GL_BLEND)
+    glEnable(GL_TEXTURE_2D)
+    glBindTexture(GL_TEXTURE_2D, tid)   
+    glLoadIdentity()                    
+    glTranslatef(50.0, 50.0, -0.1)
     x = window_width
     x /= 30
     y = x
@@ -81,8 +67,7 @@ def say_2dfont(font_id, msg):
         xx = code % col
         yy = code // col
         a, b, s, t = font_coord_to_tex_coord(font_id, xx, yy)
-        print(msg, char, code, x, a,b,s,t)
-        glBindTexture(GL_TEXTURE_2D, tid)   
+        #print(msg, char, code, x, a,b,s,t)
         glBegin(GL_QUADS)                   
         glTexCoord2f(a, b)
         glVertex3f(left-x, -y, 0.0)         
@@ -111,6 +96,7 @@ def texture_init(data, w, h):
     return t
 
 
+x = 0
 def loadTexture(name):
     image = Image.open(name)
     ix = image.size[0]
@@ -118,11 +104,11 @@ def loadTexture(name):
     image = image.tobytes("raw", "RGBX", 0, -1)
     #conver to BMP?
     t = texture_init(image, ix, iy)
-    return t
+    return t, image
 
 
 def InitGL(Width, Height):              
-    glClearColor(0.0, 0.0, 0.0, 1.0)    
+    glClearColor(0.3, 0.3, 0.3, 1.0)    
     glClearDepth(1.0)                   
     glDepthFunc(GL_LESS)                
     glEnable(GL_DEPTH_TEST)             
@@ -132,9 +118,8 @@ def InitGL(Width, Height):
     gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
     glMatrixMode(GL_MODELVIEW)
 
-    global texture, texturebg, font
-    texture = loadTexture('font0.png')
-    texturebg = loadTexture('bg.png')
+    global texture, texturebg, font, img
+    texture, img = loadTexture('font0.png')
     font = initFont('font0.png', 32, 32)
     glEnable(GL_TEXTURE_2D)
 
@@ -174,76 +159,30 @@ def ReSizeGLScene(Width, Height):
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
-def step2(d):
-    for l in data.lines:
-        gen_line(l, 5)
-    glutTimerFunc(1, step2, 1)
 
 def step(d):
-    global rotx, ic
-    rotx += 5.0
-    ic = random.random()*3.0
     glutPostRedisplay()
     glutTimerFunc(33, step, 1)
 
-rotx = 0.0
-ic = 1.0
 texture = 0
 texturebg = 0
 
 def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    
-    glDisable(GL_LIGHTING)
     glDisable(GL_CULL_FACE)             
-    glDisable(GL_TEXTURE_2D)
     glShadeModel(GL_SMOOTH)
-    #glAlphaFunc(GL_GEQUAL, 0.0625)
-    #glEnable(GL_ALPHA_TEST)
-    glEnable(GL_BLEND)
-    glBlendFunc(GL_SRC_COLOR, GL_ONE)
-#    glBlendFunc(GL_ONE, GL_SRC_COLOR)
-
-    for l in data.lines:
-        draw_line(l)
 
     glColor3f(0, 0, 1.0)            
     glRectf(px, py,px+1,py+1)
     
-    glLoadIdentity()                    
-    glTranslatef(0.1, 0.1, -2.0)
-    glLineWidth(8)
-    glColor3f(0.2, 0.4, 1.0)
-    glBegin(GL_LINE_STRIP)
-    x = y = 0
-    for i in range(10):
-        x += random.random()*5
-        y += random.random()*5
-        glVertex2f(x, y)
-    glEnd()
-
-    glEnable(GL_TEXTURE_2D)
-
-    glLoadIdentity()                    
+    #say_2dfont(font, "abcde")
     glTranslatef(50.0, 50.0, -0.1)
-    glColor3f(1.0, 1.0, 1.0)
-    x = window_width
-    x /= 4
-    glBindTexture(GL_TEXTURE_2D, texture)   
-    glBegin(GL_QUADS)                   
-    glTexCoord2f(0.0, 0.0)
-    glVertex3f(-x, -x, 0.0)         
-    glTexCoord2f(0.0, 1.0)
-    glVertex3f(-x, x, 0.0)          
-    glTexCoord2f(1.0, 1.0)
-    glVertex3f(x, x, 0.0)           
-    glTexCoord2f(1.0, 0.0)
-    glVertex3f(x, -x, 0.0)          
-    glEnd()
-
-    say_2dfont(font, "abcde")
-
-    drawBg()
+    glRasterPos2d(-50.0, -50.0)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    glDrawPixels(128, 128, GL_RGBA, GL_UNSIGNED_BYTE, img)   
+    glRasterPos2d(0.0, 0.0)
+    glDrawPixels(32, 32, GL_RGBA, GL_UNSIGNED_BYTE, font['a'])   
 
     err = glGetError()
     if err:
@@ -302,7 +241,6 @@ def main():
     glutMouseFunc(mouse)
     glutMotionFunc(motion)
     glutTimerFunc(33, step, 1)
-    glutTimerFunc(3, step2, 1)
     InitGL(640, 480)
     glutMainLoop()
 
