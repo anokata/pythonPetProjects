@@ -17,10 +17,10 @@ def initFont(name, char_width, char_height): # -> fontId
     col_count = ix // char_width
     row_count = iy // char_height
     chars = dict()
-    code = 0
+    code = 1
 
-    char_win_w = (char_width / ix) * window_width/0.8
-    char_win_h = (char_height / iy) * window_width/0.8
+    char_win_w = char_width 
+    char_win_h = char_height 
 
     for y in range(0, row_count * char_height, char_height):
         for x in range(0, col_count * char_width, char_width):
@@ -29,6 +29,7 @@ def initFont(name, char_width, char_height): # -> fontId
             chars[code] = char_bytes
             code += 1
 
+    print(code)
     return {
             'col':col_count,
             'row':row_count,
@@ -50,17 +51,19 @@ def draw_char(font, code):
 
 def draw_chars(font, s, x=0, y=0):
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    w = font['w']
+    dw = font['w']
+    dh = font['h']
     cw = font['cw']
     ch = font['ch']
-    h = font['h']
-    y *= -ch
+    y += 1
+    y *= ch
     x *= cw
+
     for c in s:
         code = ord(c)
         glRasterPos2d(x, y)
         data = font['chars'][code]
-        glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, data)   
+        glDrawPixels(dw, dh, GL_RGBA, GL_UNSIGNED_BYTE, data)   
         x += cw
 
 def InitGL(Width, Height):              
@@ -69,18 +72,14 @@ def InitGL(Width, Height):
     glDepthFunc(GL_LESS)                
     glEnable(GL_DEPTH_TEST)             
     glShadeModel(GL_SMOOTH)             
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()                    
-    gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
-    glMatrixMode(GL_MODELVIEW)
 
     global font
     font = initFont('font1.png', 16, 16)
 
-
 font = 0
 window_width = 128.0
 w = h = 0
+state = MutableNamedTuple()
 
 def glob_xy_calc(x, y):
     return xy_calc(x, y, w, h, window_width)
@@ -105,10 +104,14 @@ def ReSizeGLScene(Width, Height):
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     aspect = float(Width)/float(Height)
+    state.aspect = aspect
+    window_width = Width
     if Width <= Height:
-        glOrtho(-window_width, window_width, -window_width/aspect, window_width/aspect, 100.0, -100.0)
+        glOrtho(0, window_width, Height, 0, 100.0, -100.0)
+        state.h = True
     else:
-        glOrtho(-window_width * aspect, window_width * aspect, -window_width, window_width, 100.0, -100.0)
+        glOrtho(0, window_width , Height, 0, 100.0, -100.0)
+        state.h = False
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
 
@@ -122,20 +125,16 @@ def DrawGLScene():
     glLoadIdentity()                    
     glDisable(GL_CULL_FACE)             
     glShadeModel(GL_SMOOTH)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     glColor3f(0, 0, 1.0)            
-    glRectf(px, py,px+1,py+1)
+    #glRectf(px, py,px+1,py+1)
     
-    glTranslatef(-window_width, window_width, -0.1)
+    #glTranslatef(-window_width, window_width, -0.1)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    #glDrawPixels(128, 128, GL_RGBA, GL_UNSIGNED_BYTE, font['img'])   
-    #glPixelZoom(5.5,5.5)
-    #glRasterPos2d(0.0, 0.0)
-    #glDrawPixels(32, 32, GL_RGBA, GL_UNSIGNED_BYTE, font['chars'][3])   
-    draw_chars(font, '\01\00\02')
-    draw_chars(font, '\00\02', y=1)
-    draw_chars(font, '\00\02', y=2, x=1)
-    draw_chars(font, '\32\28', y=4, x=1)
+    draw_chars(font, '\x82\x81\x83', y=1, x=1)
+    draw_chars(font, 'abc xyz ABC XYZ', y=0, x=0)
 
     err = glGetError()
     if err:
