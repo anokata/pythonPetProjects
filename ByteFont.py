@@ -1,5 +1,6 @@
 from PIL import Image
 from OpenGL.GL import *
+from gl_texture import texture_init, draw_tex_quad
 
 def init_font(name, char_width, char_height): # -> fontId
     imagep = Image.open(name)
@@ -9,6 +10,7 @@ def init_font(name, char_width, char_height): # -> fontId
     col_count = ix // char_width
     row_count = iy // char_height
     chars = dict()
+    chars_tex = dict()
     code = 1
 
     char_win_w = char_width 
@@ -19,6 +21,8 @@ def init_font(name, char_width, char_height): # -> fontId
             i = imagep.crop((x,y, x + char_width, y + char_height))
             char_bytes = i.tobytes("raw", "RGBA", 0, -1)
             chars[code] = char_bytes
+            tex = texture_init(char_bytes, char_width, char_height)
+            chars_tex[code] = tex
             code += 1
 
     return {
@@ -30,12 +34,31 @@ def init_font(name, char_width, char_height): # -> fontId
             'height':iy,
             'img': image,
             'chars':chars,
+            'chars_tex':chars_tex,
             'cw' : char_win_w,
             'ch' : char_win_h,
             }
 
 def gl_draw_char(data, w, h):
     glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, data)   
+
+def gl_draw_char_tex(font, code, x, y, color=(1,0,0)):
+    glColor3f(*color)
+    w = font['w']
+    h = font['h']
+    draw_tex_quad(font['chars_tex'][code],x,y,x+w,y+h )
+
+def draw_chars_tex(font, s, x=0, y=0, color=(0,0,1)):
+    dw = font['w']
+    dh = font['h']
+    cw = font['cw']
+    ch = font['ch']
+    y *= ch
+    x *= cw
+    for c in s:
+        code = ord(c)
+        gl_draw_char_tex(font, code, x, y, color)
+        x += cw
 
 def draw_char(font, code):
     w = font['w']
