@@ -23,3 +23,20 @@ def loadTexture(name):
     #conver to BMP?
     t = texture_init(image, ix, iy)
     return t, image
+
+def drawBg():
+    x = state.w
+    x /= 2
+    glLoadIdentity()                    
+    glTranslatef(50.0, 50.0, -0.1)
+    glColor3f(1.0, 1.0, 1.0)
+    glBegin(GL_QUADS)                   
+    glTexCoord2f(0.0, 0.0)
+    glVertex3f(-x, -x, -10.0)         
+    glTexCoord2f(0.0, 1.0)
+    glVertex3f(-x, x, -10.0)          
+    glTexCoord2f(1.0, 1.0)
+    glVertex3f(x, x, -10.0)           
+    glTexCoord2f(1.0, 0.0)
+    glVertex3f(x, -x, -10.0)          
+    glEnd()                             
