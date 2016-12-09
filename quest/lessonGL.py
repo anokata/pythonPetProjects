@@ -6,18 +6,12 @@ import random
 from mega import MutableNamedTuple
 from ByteFont import *
 from gl_texture import draw_tex_quad
+from gl_main import *
 
-ESCAPE = b'\033'
 state = MutableNamedTuple()
 state.window = 0
 
-def InitGL(Width, Height):              
-    glClearColor(0.3, 0.3, 0.3, 1.0)    
-    glClearDepth(1.0)                   
-    glDepthFunc(GL_LESS)                
-    glEnable(GL_DEPTH_TEST)             
-    glShadeModel(GL_SMOOTH)             
-
+def init():
     font = init_font('font1.png', 16, 16)
     state.font = font
 
@@ -87,6 +81,7 @@ def main():
     glutMotionFunc(motion)
     glutTimerFunc(33, step, 1)
     InitGL(640, 480)
+    init()
     glutMainLoop()
 
 if __name__=='__main__':
