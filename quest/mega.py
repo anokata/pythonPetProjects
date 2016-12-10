@@ -1,4 +1,5 @@
 # TODO add list indexing
+# add append dict - mega.append({'x': 8...})
 class MutableNamedTuple():
     def __init__(self, **kwargs):
         self._keys = list()
@@ -24,3 +25,4 @@ class MutableNamedTuple():
         return self._keys
 
 Mega = MutableNamedTuple
+DotDict = Mega
