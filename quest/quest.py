@@ -43,11 +43,19 @@ def go_right():
     actor = state.player
     actor.x += 1
 
+def retile_map(m, pairs):
+    prs = dict(zip(pairs[::2], pairs[1::2]))
+    print(prs)
+    prs = str.maketrans(prs)
+    m = [line.translate(prs) for line in m]
+    return m
+        
+
 def init():
     font = init_font(font_file, 16, 16)
     state.font = font
-    state.map = yaml.load(open(map_file))
-    state.map['map'] = state.map['map'][0].split('\n')
+    state.level_data = yaml.load(open(map_file))
+    state.map = state.level_data['map'][0].split('\n')
     print(state.map)
     state.player = make_actor(x=0, y=0, char='\x01')
     print(state.player)
@@ -55,6 +63,7 @@ def init():
     state.objects.append(state.player)
     # state = {'map': yaml.load(...
     #           'player' : make_actor ... 
+    state.map = retile_map(state.map, state.level_data['map_tiles'])
 
 def ReSizeGLScene(Width, Height):
     state.w = w = Width
@@ -87,7 +96,7 @@ def draw_help():
 
         
 def draw():
-    draw_map(state.map['map'])
+    draw_map(state.map)
     draw_objects(state.objects)
     draw_help()
 
