@@ -9,8 +9,11 @@ from gl_texture import draw_tex_quad
 from gl_main import *
 
 import yaml
+#TODO: объекты должны быть отдельно.
 #TODO: Объекты цвет описания
 #TODO Rend: glow, loop bright flick
+#TODO инвентарь. возможность брать предметы, применять, комбинировать. 
+#TODO Октрывать закрывать двери, замки, контейнеры, ключами.
 
 state = MutableNamedTuple()
 state.window = 0
@@ -21,9 +24,8 @@ h - влево
 l - вправо
 j - вниз
 k - вверх
-()*
-! #$%^&
-1234567890'''
+, - взять
+'''
 
 def make_actor(**kwargs):
     actor = DotDict(**kwargs)
@@ -103,9 +105,11 @@ def init():
     state.objects_data = state.level_data['objects']
     # state = {'map': yaml.load(...
     #           'player' : make_actor ... 
-    state.map = retile_map(state.map, state.level_data['map_tiles'])
+    state.map = retile_map(state.old_map, state.level_data['map_tiles'])
     state.messages = DotDict()
     state.messages.view_msg = 'none'
+    state.inventory = list()
+    #...!!TODO extract_objects(state.map, state.objects_data)
 
 def ReSizeGLScene(Width, Height):
     state.w = w = Width
