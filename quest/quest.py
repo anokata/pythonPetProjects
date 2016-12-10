@@ -29,26 +29,44 @@ def make_actor(**kwargs):
     actor = DotDict(**kwargs)
     return actor
 
+def get_object(x, y, amap, objects):
+    char = amap[y][x]
+    if char in objects:
+        return objects[char]
+    else:
+        return {'pass':True}
+
+def can_be_there(x, y, amap, objects):
+    obj = get_object(x, y, amap, objects)
+    return obj['pass']
+
+def can_be_there_state(x, y):
+    return can_be_there(x, y, state.old_map, state.objects_data)
+
 def go_down():
     actor = state.player
-    actor.y += 1
+    if can_be_there_state(actor.x, actor.y + 1):
+        actor.y += 1
 
 def go_up():
     actor = state.player
-    actor.y -= 1
+    if can_be_there_state(actor.x, actor.y - 1):
+        actor.y -= 1
 
 def go_left():
     actor = state.player
-    actor.x -= 1
+    if can_be_there_state(actor.x - 1, actor.y):
+        actor.x -= 1
 
 def go_right():
     actor = state.player
-    actor.x += 1
+    if can_be_there_state(actor.x + 1, actor.y):
+        actor.x += 1
 
 def chars_in_view(actor, amap):
     w = len(amap[0])
     h = len(amap)
-    chars = list()
+    chars = set()
     for i in (-1, 0, 1):
         for j in (-1, 0, 1):
             x = actor.x + i
@@ -56,14 +74,14 @@ def chars_in_view(actor, amap):
             if 0 <= x < w and 0 <= y < h:
                 char = amap[y][x]
                 if char not in ' ':
-                    chars.append(char)
+                    chars.add(char)
     return chars
 
 def chars_describe(chars, objects):
-    strings = str()
+    strings = 'Вижу:\n'
     for c in chars:
         if c in objects:
-            strings += 'Вижу ' + objects[c]['name'] + '(%s)\n'%c
+            strings += "     " + objects[c]['name'] + '(%s)\n'%c
     return strings
 
 def retile_map(m, pairs):

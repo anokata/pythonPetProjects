@@ -26,9 +26,18 @@ objects:
     t:
         name: 'стол'
         action_msg: 'забраться под стол или на стол?'
+        pass: False
     h:
         name: 'стул'
         char: 'h'
         color: (0, 0, 1)
+        pass: True
     +:
         name: 'дверь'
+        pass: True
+    '#':
+        name: 'стену'
+        pass: False
+    X:
+        name: 'шкаф'
+        pass: False
