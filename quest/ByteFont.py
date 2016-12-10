@@ -53,12 +53,18 @@ def draw_chars_tex(font, s, x=0, y=0, color=(0,0,1)):
     dh = font['h']
     cw = font['cw']
     ch = font['ch']
-    y *= ch
-    x *= cw
+    cy = y
+    cx = x
+    cy *= ch
+    cx *= cw
     for c in s:
+        if c == '\n':
+            cy += ch
+            cx = x
+            continue
         code = ord(c)
-        gl_draw_char_tex(font, code, x, y, color)
-        x += cw
+        gl_draw_char_tex(font, code, cx, cy, color)
+        cx += cw
 
 def draw_char(font, code):
     w = font['w']

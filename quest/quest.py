@@ -75,13 +75,12 @@ def draw_objects(objects):
     for o in objects:
         draw_chars_tex(state.font, o.char, y=o.y, x=o.x, color=(0.0, 0.3, 1.0))
         
-
 def draw():
     #draw_chars_tex(state.font, 'AZX\x82\x83\x81', y=1, color=(1.0, 0.5, 0))
     #draw_chars_tex(state.font, '.#', y=1, color=(1.0, 0.5, 0))
     draw_map(state.map['map'])
     draw_objects(state.objects)
-    draw_chars_tex(state.font, chr(1024), y=19, color=(1.0, 0, 0))
+    draw_chars_tex(state.font, 'абвгдежз \nийклмн опрст уфхчцшщ ъыь эюя', y=19, color=(1.0, 0, 0))
 
 
 
