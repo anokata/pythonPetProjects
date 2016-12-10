@@ -14,7 +14,14 @@ state = MutableNamedTuple()
 state.window = 0
 map_file = 'map.yaml'
 font_file = 'font1.png'
-help_mgs = ''
+help_mgs = '''Управление:
+h - влево
+l - вправо
+j - вниз
+k - вверх
+()*
+! #$%^&
+1234567890'''
 
 def make_actor(**kwargs):
     actor = DotDict(**kwargs)
@@ -74,15 +81,15 @@ def draw_map(lines):
 def draw_objects(objects):
     for o in objects:
         draw_chars_tex(state.font, o.char, y=o.y, x=o.x, color=(0.0, 0.3, 1.0))
+
+def draw_help():
+    draw_chars_tex(state.font, help_mgs, y=0, x=27, color=(1.0, 1, 1))
+
         
 def draw():
-    #draw_chars_tex(state.font, 'AZX\x82\x83\x81', y=1, color=(1.0, 0.5, 0))
-    #draw_chars_tex(state.font, '.#', y=1, color=(1.0, 0.5, 0))
     draw_map(state.map['map'])
     draw_objects(state.objects)
-    draw_chars_tex(state.font, 'абвгдежз \nийклмн опрст уфхчцшщ ъыь эюя', y=19, color=(1.0, 0, 0))
-
-
+    draw_help()
 
 def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
