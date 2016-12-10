@@ -14,6 +14,7 @@ state = MutableNamedTuple()
 state.window = 0
 map_file = 'map.yaml'
 font_file = 'font1.png'
+help_mgs = ''
 
 def make_actor(**kwargs):
     actor = DotDict(**kwargs)
@@ -80,6 +81,7 @@ def draw():
     #draw_chars_tex(state.font, '.#', y=1, color=(1.0, 0.5, 0))
     draw_map(state.map['map'])
     draw_objects(state.objects)
+    draw_chars_tex(state.font, chr(1024), y=19, color=(1.0, 0, 0))
 
 
 
