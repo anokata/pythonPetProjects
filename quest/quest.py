@@ -9,6 +9,8 @@ from gl_texture import draw_tex_quad
 from gl_main import *
 
 import yaml
+#TODO: Объекты цвет описания
+#TODO Rend: glow, loop bright flick
 
 state = MutableNamedTuple()
 state.window = 0
@@ -43,27 +45,49 @@ def go_right():
     actor = state.player
     actor.x += 1
 
+def chars_in_view(actor, amap):
+    w = len(amap[0])
+    h = len(amap)
+    chars = list()
+    for i in (-1, 0, 1):
+        for j in (-1, 0, 1):
+            x = actor.x + i
+            y = actor.y + j
+            if 0 <= x < w and 0 <= y < h:
+                char = amap[y][x]
+                if char not in ' ':
+                    chars.append(char)
+    return chars
+
+def chars_describe(chars, objects):
+    strings = str()
+    for c in chars:
+        if c in objects:
+            strings += 'Вижу ' + objects[c]['name'] + '(%s)\n'%c
+    return strings
+
 def retile_map(m, pairs):
     prs = dict(zip(pairs[::2], pairs[1::2]))
-    print(prs)
     prs = str.maketrans(prs)
     m = [line.translate(prs) for line in m]
     return m
         
-
 def init():
     font = init_font(font_file, 16, 16)
     state.font = font
     state.level_data = yaml.load(open(map_file))
     state.map = state.level_data['map'][0].split('\n')
-    print(state.map)
-    state.player = make_actor(x=0, y=0, char='\x01')
-    print(state.player)
+    state.old_map = state.level_data['map'][0].split('\n')
+    state.player = make_actor(x=3, y=3, char='\x01')
     state.objects = list()
     state.objects.append(state.player)
+    print(state.level_data['objects'])
+    state.objects_data = state.level_data['objects']
     # state = {'map': yaml.load(...
     #           'player' : make_actor ... 
     state.map = retile_map(state.map, state.level_data['map_tiles'])
+    state.messages = DotDict()
+    state.messages.view_msg = 'none'
 
 def ReSizeGLScene(Width, Height):
     state.w = w = Width
@@ -94,11 +118,19 @@ def draw_objects(objects):
 def draw_help():
     draw_chars_tex(state.font, help_mgs, y=0, x=27, color=(1.0, 1, 1))
 
+def update_view(actor, amap, objects_data):
+    chars = chars_in_view(actor, amap)
+    return chars_describe(chars, objects_data)
+
+def draw_view():
+    state.messages.view_msg = update_view(state.player, state.old_map, state.objects_data)
+    draw_chars_tex(state.font, state.messages.view_msg, y=20, x=1, color=(0, 0.5, 1))
         
 def draw():
     draw_map(state.map)
     draw_objects(state.objects)
     draw_help()
+    draw_view()
 
 def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -125,7 +157,7 @@ def keyPressed(*args):
     if args[0] == ESCAPE:
         sys.exit()
     key_sym = bytes.decode(args[0])
-    print(args, args[0], key_sym)
+    #print(args, args[0], key_sym)
     keyboard_fun = {
             'j':go_down,
             'k':go_up,
