@@ -91,6 +91,21 @@ def retile_map(m, pairs):
     prs = str.maketrans(prs)
     m = [line.translate(prs) for line in m]
     return m
+
+def extract_objects(amap, objects_data, floor_char=' '):
+    objects = list()
+    for x in range(len(amap[0])):
+        for y in range(len(amap)):
+            char = amap[y][x]
+            if char in objects_data:
+                obj = DotDict(x=x, y=y, char=char)
+                obj.update(objects_data[char])
+                if type(obj.char) is int:
+                    obj.char = chr(obj.char)
+                objects.append(obj)
+                amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
+    return objects
+
         
 def init():
     font = init_font(font_file, 16, 16)
@@ -98,18 +113,22 @@ def init():
     state.level_data = yaml.load(open(map_file))
     state.map = state.level_data['map'][0].split('\n')
     state.old_map = state.level_data['map'][0].split('\n')
-    state.player = make_actor(x=3, y=3, char='\x01')
+    state.map = [line for line in state.map if line != '']
+    state.old_map = [line for line in state.old_map if line != '']
+    state.player = make_actor(x=3, y=3, color=(0,1,1), char='\x01')
     state.objects = list()
-    state.objects.append(state.player)
-    print(state.level_data['objects'])
+    state.level_data['objects']
     state.objects_data = state.level_data['objects']
+    state.objects += extract_objects(state.map, state.objects_data)
+    state.objects.append(state.player)
+    #print(state.objects_data)
+    #print(state.objects)
     # state = {'map': yaml.load(...
     #           'player' : make_actor ... 
-    state.map = retile_map(state.old_map, state.level_data['map_tiles'])
+    state.map = retile_map(state.map, state.level_data['map_tiles'])
     state.messages = DotDict()
     state.messages.view_msg = 'none'
     state.inventory = list()
-    #...!!TODO extract_objects(state.map, state.objects_data)
 
 def ReSizeGLScene(Width, Height):
     state.w = w = Width
@@ -135,7 +154,8 @@ def draw_map(lines):
 
 def draw_objects(objects):
     for o in objects:
-        draw_chars_tex(state.font, o.char, y=o.y, x=o.x, color=(0.0, 0.3, 1.0))
+        clr = tuple(o.color)
+        draw_chars_tex(state.font, o.char, y=o.y, x=o.x, color=clr)
 
 def draw_help():
     draw_chars_tex(state.font, help_mgs, y=0, x=27, color=(1.0, 1, 1))

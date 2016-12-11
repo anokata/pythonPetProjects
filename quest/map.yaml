@@ -23,22 +23,35 @@ map_tiles:
 
         ]
 objects:
+    default: &default
+        pass: False
+        take: False
+        color: [1,1,1]
     t:
+        <<: *default 
         name: 'стол'
         action_msg: 'забраться под стол или на стол?'
         pass: False
+        color: [0.7, 0.4, 0.4]
+        char: 4
     h:
+        <<: *default 
         name: 'стул'
         char: 'h'
-        color: (0, 0, 1)
+        color: [0, 0, 1]
         pass: True
         take: True
     +:
+        <<: *default 
         name: 'дверь'
         pass: True
+        color: [0.7, 0.4, 0.4]
     '#':
+        <<: *default 
         name: 'стену'
         pass: False
+        char: 3
     X:
+        <<: *default 
         name: 'шкаф'
         pass: False

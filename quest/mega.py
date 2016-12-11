@@ -11,6 +11,7 @@ class MutableNamedTuple():
         for k in self._keys:
             s += str(k) + ':' + str(getattr(self, k)) + '\n'
         return s
+    __repr__ = __str__
 
     def add_attr(self, k, v):
         setattr(self, k, v)
@@ -23,6 +24,10 @@ class MutableNamedTuple():
 
     def items(self):
         return self._keys
+
+    def update(self, dct):
+        for k,v in dct.items():
+            self.add_attr(k, v)
 
 Mega = MutableNamedTuple
 DotDict = Mega
