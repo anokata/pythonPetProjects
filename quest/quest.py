@@ -13,7 +13,8 @@ import stateSystem
 import yaml
 #TODO Rend: glow(hard), loop bright flick(частично сделал, но нужно чтобы незвисимо было у разных объектов, и возможно по разным каналам rgb)
 #TODO инвентарь. возможность брать предметы, применять, комбинировать. 
-#TODO +Октрывать !закрывать двери, замки, контейнеры, ключами.
+#TODO +Октрывать +закрывать двери, замки, контейнеры, ключами.
+# как сделать объекты содержащие объекты?
 #TODO книги, записки, подсказки. Мысли героя. Описание местности куда входит. Лог сообщений. разным цветом смысловые слова и объекты выделять.
 #TODO когда идёт в стену, объект, писать в лог. (сообщения на событие движения в объект у объекта) Описание звуков действий.
 
@@ -29,6 +30,7 @@ k - вверх
 , - взять
 o - открыть
 c - закрыть
+ESQ - выход
 '''
 
 def make_actor(**kwargs):
@@ -108,6 +110,8 @@ def extract_objects(amap, objects_data, floor_char=' '):
                 obj.update(objects_data[char])
                 if type(obj.char) is int:
                     obj.char = chr(obj.char)
+                if hasattr(obj, 'close_char') and type(obj.close_char) is int:
+                    obj.close_char = chr(obj.close_char)
                 objects.append(obj)
                 amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
     return objects

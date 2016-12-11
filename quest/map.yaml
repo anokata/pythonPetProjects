@@ -13,7 +13,7 @@ map:
         #                T#BBBBB#
         #         O##############
         ##H##+##+###.............
-        ....# #  #...............
+        ....# # r#...............
         ....######...............
 map_tiles:
     ['#',3,
@@ -28,6 +28,10 @@ objects:
         take: False
         color: [1,1,1]
         can_open: False
+    r:
+        <<: *default
+        name: 'раковина'
+        char: 7
     t:
         <<: *default 
         name: 'стол'
@@ -49,7 +53,8 @@ objects:
         need_key: False
         opened: False
         open_char: '/'
-        close_char: '+'
+        close_char: 6
+        char: 6
     +:
         <<: *door
         color: [0.7, 0.4, 0.4]
@@ -60,11 +65,13 @@ objects:
         passable: False
         need_key: True
         key_id: 1
+        char: '='
     '#':
         <<: *default 
         name: 'стену'
         passable: False
         char: 3
+        color: [0.8, 0.8, 0.8]
     X:
         <<: *default 
         name: 'шкаф'
