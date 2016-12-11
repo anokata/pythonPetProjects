@@ -7,6 +7,8 @@ from mega import *
 from ByteFont import *
 from gl_texture import draw_tex_quad
 from gl_main import *
+sys.path.append('../modules')
+import stateSystem
 
 import yaml
 #TODO Rend: glow, loop bright flick
@@ -23,6 +25,7 @@ l - вправо
 j - вниз
 k - вверх
 , - взять
+o - открыть
 '''
 
 def make_actor(**kwargs):
@@ -126,7 +129,27 @@ def init():
     state.map = retile_map(state.map, state.level_data['map_tiles'])
     state.messages = DotDict()
     state.messages.view_msg = 'none'
+    state.messages.log_msg = 'log:'
     state.inventory = list()
+    stateSystem.addState('walk') 
+    stateSystem.addState('open_door') 
+    stateSystem.changeState('walk')
+    stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
+
+def walk_keypress(key_sym):
+    keyboard_fun = {
+            'j':go_down,
+            'k':go_up,
+            'h':go_left,
+            'l':go_right,
+            'o':door_open_start,
+            }
+    fun = keyboard_fun.get(key_sym, False)
+    if fun:
+        fun()
+
+def door_open_start():
+    pass
 
 def ReSizeGLScene(Width, Height):
     state.w = w = Width
@@ -164,7 +187,8 @@ def update_view(actor, amap, objects_data):
 
 def draw_view():
     state.messages.view_msg = update_view(state.player, state.old_map, state.objects_data)
-    draw_chars_tex(state.font, state.messages.view_msg, y=20, x=1, color=(0, 0.5, 1))
+    draw_chars_tex(state.font, state.messages.view_msg, y=25, x=1, color=(0, 0.5, 1))
+    draw_chars_tex(state.font, state.messages.log_msg, y=20, x=1, color=(0.9, 0.5, 0.1))
         
 def draw():
     draw_map(state.map)
@@ -198,15 +222,7 @@ def keyPressed(*args):
         sys.exit()
     key_sym = bytes.decode(args[0])
     #print(args, args[0], key_sym)
-    keyboard_fun = {
-            'j':go_down,
-            'k':go_up,
-            'h':go_left,
-            'l':go_right,
-            }
-    fun = keyboard_fun.get(key_sym, False)
-    if fun:
-        fun()
+    stateSystem.handleEvent('keypress', key_sym)
 
 def mouse(button, state, x, y):
     if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:

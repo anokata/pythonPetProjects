@@ -47,6 +47,9 @@ objects:
         pass: True
         color: [0.7, 0.4, 0.4]
         pass: False
+        can_open: True
+        need_key: False
+        opened: False
     '#':
         <<: *default 
         name: 'стену'
