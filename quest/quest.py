@@ -9,8 +9,6 @@ from gl_texture import draw_tex_quad
 from gl_main import *
 
 import yaml
-#TODO: объекты должны быть отдельно.
-#TODO: Объекты цвет описания
 #TODO Rend: glow, loop bright flick
 #TODO инвентарь. возможность брать предметы, применять, комбинировать. 
 #TODO Октрывать закрывать двери, замки, контейнеры, ключами.

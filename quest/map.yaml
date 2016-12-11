@@ -3,10 +3,10 @@ map:
     - |
         ...................######
         ...................#    #
-        ####--###############+###
+        ####ww###############+###
         #         #====        X#
-        # h h    t#            X#
-        #        T#       #     #
+        #       ht#            X#
+        #        h#       #     #
         #         #       #BBBBB#
         ####+######       #BBBBB#
         #         #      T#BBBBB#
@@ -38,7 +38,7 @@ objects:
         <<: *default 
         name: 'стул'
         char: 'h'
-        color: [0, 0, 1]
+        color: [0.8, 0.5, 0]
         pass: True
         take: True
     +:
@@ -46,6 +46,7 @@ objects:
         name: 'дверь'
         pass: True
         color: [0.7, 0.4, 0.4]
+        pass: False
     '#':
         <<: *default 
         name: 'стену'
@@ -55,3 +56,10 @@ objects:
         <<: *default 
         name: 'шкаф'
         pass: False
+    w:
+        <<: *default 
+        name: 'окно'
+        color: [0, 1, 1]
+        pass: False
+        take: False
+        char: 6
