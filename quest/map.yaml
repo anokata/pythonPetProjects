@@ -7,7 +7,7 @@ map:
         #         #====        X#
         #       ht#            X#
         #        h#       #     #
-        #         #       #BBBBB#
+        # b       #       #BBBBB#
         ####+######       #BBBBB#
         #         #      T#BBBBB#
         #                T#BBBBB#
@@ -28,6 +28,7 @@ objects:
         take: False
         color: [1,1,1]
         can_open: False
+        contain: False
     r:
         <<: *default
         name: 'раковина'
@@ -72,6 +73,15 @@ objects:
         passable: False
         char: 3
         color: [0.8, 0.8, 0.8]
+    b:  
+        <<: *default
+        name: 'коробка'
+        char: 9
+        contain:
+            - k:
+                <<: *default
+                name: 'ключ'
+                char: 8
     X:
         <<: *default 
         name: 'шкаф'

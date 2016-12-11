@@ -30,6 +30,7 @@ k - вверх
 , - взять
 o - открыть
 c - закрыть
+s - исследовать
 ESQ - выход
 '''
 
@@ -73,6 +74,20 @@ def go_right(_):
     if can_be_there_state(actor.x + 1, actor.y):
         actor.x += 1
 
+def objects_in_view(actor, amap):
+    w = len(amap[0])
+    h = len(amap)
+    objs = set()
+    for i in (-1, 0, 1):
+        for j in (-1, 0, 1):
+            x = actor.x + i
+            y = actor.y + j
+            if 0 <= x < w and 0 <= y < h:
+                o = object_at(x, y)
+                if o and o.name != 'self':
+                    objs.add(o)
+    return objs
+
 def chars_in_view(actor, amap):
     w = len(amap[0])
     h = len(amap)
@@ -112,6 +127,12 @@ def extract_objects(amap, objects_data, floor_char=' '):
                     obj.char = chr(obj.char)
                 if hasattr(obj, 'close_char') and type(obj.close_char) is int:
                     obj.close_char = chr(obj.close_char)
+                if obj.contain:
+                    cont = list()
+                    for obj_in_container in obj.contain:
+                        _, obj_in = obj_in_container.popitem()
+                        cont.append(DotDict(**obj_in))
+                    obj.contain = cont
                 objects.append(obj)
                 amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
     return objects
@@ -125,7 +146,7 @@ def init():
     state.old_map = state.level_data['map'][0].split('\n')
     state.map = [line for line in state.map if line != '']
     state.old_map = [line for line in state.old_map if line != '']
-    state.player = make_actor(x=3, y=3, color=(0,1,1), char='\x01')
+    state.player = make_actor(name='self', x=3, y=3, color=(0,1,1), char='\x01')
     state.objects = list()
     state.level_data['objects']
     state.objects_data = state.level_data['objects']
@@ -156,10 +177,24 @@ def walk_keypress(key_sym):
             'l':go_right,
             'o':door_action_start,
             'c':door_action_start,
+            's':do_search,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
         fun(key_sym)
+
+def do_search(_):
+    objs = objects_in_view(state.player, state.old_map)
+    #print(objs)
+    found = ''
+    for obj in objs:
+        if obj.contain:
+            for obj_in_container in obj.contain:
+                found += (obj.name + ' содержит ' + obj_in_container.name)
+    if not found:
+        log_msg('Ничего необычного')
+    else:
+        log_msg(found)
 
 def door_open_keypress(key_sym):
     keyboard_fun = {
@@ -268,6 +303,7 @@ def draw_help():
 def update_view(actor, amap, objects_data):
     chars = chars_in_view(actor, amap)
     return chars_describe(chars, objects_data)
+
 
 def draw_view():
     state.messages.view_msg = update_view(state.player, state.old_map, state.objects_data)
