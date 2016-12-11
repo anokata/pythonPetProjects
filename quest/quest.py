@@ -32,16 +32,18 @@ def make_actor(**kwargs):
     actor = DotDict(**kwargs)
     return actor
 
-def get_object(x, y, amap, objects):
-    char = amap[y][x]
-    if char in objects:
-        return objects[char]
-    else:
-        return {'pass':True}
+def object_at(x, y):
+    objects = state.objects
+    for o in objects:
+        if o.x == x and o.y == y:
+            return o
+    return False
 
 def can_be_there(x, y, amap, objects):
-    obj = get_object(x, y, amap, objects)
-    return obj['pass']
+    obj = object_at(x, y)
+    if not obj:
+        return True
+    return obj.passable
 
 def can_be_there_state(x, y):
     return can_be_there(x, y, state.old_map, state.objects_data)
@@ -135,6 +137,7 @@ def init():
     stateSystem.addState('open_door') 
     stateSystem.changeState('walk')
     stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
+    stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
 
 def walk_keypress(key_sym):
     keyboard_fun = {
@@ -148,8 +151,49 @@ def walk_keypress(key_sym):
     if fun:
         fun()
 
+def door_open_keypress(key_sym):
+    keyboard_fun = {
+            'j':lambda _: (0, 1),
+            'k':lambda _: (0, -1),
+            'h':lambda _: (-1, 0),
+            'l':lambda _: (1, 0),
+            }
+    fun = keyboard_fun.get(key_sym, False)
+    opend = ' '
+    if fun:
+        x, y = fun(0)
+        opend = try_open_door(x, y)
+    stateSystem.changeState('walk')
+    log_msg(opend)
+
+def open_door(door):
+    door.opened = True
+    door.passable= True
+    door.char = door.open_char
+
+def try_open_door(x, y):
+    actor = state.player
+    x += actor.x
+    y += actor.y
+    obj = object_at(x, y)
+    if obj:
+        if obj.can_open:
+            if obj.need_key:
+                return 'Нужен ключ'
+            else:
+                open_door(obj)
+                return 'Дверь открыта'
+        else:
+            return 'это нельзя открыть'
+    else:
+        return 'тут нет двери'
+
 def door_open_start():
-    pass
+    log_msg('Открыть дверь в какой стороне?')
+    stateSystem.changeState('open_door')
+
+def log_msg(msg):
+    state.messages.log_msg = msg
 
 def ReSizeGLScene(Width, Height):
     state.w = w = Width

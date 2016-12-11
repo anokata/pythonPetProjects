@@ -12,7 +12,7 @@ map:
         #         #      T#BBBBB#
         #                T#BBBBB#
         #         O##############
-        ##+##+##+###.............
+        ##H##+##+###.............
         ....# #  #...............
         ....######...............
 map_tiles:
@@ -24,14 +24,15 @@ map_tiles:
         ]
 objects:
     default: &default
-        pass: False
+        passable: False
         take: False
         color: [1,1,1]
+        can_open: False
     t:
         <<: *default 
         name: 'стол'
         action_msg: 'забраться под стол или на стол?'
-        pass: False
+        passable: False
         color: [0.7, 0.4, 0.4]
         char: 4
     h:
@@ -39,30 +40,38 @@ objects:
         name: 'стул'
         char: 'h'
         color: [0.8, 0.5, 0]
-        pass: True
+        passable: True
         take: True
-    +:
-        <<: *default 
+    door: &door
+        <<: *default
         name: 'дверь'
-        pass: True
-        color: [0.7, 0.4, 0.4]
-        pass: False
         can_open: True
         need_key: False
         opened: False
+        open_char: '/'
+    +:
+        <<: *door
+        color: [0.7, 0.4, 0.4]
+        passable: False
+    H:
+        <<: *door
+        color: [1.0, 0.3, 0.2]
+        passable: False
+        need_key: True
+        key_id: 1
     '#':
         <<: *default 
         name: 'стену'
-        pass: False
+        passable: False
         char: 3
     X:
         <<: *default 
         name: 'шкаф'
-        pass: False
+        passable: False
     w:
         <<: *default 
         name: 'окно'
         color: [0, 1, 1]
-        pass: False
+        passable: False
         take: False
         char: 6
