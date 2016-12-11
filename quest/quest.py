@@ -11,9 +11,9 @@ sys.path.append('../modules')
 import stateSystem
 
 import yaml
-#TODO Rend: glow, loop bright flick
+#TODO Rend: glow(hard), loop bright flick(частично сделал, но нужно чтобы незвисимо было у разных объектов, и возможно по разным каналам rgb)
 #TODO инвентарь. возможность брать предметы, применять, комбинировать. 
-#TODO Октрывать закрывать двери, замки, контейнеры, ключами.
+#TODO +Октрывать !закрывать двери, замки, контейнеры, ключами.
 
 state = MutableNamedTuple()
 state.window = 0
@@ -138,6 +138,8 @@ def init():
     stateSystem.changeState('walk')
     stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
     stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
+    state.color_multiplier = 1.0
+    state.color_multiplier_dir = True
 
 def walk_keypress(key_sym):
     keyboard_fun = {
@@ -208,14 +210,34 @@ def ReSizeGLScene(Width, Height):
     glLoadIdentity()
 
 def step(d):
+    color_mul_step()
     glutPostRedisplay()
     glutTimerFunc(33, step, 1)
 
+def color_mul_step():
+    if state.color_multiplier_dir:
+        state.color_multiplier += 0.1
+    else:
+        state.color_multiplier -= 0.1
+    if state.color_multiplier > 1.3:
+        state.color_multiplier_dir = False 
+    if state.color_multiplier < 0.7:
+        state.color_multiplier_dir = True 
+
 def draw_map(lines):
     t = 0
+    cl = (0.0, 0.3, 0.4)
+    cl = mul_color(cl)
     for line in lines:
-        draw_chars_tex(state.font, line, y=t, color=(1.0, 0.3, 0.4))
+        draw_chars_tex(state.font, line, y=t, color=cl)
         t += 1
+
+def mul_color(cl):
+    r, g, b = cl
+    r *= state.color_multiplier
+    g *= state.color_multiplier
+    b *= state.color_multiplier
+    return (r, g, b)
 
 def draw_objects(objects):
     for o in objects:
