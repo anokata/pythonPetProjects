@@ -49,6 +49,7 @@ objects:
         need_key: False
         opened: False
         open_char: '/'
+        close_char: '+'
     +:
         <<: *door
         color: [0.7, 0.4, 0.4]

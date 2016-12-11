@@ -15,7 +15,7 @@ import yaml
 #TODO инвентарь. возможность брать предметы, применять, комбинировать. 
 #TODO +Октрывать !закрывать двери, замки, контейнеры, ключами.
 #TODO книги, записки, подсказки. Мысли героя. Описание местности куда входит. Лог сообщений. разным цветом смысловые слова и объекты выделять.
-#TODO когда идёт в стену, объект, писать в лог. (сообщения на событие движения в объект у объекта)
+#TODO когда идёт в стену, объект, писать в лог. (сообщения на событие движения в объект у объекта) Описание звуков действий.
 
 state = MutableNamedTuple()
 state.window = 0
@@ -51,22 +51,22 @@ def can_be_there(x, y, amap, objects):
 def can_be_there_state(x, y):
     return can_be_there(x, y, state.old_map, state.objects_data)
 
-def go_down():
+def go_down(_):
     actor = state.player
     if can_be_there_state(actor.x, actor.y + 1):
         actor.y += 1
 
-def go_up():
+def go_up(_):
     actor = state.player
     if can_be_there_state(actor.x, actor.y - 1):
         actor.y -= 1
 
-def go_left():
+def go_left(_):
     actor = state.player
     if can_be_there_state(actor.x - 1, actor.y):
         actor.x -= 1
 
-def go_right():
+def go_right(_):
     actor = state.player
     if can_be_there_state(actor.x + 1, actor.y):
         actor.x += 1
@@ -150,11 +150,12 @@ def walk_keypress(key_sym):
             'k':go_up,
             'h':go_left,
             'l':go_right,
-            'o':door_open_start,
+            'o':door_action_start,
+            'c':door_action_start,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
-        fun()
+        fun(key_sym)
 
 def door_open_keypress(key_sym):
     keyboard_fun = {
@@ -172,9 +173,16 @@ def door_open_keypress(key_sym):
     log_msg(opend)
 
 def open_door(door):
-    door.opened = True
-    door.passable= True
-    door.char = door.open_char
+    if door.opened:
+        door.opened = False
+        door.passable= False
+        door.char = door.close_char
+        return 'Дверь закрыта'
+    else:
+        door.opened = True
+        door.passable= True
+        door.char = door.open_char
+        return 'Дверь открыта'
 
 def try_open_door(x, y):
     actor = state.player
@@ -186,15 +194,18 @@ def try_open_door(x, y):
             if obj.need_key:
                 return 'Нужен ключ'
             else:
-                open_door(obj)
-                return 'Дверь открыта'
+                msg = open_door(obj)
+                return msg
         else:
             return 'это нельзя открыть'
     else:
         return 'тут нет двери'
 
-def door_open_start():
-    log_msg('Открыть дверь в какой стороне?')
+def door_action_start(key_sym):
+    if key_sym == 'o':
+        log_msg('Открыть дверь в какой стороне?')
+    else:
+        log_msg('Закрыть дверь в какой стороне?')
     stateSystem.changeState('open_door')
 
 def log_msg(msg):
