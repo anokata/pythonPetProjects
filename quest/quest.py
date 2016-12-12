@@ -10,6 +10,7 @@ from gl_main import *
 sys.path.append('../modules')
 import stateSystem
 from map_util import *
+from actions import *
 
 import yaml
 #TODO Rend: glow(hard), loop bright flick(частично сделал, но нужно чтобы незвисимо было у разных объектов, и возможно по разным каналам rgb)
@@ -36,41 +37,45 @@ s - исследовать
 ESQ - выход
 '''
 
+def join(sep, *args):
+    return sep.join(args)
+
+
 def make_actor(**kwargs):
     actor = DotDict(**kwargs)
     return actor
 
-def object_at(x, y):
+def object_at(x, y): #state
     objects = state.objects
     for o in objects:
         if o.x == x and o.y == y:
             return o
     return False
 
-def can_be_there_state(x, y):
+def can_be_there_state(x, y): #state
     return can_be_there(x, y, state.old_map, state.objects)
 
-def go_down(_):
+def go_down(_): #state
     actor = state.player
     if can_be_there_state(actor.x, actor.y + 1):
         actor.y += 1
 
-def go_up(_):
+def go_up(_): #state
     actor = state.player
     if can_be_there_state(actor.x, actor.y - 1):
         actor.y -= 1
 
-def go_left(_):
+def go_left(_): #state
     actor = state.player
     if can_be_there_state(actor.x - 1, actor.y):
         actor.x -= 1
 
-def go_right(_):
+def go_right(_): #state
     actor = state.player
     if can_be_there_state(actor.x + 1, actor.y):
         actor.x += 1
 
-def objects_in_view(actor, amap):
+def objects_in_view(actor, amap): #join, ref object_at!
     w = len(amap[0])
     h = len(amap)
     objs = set()
@@ -84,59 +89,12 @@ def objects_in_view(actor, amap):
                     objs.add(o)
     return objs
 
-def chars_in_view(actor, amap):
-    w = len(amap[0])
-    h = len(amap)
-    chars = set()
-    for i in (-1, 0, 1):
-        for j in (-1, 0, 1):
-            x = actor.x + i
-            y = actor.y + j
-            if 0 <= x < w and 0 <= y < h:
-                char = amap[y][x]
-                if char not in ' ':
-                    chars.add(char)
-    return chars
-
-def chars_describe(chars, objects):
-    strings = 'Вижу:\n'
-    for c in chars:
-        if c in objects:
-            strings += "     " + objects[c]['name'] + '(%s)\n'%c
-    return strings
-
-def retile_map(m, pairs):
-    prs = dict(zip(pairs[::2], pairs[1::2]))
-    prs = str.maketrans(prs)
-    m = [line.translate(prs) for line in m]
-    return m
-
-def extract_objects(amap, objects_data, floor_char=' '):
-    objects = list()
-    for x in range(len(amap[0])):
-        for y in range(len(amap)):
-            char = amap[y][x]
-            if char in objects_data:
-                obj = DotDict(x=x, y=y, char=char)
-                obj.update(objects_data[char])
-                if type(obj.char) is int:
-                    obj.char = chr(obj.char)
-                if hasattr(obj, 'close_char') and type(obj.close_char) is int:
-                    obj.close_char = chr(obj.close_char)
-                if obj.contain:
-                    cont = list()
-                    for obj_in_container in obj.contain:
-                        _, obj_in = obj_in_container.popitem()
-                        cont.append(DotDict(**obj_in))
-                    obj.contain = cont
-                objects.append(obj)
-                amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
-    return objects
-
-        
 def init():
-    font = init_font(font_file, 16, 16)
-    state.font = font
+    state.font = init_font(font_file, 16, 16)
+    init_map()
+    init_states()
+
+def init_map():
     state.level_data = yaml.load(open(map_file))
     state.map = state.level_data['map'][0].split('\n')
     state.old_map = state.level_data['map'][0].split('\n')
@@ -157,13 +115,15 @@ def init():
     state.messages.view_msg = 'none'
     state.messages.log_msg = 'log:'
     state.inventory = list()
+    state.color_multiplier = 1.0
+    state.color_multiplier_dir = True
+
+def init_states():
     stateSystem.addState('walk') 
     stateSystem.addState('open_door') 
     stateSystem.changeState('walk')
     stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
     stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
-    state.color_multiplier = 1.0
-    state.color_multiplier_dir = True
 
 def walk_keypress(key_sym):
     keyboard_fun = {
@@ -179,9 +139,8 @@ def walk_keypress(key_sym):
     if fun:
         fun(key_sym)
 
-def do_search(_):
+def do_search(_): #state
     objs = objects_in_view(state.player, state.old_map)
-    #print(objs)
     found = ''
     for obj in objs:
         if obj.contain:
@@ -207,19 +166,7 @@ def door_open_keypress(key_sym):
     stateSystem.changeState('walk')
     log_msg(opend)
 
-def open_door(door):
-    if door.opened:
-        door.opened = False
-        door.passable= False
-        door.char = door.close_char
-        return 'Дверь закрыта'
-    else:
-        door.opened = True
-        door.passable= True
-        door.char = door.open_char
-        return 'Дверь открыта'
-
-def try_open_door(x, y):
+def try_open_door(x, y): #state
     actor = state.player
     x += actor.x
     y += actor.y
@@ -236,7 +183,7 @@ def try_open_door(x, y):
     else:
         return 'тут нет двери'
 
-def door_action_start(key_sym):
+def door_action_start(key_sym): #передавать stateSys? объект у кот вызывать? передавать функ?
     if key_sym == 'o':
         log_msg('Открыть дверь в какой стороне?')
     else:
