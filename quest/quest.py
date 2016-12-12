@@ -13,6 +13,7 @@ from map_util import *
 from actions import *
 from render import *
 from util import *
+from log import *
 
 import yaml
 #TODO Rend: glow(hard), loop bright flick(частично сделал, но нужно чтобы незвисимо было у разных объектов, и возможно по разным каналам rgb)
@@ -87,9 +88,6 @@ def init_map():
     world.colors = colors
     world.inventory = list()
     world.inventory.append(get_object(world.objects_data, 'a'))
-
-def send_to_main_log(messages, msg):
-    messages.main_log.append(msg)
 
 def init_states():
     stateSystem.addState('walk') 

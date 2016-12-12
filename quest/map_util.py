@@ -1,5 +1,6 @@
 from mega import *
 from util import *
+from log import *
 
 def object_at_xy(x, y, objects):
     for o in objects:
@@ -17,11 +18,17 @@ def object_at(point, objects):
             return o
     return False
 
-def can_be_there(x, y, objects):
+def can_be_there(x, y, world):
+    objects = world.objects
     obj = object_at_xy(x, y, objects)
     if not obj:
         return True
+    walk_to_obj(world, obj)
     return obj.passable
+
+def walk_to_obj(world, obj):
+    if obj.walk_msg:
+        send_to_main_log(world.messages, obj.walk_msg)
 
 
 def chars_in_view(actor, amap): #join

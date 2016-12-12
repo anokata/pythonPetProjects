@@ -29,6 +29,7 @@ objects:
         color: [1,1,1]
         can_open: False
         contain: False
+        walk_msg: False
     r:
         <<: *default
         name: 'раковина'
@@ -73,6 +74,7 @@ objects:
         passable: False
         char: 3
         color: [0.8, 0.8, 0.8]
+        walk_msg: 'Стена плотная - пройти не получится.'
     b:  
         <<: *default
         name: 'коробка'

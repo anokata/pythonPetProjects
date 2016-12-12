@@ -31,22 +31,22 @@ def try_open_door(x, y, actor, objects): #describe status
 
 def go_down(_, world): 
     actor = world.player
-    if can_be_there(actor.x, actor.y + 1, world.objects):
+    if can_be_there(actor.x, actor.y + 1, world):
         actor.y += 1
 
 def go_up(_, world): 
     actor = world.player
-    if can_be_there(actor.x, actor.y - 1, world.objects):
+    if can_be_there(actor.x, actor.y - 1, world):
         actor.y -= 1
 
 def go_left(_, world):
     actor = world.player
-    if can_be_there(actor.x - 1, actor.y, world.objects):
+    if can_be_there(actor.x - 1, actor.y, world):
         actor.x -= 1
 
 def go_right(_, world): 
     actor = world.player
-    if can_be_there(actor.x + 1, actor.y, world.objects):
+    if can_be_there(actor.x + 1, actor.y, world):
         actor.x += 1
 
 def do_search(_, world): 
