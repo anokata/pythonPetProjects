@@ -59,7 +59,7 @@ def init():
 def init_map():
     world = DotDict()
     state.world = world
-    world.level_data = yaml.load(open(map_file))
+    world.level_data = yaml.load(open(map_file)) # map load method, from string?
     world.map = world.level_data['map'][0].split('\n')
     world.old_map = world.level_data['map'][0].split('\n')
     world.map = [line for line in world.map if line != '']
