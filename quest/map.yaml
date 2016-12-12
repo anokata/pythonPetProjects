@@ -82,6 +82,7 @@ objects:
                 <<: *default
                 name: 'ключ'
                 char: 8
+                key_id: 1
     a: 
         <<: *default
         name: 'яблоко'
