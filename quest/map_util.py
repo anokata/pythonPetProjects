@@ -1,16 +1,19 @@
 from mega import *
 from util import *
 
-def object_at_xy(x, y, objects): # Выделить точку, и карту с объктами вместе
+def object_at_xy(x, y, objects):
     for o in objects:
         if o.x == x and o.y == y:
             return o
     return False
 
+def remove_obj(obj, objects):
+    objects.remove(obj)
+
 def object_at(point, objects): 
     x, y = point.x, point.y
     for o in objects:
-        if o.x == x and o.y == y:
+        if o.x == x and o.y == y and o.name != 'self':
             return o
     return False
 
@@ -71,7 +74,10 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
     return objects
 
 def get_object(objects_data, name):
-    return DotDict(**objects_data[name])
+    obj = DotDict(**objects_data[name])
+    if type(obj.char) is int:
+        obj.char = chr(obj.char)
+    return obj
 
 def objects_in_view(actor, world): 
     amap = world.old_map

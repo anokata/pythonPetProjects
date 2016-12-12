@@ -25,7 +25,7 @@ map_tiles:
 objects:
     default: &default
         passable: False
-        take: False
+        takeable: False
         color: [1,1,1]
         can_open: False
         contain: False
@@ -82,6 +82,12 @@ objects:
                 <<: *default
                 name: 'ключ'
                 char: 8
+    a: 
+        <<: *default
+        name: 'яблоко'
+        char: 15
+        passable: True
+        takeable: True
     c:
         <<: *default
         name: 'чашка'

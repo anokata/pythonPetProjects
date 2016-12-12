@@ -43,6 +43,7 @@ i - инвентарь
 
 def make_actor(**kwargs):
     actor = DotDict(**kwargs)
+    actor.takeable = False
     return actor
 
 def init():
@@ -70,27 +71,50 @@ def init_map():
     world.map = retile_map(world.map, world.level_data['map_tiles'])
     world.messages = DotDict()
     world.messages.view_msg = 'none'
-    world.messages.log_msg = 'log:'
+    world.messages.log_msg = '...'
     world.messages.help_mgs = help_mgs
     colors = DotDict()
     colors.color_multiplier = 1.0
     colors.color_multiplier_dir = True
     world.colors = colors
     world.inventory = list()
-    world.inventory.append(get_object(world.objects_data, 'c'))
-    world.inventory.append(get_object(world.objects_data, 'c'))
+    world.inventory.append(get_object(world.objects_data, 'a'))
 
 def init_states():
     stateSystem.addState('walk') 
     stateSystem.addState('open_door') 
     stateSystem.addState('inventory') 
+    stateSystem.addState('take') 
     stateSystem.changeState('walk')
     stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
     stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
     stateSystem.setEventHandler('inventory', 'keypress', inventory_keypress)
+    stateSystem.setEventHandler('take', 'keypress', take_keypress)
     stateSystem.setEventHandler('walk', 'draw', draw_walk)
     stateSystem.setEventHandler('open_door', 'draw', draw_walk)
+    stateSystem.setEventHandler('take', 'draw', draw_walk)
     stateSystem.setEventHandler('inventory', 'draw', draw_inventory)
+
+def do_take(_, world):
+    log_msg('Взять откуда?', world)
+    stateSystem.changeState('take')
+
+def inventory_add(obj, inventory):
+    inventory.append(obj)
+
+def take_from(x, y, world):
+    x = world.player.x + x
+    y = world.player.y + y
+    obj = object_at_xy(x, y, world.objects)
+    if obj:
+        if obj.takeable:
+            log_msg('Беру ' + obj.name, world)
+            inventory_add(obj, world.inventory)
+            remove_obj(obj, world.objects)
+        else:
+            log_msg('Это нельзя брать.', world)
+    else:
+        log_msg('Здесь нечего брать.', world)
 
 def go_inventory(_, world):
     stateSystem.changeState('inventory')
@@ -104,6 +128,16 @@ def inventory_keypress(key_sym, world):
         fun(key_sym, world)
     stateSystem.changeState('walk')
 
+def take_keypress(key_sym, world):
+    direction = get_direction(key_sym)
+    if direction:
+        x, y = direction
+        take_from(x, y, world)
+        stateSystem.changeState('walk')
+        #log_msg('', world)
+    else:
+        log_msg('Неправильное направление. ', world)
+
 def walk_keypress(key_sym, world):
     keyboard_fun = {
             'j':go_down,
@@ -114,23 +148,31 @@ def walk_keypress(key_sym, world):
             'c':door_action_start,
             's':do_search,
             'i':go_inventory,
+            ',':do_take,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
         fun(key_sym, world)
 
-
-def door_open_keypress(key_sym, world):
+def get_direction(key_sym):
     keyboard_fun = {
             'j':lambda _: (0, 1),
             'k':lambda _: (0, -1),
             'h':lambda _: (-1, 0),
             'l':lambda _: (1, 0),
+            '.':lambda _: (0, 0),
             }
     fun = keyboard_fun.get(key_sym, False)
-    opend = ' '
     if fun:
-        x, y = fun(0)
+        return fun(0)
+    else:
+        return False
+
+def door_open_keypress(key_sym, world):
+    opend = ' '
+    direction = get_direction(key_sym)
+    if direction:
+        x, y = direction
         opend = try_open_door(x, y, world.player, world.objects)
     stateSystem.changeState('walk')
     log_msg(opend, world)
