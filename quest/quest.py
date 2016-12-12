@@ -9,6 +9,7 @@ from gl_texture import draw_tex_quad
 from gl_main import *
 sys.path.append('../modules')
 import stateSystem
+from map_util import *
 
 import yaml
 #TODO Rend: glow(hard), loop bright flick(частично сделал, но нужно чтобы незвисимо было у разных объектов, и возможно по разным каналам rgb)
@@ -46,14 +47,8 @@ def object_at(x, y):
             return o
     return False
 
-def can_be_there(x, y, amap, objects):
-    obj = object_at(x, y)
-    if not obj:
-        return True
-    return obj.passable
-
 def can_be_there_state(x, y):
-    return can_be_there(x, y, state.old_map, state.objects_data)
+    return can_be_there(x, y, state.old_map, state.objects)
 
 def go_down(_):
     actor = state.player
