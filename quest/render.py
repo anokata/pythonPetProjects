@@ -32,3 +32,7 @@ def draw_objects(objects):
 
 def draw_help(help_mgs):
     draw_chars_tex(help_mgs, y=0, x=27, color=(1.0, 1, 1))
+
+def draw_view(messages):
+    draw_chars_tex(messages.view_msg, y=25, x=1, color=(0, 0.5, 1))
+    draw_chars_tex(messages.log_msg, y=20, x=1, color=(0.9, 0.5, 0.1))

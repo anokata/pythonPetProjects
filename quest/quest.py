@@ -21,7 +21,7 @@ import yaml
 # как сделать объекты содержащие объекты?
 #TODO книги, записки, подсказки. Мысли героя. Описание местности куда входит. Лог сообщений. разным цветом смысловые слова и объекты выделять.
 #TODO когда идёт в стену, объект, писать в лог. (сообщения на событие движения в объект у объекта) Описание звуков действий.
-#TODO: Надобы отрефакторить и писать тесты.
+#TODO: Надобы отрефакторить и писать тесты. выделить maingl
 
 state = MutableNamedTuple()
 state.window = 0
@@ -67,16 +67,19 @@ def init_map():
     state.messages = DotDict()
     state.messages.view_msg = 'none'
     state.messages.log_msg = 'log:'
+    state.messages.help_mgs = help_mgs
     state.inventory = list()
     state.colors = DotDict()
     state.colors.color_multiplier = 1.0
     state.colors.color_multiplier_dir = True
-    state.help_mgs = help_mgs
     state.world = DotDict()
     state.world.map = state.map
     state.world.old_map = state.old_map
     state.world.player = state.player
     state.world.objects = state.objects
+    state.world.messages = state.messages
+    state.world.colors = state.colors
+    state.world.objects_data = state.objects_data
 
 def init_states():
     stateSystem.addState('walk') 
@@ -153,20 +156,18 @@ def step(d):
     glutPostRedisplay()
     glutTimerFunc(33, step, 1)
 
-def update_view(actor, amap, objects_data): # join? in_view
+def update(world):
+    world.messages.view_msg = describe_view(world.player, world.old_map, world.objects_data)
+
+def describe_view(actor, amap, objects_data):
     chars = chars_in_view(actor, amap)
     return chars_describe(chars, objects_data)
 
-def draw_view(): #state view upd
-    state.messages.view_msg = update_view(state.player, state.old_map, state.objects_data)
-    draw_chars_tex(state.messages.view_msg, y=25, x=1, color=(0, 0.5, 1))
-    draw_chars_tex(state.messages.log_msg, y=20, x=1, color=(0.9, 0.5, 0.1))
-        
-def draw():
-    draw_map(state.map, state.colors)
-    draw_objects(state.objects)
-    draw_help(state.help_mgs)
-    draw_view()
+def draw(world):
+    draw_map(world.map, world.colors)
+    draw_objects(world.objects)
+    draw_help(world.messages.help_mgs)
+    draw_view(world.messages)
 
 def DrawGLScene():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -183,7 +184,7 @@ def DrawGLScene():
     #draw_chars_tex(state.font, 'abc')
     #draw_chars_tex(state.font, 'abc', x=3, color=(0.5, 0.5, 0))
     #draw_chars(state.font, 'abc xyz ABC XYZ \x83\x81', y=3, x=0)
-    draw()
+    draw(state.world)
     err = glGetError()
     if err:
         print(err, gluErrorString(err))
@@ -194,6 +195,7 @@ def keyPressed(*args):
         sys.exit()
     key_sym = bytes.decode(args[0])
     stateSystem.handleEvent('keypress', key_sym)
+    update(state.world) # handle update
 
 def mouse(button, state, x, y):
     if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
