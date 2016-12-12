@@ -56,6 +56,7 @@ def init():
     set_font(state.font)
     init_map()
     init_states()
+    send_to_main_log(state.world.messages, 'Я осознал себя на ...')
 
 def init_map():
     world = DotDict()
@@ -78,13 +79,17 @@ def init_map():
     world.messages.view_msg = 'none'
     world.messages.log_msg = '...'
     world.messages.help_mgs = help_mgs
-    world.messages.log = ''
+    world.messages.main_log = list()
+    world.messages.main_log_maxview = 10
     colors = DotDict()
     colors.color_multiplier = 1.0
     colors.color_multiplier_dir = True
     world.colors = colors
     world.inventory = list()
     world.inventory.append(get_object(world.objects_data, 'a'))
+
+def send_to_main_log(messages, msg):
+    messages.main_log.append(msg)
 
 def init_states():
     stateSystem.addState('walk') 
@@ -233,6 +238,7 @@ def draw_walk(world):
     draw_objects(world.objects)
     draw_help(world.messages.help_mgs)
     draw_view(world.messages)
+    draw_main_log(world.messages)
 
 def gl_draw_pre():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
