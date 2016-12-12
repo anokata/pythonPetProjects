@@ -97,18 +97,6 @@ def walk_keypress(key_sym, world):
     if fun:
         fun(key_sym, world)
 
-def do_search(_, world): #log:
-    objs = objects_in_view(world.player, world)
-    found = ''
-    for obj in objs:
-        if obj.contain:
-            for obj_in_container in obj.contain:
-                found += (obj.name + ' содержит ' + obj_in_container.name)
-    if not found:
-        log_msg('Ничего необычного', world)
-    else:
-        log_msg(found, world)
-
 def door_open_keypress(key_sym, world):
     keyboard_fun = {
             'j':lambda _: (0, 1),
@@ -130,9 +118,6 @@ def door_action_start(key_sym, world): #передавать stateSys? объе�
     else:
         log_msg('Закрыть дверь в какой стороне?', world)
     stateSystem.changeState('open_door')
-
-def log_msg(msg, world):
-    world.messages.log_msg = msg
 
 def ReSizeGLScene(Width, Height):
     state.w = w = Width
