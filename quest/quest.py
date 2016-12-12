@@ -77,8 +77,8 @@ def init_map():
     colors.color_multiplier_dir = True
     world.colors = colors
     world.inventory = list()
-    world.inventory.append(get_object(world.objects_data, 'cup'))
-    world.inventory.append(get_object(world.objects_data, 'cup'))
+    world.inventory.append(get_object(world.objects_data, 'c'))
+    world.inventory.append(get_object(world.objects_data, 'c'))
 
 def init_states():
     stateSystem.addState('walk') 

@@ -4,7 +4,7 @@ map:
         ...................######
         ...................#    #
         ####ww###############+###
-        #         #====        X#
+        #        c#====        X#
         #       ht#            X#
         #        h#       #     #
         # b       #       #BBBBB#
@@ -82,10 +82,12 @@ objects:
                 <<: *default
                 name: 'ключ'
                 char: 8
-    cup:
+    c:
         <<: *default
         name: 'чашка'
-        char: 'o'
+        char: 14
+        passable: True
+        takeable: True
     X:
         <<: *default 
         name: 'шкаф'
