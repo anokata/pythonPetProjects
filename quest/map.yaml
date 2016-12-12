@@ -88,12 +88,14 @@ objects:
         char: 15
         passable: True
         takeable: True
+        color: [1.0, 0.0, 0.0]
     c:
         <<: *default
         name: 'чашка'
         char: 14
         passable: True
         takeable: True
+        color: [0.0, 0.3, 0.8]
     X:
         <<: *default 
         name: 'шкаф'
