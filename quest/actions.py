@@ -6,12 +6,12 @@ def open_door(door):
         door.opened = False
         door.passable= False
         door.char = door.close_char
-        return 'Дверь закрыта'
+        return OPEN_CLOSED
     else:
         door.opened = True
         door.passable= True
         door.char = door.open_char
-        return 'Дверь открыта'
+        return OPEN_OPEND
 
 def try_open_door(x, y, actor, objects): #describe status
     x += actor.x
@@ -20,14 +20,14 @@ def try_open_door(x, y, actor, objects): #describe status
     if obj:
         if obj.can_open:
             if obj.need_key:
-                return 'Нужен ключ'
+                return OPEN_NEED_KEY, obj
             else:
-                msg = open_door(obj)
-                return msg
+                status = open_door(obj)
+                return status, obj
         else:
-            return 'это нельзя открыть'
+            return OPEN_CANNOT, obj
     else:
-        return 'тут нет двери'
+        return OPEN_NODOOR, obj
 
 def go_down(_, world): 
     actor = world.player

@@ -124,12 +124,14 @@ def take_from(x, y, world):
     if obj:
         if obj.takeable:
             log_msg('Беру ' + obj.name, world)
+            send_to_main_log(world.messages, 'Я взял ' + obj.name)
             inventory_add(obj, world.inventory)
             remove_obj(obj, world.objects)
         else:
             if obj.contain: # пока не содержат более одного объекта
                 contaiment = obj.contain[0]
                 log_msg('Беру из {} {}'.format(obj.name, contaiment.name), world)
+                send_to_main_log(world.messages, 'Я взял {} из {}'.format(contaiment.name, obj.name))
                 obj.contain = False
                 inventory_add(contaiment, world.inventory)
             else:
@@ -190,13 +192,25 @@ def get_direction(key_sym):
         return False
 
 def door_open_keypress(key_sym, world):
-    opend = ' '
+    open_msg = ' '
+    open_messages = {
+            OPEN_NEED_KEY: 'Нужен ключ',
+            OPEN_OPEND: 'Дверь открыта',
+            OPEN_CLOSED: 'Дверь закрыта',
+            OPEN_CANNOT:'это нельзя открыть',
+            OPEN_NODOOR:'тут нет двери',
+            }
     direction = get_direction(key_sym)
     if direction:
         x, y = direction
-        opend = try_open_door(x, y, world.player, world.objects)
+        open_status, obj = try_open_door(x, y, world.player, world.objects)
+        open_msg = open_messages[open_status]
+        if open_status == OPEN_OPEND:
+            send_to_main_log(world.messages, 'Я открыл {}'.format(obj.name))
+        if open_status == OPEN_CLOSED:
+            send_to_main_log(world.messages, 'Я закрыл {}'.format(obj.name))
     stateSystem.changeState('walk')
-    log_msg(opend, world)
+    log_msg(open_msg, world)
 
 def door_action_start(key_sym, world): #передавать stateSys? объект у кот вызывать? передавать функ?
     if key_sym == 'o':
