@@ -50,36 +50,31 @@ def init():
     init_states()
 
 def init_map():
-    state.level_data = yaml.load(open(map_file))
-    state.map = state.level_data['map'][0].split('\n')
-    state.old_map = state.level_data['map'][0].split('\n')
-    state.map = [line for line in state.map if line != '']
-    state.old_map = [line for line in state.old_map if line != '']
-    state.player = make_actor(name='self', x=3, y=3, color=(0,1,1), char='\x01')
-    state.objects = list()
-    state.level_data['objects']
-    state.objects_data = state.level_data['objects']
-    state.objects += extract_objects(state.map, state.objects_data)
-    state.objects.append(state.player)
+    world = DotDict()
+    state.world = world
+    world.level_data = yaml.load(open(map_file))
+    world.map = world.level_data['map'][0].split('\n')
+    world.old_map = world.level_data['map'][0].split('\n')
+    world.map = [line for line in world.map if line != '']
+    world.old_map = [line for line in world.old_map if line != '']
+    world.player = make_actor(name='self', x=3, y=3, color=(0,1,1), char='\x01')
+    world.objects = list()
+    world.level_data['objects']
+    world.objects_data = world.level_data['objects']
+    world.objects += extract_objects(world.map, world.objects_data)
+    world.objects.append(world.player)
     # state = {'map': yaml.load(... #TODO переделать в виде явных данных
     #           'player' : make_actor ... 
-    state.map = retile_map(state.map, state.level_data['map_tiles'])
-    state.messages = DotDict()
-    state.messages.view_msg = 'none'
-    state.messages.log_msg = 'log:'
-    state.messages.help_mgs = help_mgs
-    state.inventory = list()
-    state.colors = DotDict()
-    state.colors.color_multiplier = 1.0
-    state.colors.color_multiplier_dir = True
-    state.world = DotDict()
-    state.world.map = state.map
-    state.world.old_map = state.old_map
-    state.world.player = state.player
-    state.world.objects = state.objects
-    state.world.messages = state.messages
-    state.world.colors = state.colors
-    state.world.objects_data = state.objects_data
+    world.map = retile_map(world.map, world.level_data['map_tiles'])
+    world.messages = DotDict()
+    world.messages.view_msg = 'none'
+    world.messages.log_msg = 'log:'
+    world.messages.help_mgs = help_mgs
+    colors = DotDict()
+    colors.color_multiplier = 1.0
+    colors.color_multiplier_dir = True
+    world.colors = colors
+    world.inventory = list()
 
 def init_states():
     stateSystem.addState('walk') 
@@ -88,7 +83,7 @@ def init_states():
     stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
     stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
 
-def walk_keypress(key_sym):
+def walk_keypress(key_sym, world):
     keyboard_fun = {
             'j':go_down,
             'k':go_up,
@@ -100,7 +95,7 @@ def walk_keypress(key_sym):
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
-        fun(key_sym, state.world)
+        fun(key_sym, world)
 
 def do_search(_, world): #log:
     objs = objects_in_view(world.player, world)
@@ -110,11 +105,11 @@ def do_search(_, world): #log:
             for obj_in_container in obj.contain:
                 found += (obj.name + ' содержит ' + obj_in_container.name)
     if not found:
-        log_msg('Ничего необычного')
+        log_msg('Ничего необычного', world)
     else:
-        log_msg(found)
+        log_msg(found, world)
 
-def door_open_keypress(key_sym):
+def door_open_keypress(key_sym, world):
     keyboard_fun = {
             'j':lambda _: (0, 1),
             'k':lambda _: (0, -1),
@@ -125,19 +120,19 @@ def door_open_keypress(key_sym):
     opend = ' '
     if fun:
         x, y = fun(0)
-        opend = try_open_door(x, y, state.player, state.objects)
+        opend = try_open_door(x, y, world.player, world.objects)
     stateSystem.changeState('walk')
-    log_msg(opend)
+    log_msg(opend, world)
 
 def door_action_start(key_sym, world): #передавать stateSys? объект у кот вызывать? передавать функ?
     if key_sym == 'o':
-        log_msg('Открыть дверь в какой стороне?')
+        log_msg('Открыть дверь в какой стороне?', world)
     else:
-        log_msg('Закрыть дверь в какой стороне?')
+        log_msg('Закрыть дверь в какой стороне?', world)
     stateSystem.changeState('open_door')
 
-def log_msg(msg): #state
-    state.messages.log_msg = msg
+def log_msg(msg, world):
+    world.messages.log_msg = msg
 
 def ReSizeGLScene(Width, Height):
     state.w = w = Width
@@ -152,7 +147,7 @@ def ReSizeGLScene(Width, Height):
     glLoadIdentity()
 
 def step(d):
-    color_mul_step(state.colors)
+    color_mul_step(state.world.colors)
     glutPostRedisplay()
     glutTimerFunc(33, step, 1)
 
@@ -169,7 +164,7 @@ def draw(world):
     draw_help(world.messages.help_mgs)
     draw_view(world.messages)
 
-def DrawGLScene():
+def gl_draw_pre():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    
     glDisable(GL_CULL_FACE)             
@@ -180,21 +175,23 @@ def DrawGLScene():
     glDisable(GL_DEPTH_TEST)
     glColor4f(0, 1, 1, 0.5)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    #draw_chars(state.font, '\x82\x81\x83', y=1, x=1)
-    #draw_chars_tex(state.font, 'abc')
-    #draw_chars_tex(state.font, 'abc', x=3, color=(0.5, 0.5, 0))
-    #draw_chars(state.font, 'abc xyz ABC XYZ \x83\x81', y=3, x=0)
-    draw(state.world)
+
+def gl_error_msg():
     err = glGetError()
     if err:
         print(err, gluErrorString(err))
     glutSwapBuffers()
 
+def DrawGLScene():
+    gl_draw_pre()
+    draw(state.world)
+    gl_error_msg()
+
 def keyPressed(*args):
     if args[0] == ESCAPE:
         sys.exit()
     key_sym = bytes.decode(args[0])
-    stateSystem.handleEvent('keypress', key_sym)
+    stateSystem.handleEvent('keypress', key_sym, state.world)
     update(state.world) # handle update
 
 def mouse(button, state, x, y):
