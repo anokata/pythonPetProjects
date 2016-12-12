@@ -36,7 +36,9 @@ k - вверх
 o - открыть
 c - закрыть
 s - исследовать
+i - инвентарь
 ESQ - выход
+i - инвентарь
 '''
 
 def make_actor(**kwargs):
@@ -75,13 +77,32 @@ def init_map():
     colors.color_multiplier_dir = True
     world.colors = colors
     world.inventory = list()
+    world.inventory.append(get_object(world.objects_data, 'cup'))
+    world.inventory.append(get_object(world.objects_data, 'cup'))
 
 def init_states():
     stateSystem.addState('walk') 
     stateSystem.addState('open_door') 
+    stateSystem.addState('inventory') 
     stateSystem.changeState('walk')
     stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
     stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
+    stateSystem.setEventHandler('inventory', 'keypress', inventory_keypress)
+    stateSystem.setEventHandler('walk', 'draw', draw_walk)
+    stateSystem.setEventHandler('open_door', 'draw', draw_walk)
+    stateSystem.setEventHandler('inventory', 'draw', draw_inventory)
+
+def go_inventory(_, world):
+    stateSystem.changeState('inventory')
+
+def inventory_keypress(key_sym, world):
+    keyboard_fun = {
+            'q':go_inventory,
+            }
+    fun = keyboard_fun.get(key_sym, False)
+    if fun:
+        fun(key_sym, world)
+    stateSystem.changeState('walk')
 
 def walk_keypress(key_sym, world):
     keyboard_fun = {
@@ -92,10 +113,12 @@ def walk_keypress(key_sym, world):
             'o':door_action_start,
             'c':door_action_start,
             's':do_search,
+            'i':go_inventory,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
         fun(key_sym, world)
+
 
 def door_open_keypress(key_sym, world):
     keyboard_fun = {
@@ -143,7 +166,15 @@ def describe_view(actor, amap, objects_data):
     chars = chars_in_view(actor, amap)
     return chars_describe(chars, objects_data)
 
-def draw(world):
+def draw_inventory(world):
+    i = 1
+    for obj in world.inventory:
+        line = "{}: {}({})".format(i, obj.name, obj.char)
+        i += 1
+        clr = obj.color
+        draw_chars_tex(line, y=i, x=1, color=clr)
+
+def draw_walk(world):
     draw_map(world.map, world.colors)
     draw_objects(world.objects)
     draw_help(world.messages.help_mgs)
@@ -169,7 +200,8 @@ def gl_error_msg():
 
 def DrawGLScene():
     gl_draw_pre()
-    draw(state.world)
+    stateSystem.handleEvent('draw', state.world)
+    #draw(state.world)
     gl_error_msg()
 
 def keyPressed(*args):

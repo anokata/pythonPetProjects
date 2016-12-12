@@ -82,6 +82,10 @@ objects:
                 <<: *default
                 name: 'ключ'
                 char: 8
+    cup:
+        <<: *default
+        name: 'чашка'
+        char: 'o'
     X:
         <<: *default 
         name: 'шкаф'

@@ -70,6 +70,9 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
                 amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
     return objects
 
+def get_object(objects_data, name):
+    return DotDict(**objects_data[name])
+
 def objects_in_view(actor, world): 
     amap = world.old_map
     objects = world.objects
