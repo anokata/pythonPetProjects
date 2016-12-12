@@ -1,13 +1,21 @@
 from mega import *
+from util import *
 
-def object_at(x, y, objects): # Выделить точку, и карту с объктами вместе
+def object_at_xy(x, y, objects): # Выделить точку, и карту с объктами вместе
     for o in objects:
         if o.x == x and o.y == y:
             return o
     return False
 
-def can_be_there(x, y, amap, objects):
-    obj = object_at(x, y, objects)
+def object_at(point, objects): 
+    x, y = point.x, point.y
+    for o in objects:
+        if o.x == x and o.y == y:
+            return o
+    return False
+
+def can_be_there(x, y, objects):
+    obj = object_at_xy(x, y, objects)
     if not obj:
         return True
     return obj.passable
@@ -61,3 +69,19 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
                 objects.append(obj)
                 amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
     return objects
+
+def objects_in_view(actor, world): 
+    amap = world.old_map
+    objects = world.objects
+    w = len(amap[0])
+    h = len(amap)
+    objs = set()
+    for i in (-1, 0, 1):
+        for j in (-1, 0, 1):
+            x = actor.x + i
+            y = actor.y + j
+            if 0 <= x < w and 0 <= y < h:
+                o = object_at(Point(x, y), objects)
+                if o and o.name != 'self':
+                    objs.add(o)
+    return objs

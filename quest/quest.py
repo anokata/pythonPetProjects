@@ -11,6 +11,8 @@ sys.path.append('../modules')
 import stateSystem
 from map_util import *
 from actions import *
+from render import *
+from util import *
 
 import yaml
 #TODO Rend: glow(hard), loop bright flick(частично сделал, но нужно чтобы незвисимо было у разных объектов, и возможно по разным каналам rgb)
@@ -37,60 +39,13 @@ s - исследовать
 ESQ - выход
 '''
 
-def join(sep, *args):
-    return sep.join(args)
-
-
 def make_actor(**kwargs):
     actor = DotDict(**kwargs)
     return actor
 
-def object_at(x, y): #state
-    objects = state.objects
-    for o in objects:
-        if o.x == x and o.y == y:
-            return o
-    return False
-
-def can_be_there_state(x, y): #state
-    return can_be_there(x, y, state.old_map, state.objects)
-
-def go_down(_): #state
-    actor = state.player
-    if can_be_there_state(actor.x, actor.y + 1):
-        actor.y += 1
-
-def go_up(_): #state
-    actor = state.player
-    if can_be_there_state(actor.x, actor.y - 1):
-        actor.y -= 1
-
-def go_left(_): #state
-    actor = state.player
-    if can_be_there_state(actor.x - 1, actor.y):
-        actor.x -= 1
-
-def go_right(_): #state
-    actor = state.player
-    if can_be_there_state(actor.x + 1, actor.y):
-        actor.x += 1
-
-def objects_in_view(actor, amap): #join, ref object_at!
-    w = len(amap[0])
-    h = len(amap)
-    objs = set()
-    for i in (-1, 0, 1):
-        for j in (-1, 0, 1):
-            x = actor.x + i
-            y = actor.y + j
-            if 0 <= x < w and 0 <= y < h:
-                o = object_at(x, y)
-                if o and o.name != 'self':
-                    objs.add(o)
-    return objs
-
 def init():
     state.font = init_font(font_file, 16, 16)
+    set_font(state.font)
     init_map()
     init_states()
 
@@ -106,17 +61,22 @@ def init_map():
     state.objects_data = state.level_data['objects']
     state.objects += extract_objects(state.map, state.objects_data)
     state.objects.append(state.player)
-    #print(state.objects_data)
-    #print(state.objects)
-    # state = {'map': yaml.load(...
+    # state = {'map': yaml.load(... #TODO переделать в виде явных данных
     #           'player' : make_actor ... 
     state.map = retile_map(state.map, state.level_data['map_tiles'])
     state.messages = DotDict()
     state.messages.view_msg = 'none'
     state.messages.log_msg = 'log:'
     state.inventory = list()
-    state.color_multiplier = 1.0
-    state.color_multiplier_dir = True
+    state.colors = DotDict()
+    state.colors.color_multiplier = 1.0
+    state.colors.color_multiplier_dir = True
+    state.help_mgs = help_mgs
+    state.world = DotDict()
+    state.world.map = state.map
+    state.world.old_map = state.old_map
+    state.world.player = state.player
+    state.world.objects = state.objects
 
 def init_states():
     stateSystem.addState('walk') 
@@ -137,10 +97,10 @@ def walk_keypress(key_sym):
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
-        fun(key_sym)
+        fun(key_sym, state.world)
 
-def do_search(_): #state
-    objs = objects_in_view(state.player, state.old_map)
+def do_search(_, world): #log:
+    objs = objects_in_view(world.player, world)
     found = ''
     for obj in objs:
         if obj.contain:
@@ -162,35 +122,18 @@ def door_open_keypress(key_sym):
     opend = ' '
     if fun:
         x, y = fun(0)
-        opend = try_open_door(x, y)
+        opend = try_open_door(x, y, state.player, state.objects)
     stateSystem.changeState('walk')
     log_msg(opend)
 
-def try_open_door(x, y): #state
-    actor = state.player
-    x += actor.x
-    y += actor.y
-    obj = object_at(x, y)
-    if obj:
-        if obj.can_open:
-            if obj.need_key:
-                return 'Нужен ключ'
-            else:
-                msg = open_door(obj)
-                return msg
-        else:
-            return 'это нельзя открыть'
-    else:
-        return 'тут нет двери'
-
-def door_action_start(key_sym): #передавать stateSys? объект у кот вызывать? передавать функ?
+def door_action_start(key_sym, world): #передавать stateSys? объект у кот вызывать? передавать функ?
     if key_sym == 'o':
         log_msg('Открыть дверь в какой стороне?')
     else:
         log_msg('Закрыть дверь в какой стороне?')
     stateSystem.changeState('open_door')
 
-def log_msg(msg):
+def log_msg(msg): #state
     state.messages.log_msg = msg
 
 def ReSizeGLScene(Width, Height):
@@ -206,57 +149,23 @@ def ReSizeGLScene(Width, Height):
     glLoadIdentity()
 
 def step(d):
-    color_mul_step()
+    color_mul_step(state.colors)
     glutPostRedisplay()
     glutTimerFunc(33, step, 1)
 
-def color_mul_step():
-    if state.color_multiplier_dir:
-        state.color_multiplier += 0.1
-    else:
-        state.color_multiplier -= 0.1
-    if state.color_multiplier > 1.3:
-        state.color_multiplier_dir = False 
-    if state.color_multiplier < 0.7:
-        state.color_multiplier_dir = True 
-
-def draw_map(lines):
-    t = 0
-    cl = (0.0, 0.3, 0.4)
-    cl = mul_color(cl)
-    for line in lines:
-        draw_chars_tex(state.font, line, y=t, color=cl)
-        t += 1
-
-def mul_color(cl):
-    r, g, b = cl
-    r *= state.color_multiplier
-    g *= state.color_multiplier
-    b *= state.color_multiplier
-    return (r, g, b)
-
-def draw_objects(objects):
-    for o in objects:
-        clr = tuple(o.color)
-        draw_chars_tex(state.font, o.char, y=o.y, x=o.x, color=clr)
-
-def draw_help():
-    draw_chars_tex(state.font, help_mgs, y=0, x=27, color=(1.0, 1, 1))
-
-def update_view(actor, amap, objects_data):
+def update_view(actor, amap, objects_data): # join? in_view
     chars = chars_in_view(actor, amap)
     return chars_describe(chars, objects_data)
 
-
-def draw_view():
+def draw_view(): #state view upd
     state.messages.view_msg = update_view(state.player, state.old_map, state.objects_data)
-    draw_chars_tex(state.font, state.messages.view_msg, y=25, x=1, color=(0, 0.5, 1))
-    draw_chars_tex(state.font, state.messages.log_msg, y=20, x=1, color=(0.9, 0.5, 0.1))
+    draw_chars_tex(state.messages.view_msg, y=25, x=1, color=(0, 0.5, 1))
+    draw_chars_tex(state.messages.log_msg, y=20, x=1, color=(0.9, 0.5, 0.1))
         
 def draw():
-    draw_map(state.map)
+    draw_map(state.map, state.colors)
     draw_objects(state.objects)
-    draw_help()
+    draw_help(state.help_mgs)
     draw_view()
 
 def DrawGLScene():
@@ -284,7 +193,6 @@ def keyPressed(*args):
     if args[0] == ESCAPE:
         sys.exit()
     key_sym = bytes.decode(args[0])
-    #print(args, args[0], key_sym)
     stateSystem.handleEvent('keypress', key_sym)
 
 def mouse(button, state, x, y):

@@ -2,6 +2,8 @@ from PIL import Image
 from OpenGL.GL import *
 from gl_texture import texture_init, draw_tex_quad
 
+current_font = None
+
 def init_font(name, char_width, char_height): # -> fontId
     imagep = Image.open(name)
     ix = imagep.size[0]
@@ -39,6 +41,10 @@ def init_font(name, char_width, char_height): # -> fontId
             'ch' : char_win_h,
             }
 
+def set_font(font):
+    global current_font
+    current_font = font
+
 def gl_draw_char(data, w, h):
     glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, data)   
 
@@ -48,7 +54,10 @@ def gl_draw_char_tex(font, code, x, y, color=(1,0,0)):
     h = font['h']
     draw_tex_quad(font['chars_tex'][code],x,y,x+w,y+h )
 
-def draw_chars_tex(font, s, x=0, y=0, color=(0,0,1)):
+def draw_chars_tex(s, x=0, y=0, color=(0,0,1)):
+    return draw_chars_tex_font(current_font, s, x, y, color)
+
+def draw_chars_tex_font(font, s, x=0, y=0, color=(0,0,1)):
     dw = font['w']
     dh = font['h']
     cw = font['cw']
