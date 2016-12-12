@@ -64,6 +64,8 @@ def init_map():
     state.world = world
     world.level_data = yaml.load(open(map_file)) # map load method, from string?
     world.map = world.level_data['map'][0].split('\n')
+    world.map_width = len(world.map[0])
+    world.map_height = len(world.map)
     world.old_map = world.level_data['map'][0].split('\n')
     world.map = [line for line in world.map if line != '']
     world.old_map = [line for line in world.old_map if line != '']
@@ -76,12 +78,16 @@ def init_map():
     # state = {'map': yaml.load(... #TODO переделать в виде явных данных
     #           'player' : make_actor ... 
     world.map = retile_map(world.map, world.level_data['map_tiles'])
-    world.messages = DotDict()
+    msgs = DotDict()
+    world.messages = msgs
     world.messages.view_msg = 'none'
     world.messages.log_msg = '...'
     world.messages.help_mgs = help_mgs
     world.messages.main_log = list()
     world.messages.main_log_maxview = 10
+    world.messages.log_y = world.map_height
+    msgs.main_log_y = msgs.log_y+1
+    world.messages.view_y = msgs.main_log_y + 10
     colors = DotDict()
     colors.color_multiplier = 1.0
     colors.color_multiplier_dir = True

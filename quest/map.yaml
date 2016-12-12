@@ -110,3 +110,4 @@ objects:
         passable: False
         take: False
         char: 6
+        walk_msg: 'Окно закрыто. 29ый этаж - выйти отсюда таким способом не лучшая идея.'
