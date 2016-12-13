@@ -4,7 +4,7 @@ map:
         ...................##ww##
         ...................#zzzz#
         ####ww###############+###
-        #,,,,,,,,c#====        X#
+        #,k,,,,,,c#====        X#
         #,,,,,,,ht#            X#
         #,,,,,,,,h#       #     #
         #,b,,,,,,,#       #BBBBB#
@@ -22,6 +22,7 @@ map_tiles:
      'T', 5,
      ',', ' ',
      '_', ' ',
+     'z', ' ',
 
         ]
 rooms:
@@ -37,6 +38,13 @@ objects:
         can_open: False
         contain: False
         walk_msg: False
+    key: &key
+        <<: *default
+        key_id: 0
+        name: 'ключ'
+        char: 8
+        passable: True
+        takeable: True
     r:
         <<: *default
         name: 'раковина'
@@ -68,6 +76,10 @@ objects:
         <<: *door
         color: [0.7, 0.4, 0.4]
         passable: False
+    k:  
+        <<: *key
+        key_id: 2
+
     H:
         <<: *door
         color: [1.0, 0.3, 0.2]
