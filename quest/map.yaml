@@ -6,7 +6,7 @@ map:
         ####ww###############+###
         #,k,,,,,,c#====        X#
         #,,,,,,,ht#            X#
-        #,,,,,,,,h#       #     #
+        #,,,,n,,,h#       #     #
         #,b,,,,,,,#       #BBBBB#
         ####+######       #BBBBB#
         #_________#      T#BBBBB#
@@ -39,6 +39,10 @@ objects:
         contain: False
         walk_msg: False
         info_msg: 'Нет информации.'
+    def_object: &def_object
+        <<: *default
+        passable: True
+        takeable: True
     key: &key
         <<: *default
         key_id: 0
@@ -46,6 +50,13 @@ objects:
         char: 8
         passable: True
         takeable: True
+    n:
+        <<: *def_object
+        name: 'Записка #1'
+        char: 16
+        info_msg: | 
+           Привет Я из будущего, это Я из прошлого пишу тебе. 
+           Ты оказался тут забыв всё, не паникуй.
     r:
         <<: *default
         name: 'раковина'
