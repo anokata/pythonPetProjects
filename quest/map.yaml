@@ -38,6 +38,7 @@ objects:
         can_open: False
         contain: False
         walk_msg: False
+        info_msg: 'Нет информации.'
     key: &key
         <<: *default
         key_id: 0
@@ -111,6 +112,7 @@ objects:
         passable: True
         takeable: True
         color: [1.0, 0.0, 0.0]
+        info_msg: 'Просто фрукт.'
     c:
         <<: *default
         name: 'чашка'

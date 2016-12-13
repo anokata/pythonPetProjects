@@ -31,6 +31,7 @@ c - закрыть
 s - исследовать
 i - инвентарь
 a - применить
+v - осмотреть предмет
 ESQ - выход
 i - инвентарь
 '''
@@ -88,15 +89,18 @@ def init_states():
     stateSystem.addState('open_door') 
     stateSystem.addState('inventory') 
     stateSystem.addState('take') 
+    stateSystem.addState('inventory_view_object') 
     stateSystem.changeState('walk')
     stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
-    stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
-    stateSystem.setEventHandler('inventory', 'keypress', inventory_keypress)
-    stateSystem.setEventHandler('take', 'keypress', take_keypress)
     stateSystem.setEventHandler('walk', 'draw', draw_walk)
+    stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
     stateSystem.setEventHandler('open_door', 'draw', draw_walk)
+    stateSystem.setEventHandler('take', 'keypress', take_keypress)
     stateSystem.setEventHandler('take', 'draw', draw_walk)
     stateSystem.setEventHandler('inventory', 'draw', draw_inventory)
+    stateSystem.setEventHandler('inventory', 'keypress', inventory_keypress)
+    stateSystem.setEventHandler('inventory_view_object', 'draw', draw_object_info)
+    stateSystem.setEventHandler('inventory_view_object', 'keypress', wait_keypress)
 
 def do_take(_, world):
     log_msg('Взять откуда?', world)
@@ -127,13 +131,40 @@ def take_from(x, y, world):
     else:
         log_msg('Здесь нечего брать.', world)
 
-def go_inventory(_, world):
+INVENTORY_VIEW_ITEM = 'v'
+def do_inventory_action(world, action, object_index):
+    inventory_actions = {
+        INVENTORY_VIEW_ITEM: inventory_view_action,
+            }
+    if object_index < len(world.inventory):
+        fun = inventory_actions.get(action, False)
+        if fun:
+            fun(world, world.inventory[object_index])
+
+def inventory_view_action(world, obj):
+    world.messages.object_info = list()
+    world.messages.object_info.append(obj.name)
+    world.messages.object_info.append(obj.info_msg)
+    stateSystem.changeState('inventory_view_object')
+
+def go_inventory(key_sym, world):
     stateSystem.changeState('inventory')
+    world.inventory_action = key_sym
+
+def draw_object_info(world):
+    draw_lines_tex(world.messages.object_info, 1, 1, (0, 1, 0.7))
+
+def wait_keypress(key_sym, world):
+    stateSystem.changeState('walk')
 
 def inventory_keypress(key_sym, world):
     keyboard_fun = {
             'q':go_inventory,
             }
+    if ord('1') <= ord(key_sym) <= ord('9'):
+        selected = ord(key_sym) - ord('1')
+        do_inventory_action(world, world.inventory_action, selected)
+        return
     fun = keyboard_fun.get(key_sym, False)
     if fun:
         fun(key_sym, world)
@@ -160,6 +191,7 @@ def walk_keypress(key_sym, world):
             's':do_search,
             'i':go_inventory,
             ',':do_take,
+            'v':go_inventory,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
