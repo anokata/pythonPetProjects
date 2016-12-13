@@ -46,7 +46,6 @@ def init():
     set_font(state.font)
     init_map(map_file)
     init_states()
-    send_to_main_log(state.world.messages, 'Я осознал себя на ...')
 
 def init_map(map_file):
     world = DotDict()
@@ -77,6 +76,7 @@ def init_map(map_file):
     world.messages.log_y = world.map_height
     msgs.main_log_y = msgs.log_y+1
     world.messages.view_y = msgs.main_log_y + 10
+    send_to_main_log(world.messages, 'Я оказался в ' + world.level_data['mapname'])
     colors = DotDict()
     colors.color_multiplier = 1.0
     colors.color_multiplier_dir = True
