@@ -7,7 +7,7 @@ map:
         #,k,,,,,,c#====     ^^^X#
         #,,,,,,,ht#            X#
         #,,,,n,,,h#       #     #
-        #,b,,,,,,,#       #BBBBB#
+        #,b,,,K,,,#       #BBBBB#
         ####+######       #BBBBB#
         #_________#      T#BBBBB#
         #_________^      T#BBBBB#
@@ -96,6 +96,10 @@ objects:
         <<: *key
         key_id: 2
 
+    K:  
+        <<: *key
+        key_id: 3
+        char: 17
     H:
         <<: *door
         color: [1.0, 0.3, 0.2]
