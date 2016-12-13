@@ -83,6 +83,32 @@ def init_map(map_file):
     world.colors = colors
     world.inventory = list()
     world.inventory.append(get_object(world.objects_data, 'a'))
+    #rooms = DotDict(**world.level_data['rooms'])
+    rooms = make_recursive_dotdict(world.level_data['rooms'])
+    world.rooms = rooms
+    world.rooms.current = get_room_at(world, 3, 3)
+    update_current_room(world)
+
+def make_recursive_dotdict(dct):
+    res = DotDict(**dct)
+    for k, v in dct.items():
+        if type(v) is dict:
+            res.set(k, make_recursive_dotdict(v))
+    return res
+
+def get_room_at(world, x, y):
+    tile = world.old_map[y][x]
+    if world.rooms.contain(tile):
+        room = world.rooms.get(tile)
+        return room
+    return world.rooms.current
+
+def update_current_room(world):
+    old_room = world.rooms.current
+    new_room = get_room_at(world, world.player.x, world.player.y)
+    if old_room != new_room:
+        world.rooms.current = new_room
+        send_to_main_log(world.messages, 'Вхожу в ' + new_room.name)
 
 def init_states():
     stateSystem.addState('walk') 
@@ -196,6 +222,7 @@ def walk_keypress(key_sym, world):
     fun = keyboard_fun.get(key_sym, False)
     if fun:
         fun(key_sym, world)
+        update_current_room(world)
 
 def get_direction(key_sym):
     keyboard_fun = {

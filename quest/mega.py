@@ -22,12 +22,21 @@ class MutableNamedTuple():
             if k != '_keys' and k not in self._keys:
                 self._keys.append(k)
 
+    def set(self, k, v):
+        setattr(self, k, v)
+
     def items(self):
         return self._keys
 
     def update(self, dct):
         for k,v in dct.items():
             self.add_attr(k, v)
+    
+    def get(self, key):
+        return getattr(self, key)
+
+    def contain(self, key):
+        return key in self._keys
 
 Mega = MutableNamedTuple
 DotDict = Mega
