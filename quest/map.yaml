@@ -135,12 +135,12 @@ objects:
         <<: *locked
         name: 'чемодан'
         key_id: 2
-        char: 9
+        char: 18
         contain:
             - s:
                 <<: *def_object
                 name: 'камень'
-                char: 3
+                char: 19
     b:  
         <<: *default
         name: 'коробка'

@@ -58,6 +58,14 @@ def retile_map(m, pairs): #test
     m = [line.translate(prs) for line in m]
     return m
 
+def object_char_translate(obj):
+    if type(obj.char) is int:
+        obj.char = chr(obj.char)
+    if hasattr(obj, 'close_char') and type(obj.close_char) is int:
+        obj.close_char = chr(obj.close_char)
+    return obj
+
+
 def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
     objects = list()
     for x in range(len(amap[0])):
@@ -66,15 +74,14 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
             if char in objects_data:
                 obj = DotDict(x=x, y=y, char=char)
                 obj.update(objects_data[char])
-                if type(obj.char) is int:
-                    obj.char = chr(obj.char)
-                if hasattr(obj, 'close_char') and type(obj.close_char) is int:
-                    obj.close_char = chr(obj.close_char)
+                object_char_translate(obj)
                 if obj.contain:
                     cont = list()
                     for obj_in_container in obj.contain:
                         _, obj_in = obj_in_container.popitem()
-                        cont.append(DotDict(**obj_in))
+                        contaiment = DotDict(**obj_in)
+                        object_char_translate(contaiment)
+                        cont.append(contaiment)
                     obj.contain = cont
                 objects.append(obj)
                 amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
