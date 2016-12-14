@@ -138,7 +138,7 @@ objects:
         name: 'растение в горшке'
         search_msg: 'Зелёная фукиция'
         char: 20
-        color: [0.0, 0.8, 0.0]
+        color: [1.0, 1.0, 1.0]
     d:  
         <<: *locked
         name: 'чемодан'
