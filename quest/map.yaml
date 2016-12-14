@@ -36,6 +36,7 @@ rooms:
         name: 'спальня'
 objects:
     default: &default
+        id: 0
         passable: False
         takeable: False
         color: [1,1,1]
@@ -54,6 +55,7 @@ objects:
         char: 8
         passable: True
         takeable: True
+        id: 4001
     n:
         <<: *def_object
         name: 'Записка #1'
@@ -81,6 +83,7 @@ objects:
         take: True
     door: &door
         <<: *default
+        id: 4000
         name: 'дверь'
         can_open: True
         need_key: False
@@ -88,6 +91,7 @@ objects:
         open_char: '/'
         close_char: 6
         char: 6
+        key_used: False
     C:
         <<: *door
         color: [1.0, 0.4, 0.4]
@@ -125,8 +129,7 @@ objects:
         char: 9
         contain:
             - k:
-                <<: *default
-                name: 'ключ'
+                <<: *key
                 char: 8
                 key_id: 1
     a: 

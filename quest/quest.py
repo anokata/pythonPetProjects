@@ -169,13 +169,43 @@ def do_inventory_action(world, action, object_index):
 
 def inventory_apply_action(x, y, world, applicator):
     pacient = object_at_xy(x, y, world.objects)
-    applicator = applicator[0]
-    object_apply(applicator, pacient)
-    send_to_main_log(world.messages, 
-            "Пытаюсь применить {} к {}...".format(applicator.name, pacient.name))# не должен быть .messages?
+    if pacient:
+        applicator = applicator[0]
+        send_to_main_log(world.messages, 
+                "Пытаюсь применить {} к {}...".format(applicator.name, pacient.name))# не должен быть .messages?
+        result = object_apply(applicator, pacient, world)
+        if not result:
+            send_to_main_log(world.messages, "не получилось")
+    else:
+        log_msg('Не к чему применять', world)
 
-def object_apply(applicator, pacient):
-    pass
+def object_apply(applicator, pacient, world):
+    objects_apply_table = { # to world?
+            4001: {
+                4000: try_key_door,
+                },
+        }
+    table2 = objects_apply_table.get(applicator.id, False)
+    if not table2:
+        return False
+    fun = table2.get(pacient.id, False)
+    if fun:
+        return fun(applicator, pacient, world)
+    else:
+        return False
+
+def try_key_door(key, door, world):
+    send_to_main_log(world.messages, 'Пытаюсь открыть дверь ключом...')
+    if door.need_key:
+        if key.key_id == door.key_id:
+            send_to_main_log(world.messages, 'Ключ подошёл, отпираю.')
+            door.key_used = True
+            door.need_key = False
+        else:
+            send_to_main_log(world.messages, 'Ключ не подходит')
+    else:
+            send_to_main_log(world.messages, 'Дверь не заперта')
+    return True
 
 def inventory_view_action(world, obj):
     world.messages.object_info = list()
