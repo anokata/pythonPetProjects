@@ -114,15 +114,15 @@ def init_states():
     stateSystem.addState('walk') 
     stateSystem.addState('open_door') 
     stateSystem.addState('inventory') 
-    stateSystem.addState('take') 
+    stateSystem.addState('direction') 
     stateSystem.addState('inventory_view_object') 
     stateSystem.changeState('walk')
     stateSystem.setEventHandler('walk', 'keypress', walk_keypress)
     stateSystem.setEventHandler('walk', 'draw', draw_walk)
     stateSystem.setEventHandler('open_door', 'keypress', door_open_keypress)
     stateSystem.setEventHandler('open_door', 'draw', draw_walk)
-    stateSystem.setEventHandler('take', 'keypress', take_keypress)
-    stateSystem.setEventHandler('take', 'draw', draw_walk)
+    stateSystem.setEventHandler('direction', 'keypress', direction_keypress)
+    stateSystem.setEventHandler('direction', 'draw', draw_walk)
     stateSystem.setEventHandler('inventory', 'draw', draw_inventory)
     stateSystem.setEventHandler('inventory', 'keypress', inventory_keypress)
     stateSystem.setEventHandler('inventory_view_object', 'draw', draw_object_info)
@@ -130,14 +130,12 @@ def init_states():
 
 def do_take(_, world):
     log_msg('Взять откуда?', world)
-    stateSystem.changeState('take')
+    direction_do(world, take_from)
 
 def inventory_add(obj, inventory):
     inventory.append(obj)
 
-def take_from(x, y, world):
-    x = world.player.x + x
-    y = world.player.y + y
+def take_from(x, y, world, _):
     obj = object_at_xy(x, y, world.objects)
     if obj:
         if obj.takeable:
@@ -158,14 +156,26 @@ def take_from(x, y, world):
         log_msg('Здесь нечего брать.', world)
 
 INVENTORY_VIEW_ITEM = 'v'
+INVENTORY_APPLY_ITEM = 'a'
 def do_inventory_action(world, action, object_index):
     inventory_actions = {
         INVENTORY_VIEW_ITEM: inventory_view_action,
+        INVENTORY_APPLY_ITEM: lambda w, x: direction_do(w, inventory_apply_action, x),
             }
     if object_index < len(world.inventory):
         fun = inventory_actions.get(action, False)
         if fun:
             fun(world, world.inventory[object_index])
+
+def inventory_apply_action(x, y, world, applicator):
+    pacient = object_at_xy(x, y, world.objects)
+    applicator = applicator[0]
+    object_apply(applicator, pacient)
+    send_to_main_log(world.messages, 
+            "Пытаюсь применить {} к {}...".format(applicator.name, pacient.name))# не должен быть .messages?
+
+def object_apply(applicator, pacient):
+    pass
 
 def inventory_view_action(world, obj):
     world.messages.object_info = list()
@@ -196,13 +206,19 @@ def inventory_keypress(key_sym, world):
         fun(key_sym, world)
     stateSystem.changeState('walk')
 
-def take_keypress(key_sym, world):
+def direction_do(world, fun, *args):
+    world.direction_action = fun
+    world.direction_args = args
+    stateSystem.changeState('direction')
+
+def direction_keypress(key_sym, world):
     direction = get_direction(key_sym)
     if direction:
         x, y = direction
-        take_from(x, y, world)
+        x = world.player.x + x
+        y = world.player.y + y
+        world.direction_action(x, y, world, world.direction_args)
         stateSystem.changeState('walk')
-        #log_msg('', world)
     else:
         log_msg('Неправильное направление. ', world)
 
@@ -218,6 +234,7 @@ def walk_keypress(key_sym, world):
             'i':go_inventory,
             ',':do_take,
             'v':go_inventory,
+            'a':go_inventory,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:

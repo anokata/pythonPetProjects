@@ -8,7 +8,7 @@ map:
         #,,,,,,,ht#            X#
         #,,,,n,,,h#       #     #
         #,b,,,K,,,#       #BBBBB#
-        ####+######       #BBBBB#
+        ###+#C#####       #BBBBB#
         #_________#      T#BBBBB#
         #_________^      T#BBBBB#
         #_________O##############
@@ -88,6 +88,12 @@ objects:
         open_char: '/'
         close_char: 6
         char: 6
+    C:
+        <<: *door
+        color: [1.0, 0.4, 0.4]
+        passable: False
+        key_id: 1
+        need_key: True
     +:
         <<: *door
         color: [0.7, 0.4, 0.4]
@@ -95,7 +101,6 @@ objects:
     k:  
         <<: *key
         key_id: 2
-
     K:  
         <<: *key
         key_id: 3
