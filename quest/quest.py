@@ -145,6 +145,9 @@ def take_from(x, y, world, _):
             remove_obj(obj, world.objects)
         else:
             if obj.contain: # пока не содержат более одного объекта
+                if obj.need_key:
+                    send_to_main_log(world.messages, obj.name + ' заперт')
+                    return
                 contaiment = obj.contain[0]
                 log_msg('Беру из {} {}'.format(obj.name, contaiment.name), world)
                 send_to_main_log(world.messages, 'Я взял {} из {}'.format(contaiment.name, obj.name))
@@ -195,7 +198,7 @@ def object_apply(applicator, pacient, world):
         return False
 
 def try_key_door(key, door, world):
-    send_to_main_log(world.messages, 'Пытаюсь открыть дверь ключом...')
+    send_to_main_log(world.messages, 'Пытаюсь открыть '+ door.name +' ключом...')
     if door.need_key:
         if key.key_id == door.key_id:
             send_to_main_log(world.messages, 'Ключ подошёл, отпираю.')

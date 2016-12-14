@@ -54,8 +54,11 @@ def do_search(_, world):
     found = ''
     for obj in objs:
         if obj.contain:
-            for obj_in_container in obj.contain:
-                found += (obj.name + ' содержит ' + obj_in_container.name)
+            if obj.need_key:
+                found += obj.name + ' заперт'
+            else:
+                for obj_in_container in obj.contain:
+                    found += (obj.name + ' содержит ' + obj_in_container.name)
     if not found:
         log_msg('Ничего необычного', world)
     else:

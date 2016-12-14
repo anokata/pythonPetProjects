@@ -4,7 +4,7 @@ map:
         ...................##ww##
         ...................#zzzz#
         ####ww###############+###
-        #,k,,,,,,c#====     ^^^X#
+        #dk,,,,,,c#====     ^^^X#
         #,,,,,,,ht#            X#
         #,,,,n,,,h#       #     #
         #,b,,,K,,,#       #BBBBB#
@@ -44,6 +44,7 @@ objects:
         contain: False
         walk_msg: False
         info_msg: 'Нет информации.'
+        need_key: False
     def_object: &def_object
         <<: *default
         passable: True
@@ -92,6 +93,13 @@ objects:
         close_char: 6
         char: 6
         key_used: False
+    locked: &locked
+        <<: *default
+        can_open: True
+        need_key: True
+        opened: False
+        id: 4000
+        key_id: 2
     C:
         <<: *door
         color: [1.0, 0.4, 0.4]
@@ -123,6 +131,16 @@ objects:
         char: 3
         color: [0.8, 0.8, 0.8]
         walk_msg: 'Стена плотная - пройти не получится.'
+    d:  
+        <<: *locked
+        name: 'чемодан'
+        key_id: 2
+        char: 9
+        contain:
+            - s:
+                <<: *def_object
+                name: 'камень'
+                char: 3
     b:  
         <<: *default
         name: 'коробка'
