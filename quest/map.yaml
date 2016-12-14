@@ -4,10 +4,10 @@ map:
         ...................##ww##
         ...................#zzzz#
         ####ww###############+###
-        #dk,,,,,,c#====     ^^^X#
+        #dk,,p,,,c#====     ^^^X#
         #,,,,,,,ht#            X#
         #,,,,n,,,h#       #     #
-        #,b,,,K,,,#       #BBBBB#
+        #,b,,,K,,a#       #BBBBB#
         ###+#C#####       #BBBBB#
         #_________#      T#BBBBB#
         #_________^      T#BBBBB#
@@ -45,6 +45,7 @@ objects:
         walk_msg: False
         info_msg: 'Нет информации.'
         need_key: False
+        search_msg: ''
     def_object: &def_object
         <<: *default
         passable: True
@@ -113,6 +114,7 @@ objects:
     k:  
         <<: *key
         key_id: 2
+        color: [0.1, 0.2, 0.8]
     K:  
         <<: *key
         key_id: 3
@@ -131,9 +133,16 @@ objects:
         char: 3
         color: [0.8, 0.8, 0.8]
         walk_msg: 'Стена плотная - пройти не получится.'
+    p: 
+        <<: *default
+        name: 'растение в горшке'
+        search_msg: 'Зелёная фукиция'
+        char: 20
+        color: [0.0, 0.8, 0.0]
     d:  
         <<: *locked
         name: 'чемодан'
+        color: [0.1, 0.2, 0.8]
         key_id: 2
         char: 18
         contain:
@@ -150,6 +159,7 @@ objects:
                 <<: *key
                 char: 8
                 key_id: 1
+                color: [1.0, 0.4, 0.4]
     a: 
         <<: *default
         name: 'яблоко'

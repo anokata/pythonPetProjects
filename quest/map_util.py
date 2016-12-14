@@ -65,7 +65,6 @@ def object_char_translate(obj):
         obj.close_char = chr(obj.close_char)
     return obj
 
-
 def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
     objects = list()
     for x in range(len(amap[0])):

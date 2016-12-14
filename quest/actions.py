@@ -59,6 +59,8 @@ def do_search(_, world):
             else:
                 for obj_in_container in obj.contain:
                     found += (obj.name + ' содержит ' + obj_in_container.name)
+        elif obj.info_msg:
+            found += obj.search_msg
     if not found:
         log_msg('Ничего необычного', world)
     else:
