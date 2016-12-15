@@ -382,7 +382,11 @@ def DrawGLScene():
 def keyPressed(*args):
     if args[0] == ESCAPE:
         sys.exit()
-    key_sym = bytes.decode(args[0])
+    try:
+        key_sym = bytes.decode(args[0])
+    except UnicodeDecodeError:
+        print('Switch to Latin keyboard layout. Переключите на латинскую раскладку.')
+        return
     stateSystem.handleEvent('keypress', key_sym, state.world)
     update(state.world) # handle update
 
