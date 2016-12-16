@@ -1,6 +1,7 @@
 from map_util import *
 from util import *
 from log import *
+import random
 
 def door_action_start(key_sym, world): #передавать stateSys? объект у кот вызывать? передавать функ?
     if key_sym == 'o':
@@ -205,8 +206,30 @@ def smash_at(x, y, world, _):
     if obj:
         if obj.smashable:
             send_to_main_log(world.messages, 'Вы пытаетесь сломать ' + obj.name)
-            #TODO
+            #TODO obj.smash_probability obj.need_leg_strength world.player.legs.strength
+            #надо чтобы дополнительная сила увеличивала вероятнсоть(как? конкретные значения) а малая уменьшала и тогда может не надо будет требований?(для инфы надо)
+            if obj.need_strength_type == 'LEG':
+                strength = world.player.legs.strength
+            actual_probability = calc_smash_probablity(strength, obj.need_strength, obj.smash_probability)
+            if take_chance(actual_probability):
+                send_to_main_log(world.messages, 'Получилось сломать')
+                obj.can_open = True
+                obj.smashable = False
+                obj.walk_msg = ''
+                obj.search_msg = obj.smashed_msg
+
+            else:
+                send_to_main_log(world.messages, 'Неполучилось сломать')
+                #TODO усталость? или статус и потом обработка или сообщение
         else:
             send_to_main_log(world.messages, 'Это нельзя cломать')
     else:
         send_to_main_log(world.messages, 'Здесь нечего ломать')
+
+def calc_smash_probablity(strength, need, probablity):
+    p = strength/need * probablity
+    return p if p <= 1.0 else 1.0
+
+def take_chance(probablity):
+    dice = random.random()
+    return dice < probablity

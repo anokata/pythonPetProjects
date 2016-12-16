@@ -63,7 +63,7 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
             char = amap[y][x]
             if char in objects_data:
                 obj = DotDict(x=x, y=y, char=char)
-                obj.update(objects_data[char])
+                obj.update(objects_data[char]) #TODO recursive
                 object_char_translate(obj)
                 if obj.contain:
                     cont = list()

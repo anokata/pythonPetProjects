@@ -40,6 +40,10 @@ m - сломать
 def make_actor(**kwargs):
     actor = DotDict(**kwargs)
     actor.takeable = False
+    actor.head = DotDict(temp=36.6)
+    actor.body = DotDict(temp=36.6, strength=1)
+    actor.hands = DotDict(temp=36.6, strength=1)
+    actor.legs = DotDict(temp=36.6, strength=1)
     return actor
 
 def init():

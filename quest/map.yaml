@@ -185,8 +185,11 @@ objects:
         can_open: False
         search_msg: 'Замок сломан, не открыть'
         walk_msg: 'Не получается открыть'
+        smashed_msg: 'сломана'
         smashable: True
-        need_leg_strength: 2
+        need_strength: 1
+        need_strength_type: 'LEG'
+        smash_probability: 0.5
     +:
         <<: *door
         color: [0.7, 0.4, 0.4]
