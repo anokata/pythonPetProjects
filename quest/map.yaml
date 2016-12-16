@@ -18,15 +18,15 @@ map:
         ####ww#############+###
         #fk,,p,,,c#==RR # ^^^X#
         #Gd,,,,,ht#L    #    X#
-        #,,,,n,,,h#     V     #
+        #,,,,n,,,h#     v     #
         #,b,,,K,,a#     #     #
         ###+#C#####     #DeE  #
         #_________^^   T#   @B#
         #__________############
         #_________O#...........
         ##H##+##+###...........
-        ..N.# # r#.............
-        ....######.............
+        #.N.# V r#.............
+        #...######.............
 map_tiles:
     ['#',3,
      'B', 2,
@@ -61,6 +61,7 @@ objects:
         search_msg: ''
         viewable: True
         name: ' '
+        smashable: False
     hidden_object: &hidden_object
         <<: *default
         passable: True
@@ -176,6 +177,16 @@ objects:
         color: [0.7, 0.4, 0.4]
         passable: False
         char: 30
+    v:
+        <<: *vdoor
+        color: [0.7, 0.4, 0.4]
+        passable: False
+        char: 30
+        can_open: False
+        search_msg: 'Замок сломан, не открыть'
+        walk_msg: 'Не получается открыть'
+        smashable: True
+        need_leg_strength: 2
     +:
         <<: *door
         color: [0.7, 0.4, 0.4]
