@@ -2,6 +2,12 @@ from mega import *
 from util import *
 from log import *
 
+def object_by_char(objects, char):
+    for o in objects:
+        if o.char == char:
+            return o
+    return False
+
 def object_at_xy(x, y, objects):
     for o in objects:
         if o.x == x and o.y == y:
@@ -41,7 +47,7 @@ def chars_in_view(actor, amap): #join
             y = actor.y + j
             if 0 <= x < w and 0 <= y < h:
                 char = amap[y][x]
-                if char not in ' ':
+                if char not in ' @':
                     chars.add(char)
     return chars
 
@@ -104,7 +110,7 @@ def objects_in_view(actor, world):
             y = actor.y + j
             if 0 <= x < w and 0 <= y < h:
                 o = object_at(Point(x, y), objects)
-                if o and o.name != 'self':
+                if o and o.name != 'self' and o.name != 'spawn':
                     objs.add(o)
     return objs
 

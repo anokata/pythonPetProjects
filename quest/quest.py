@@ -55,18 +55,21 @@ def load_map(map_file, world):
     world.old_map = world.level_data['map'][0].split('\n')
     world.map = [line for line in world.map if line != '']
     world.old_map = [line for line in world.old_map if line != '']
-    world.player = make_actor(name='self', x=3, y=3, color=(0,1,1), char='\x01')
     world.objects = list()
     world.level_data['objects']
     world.objects_data = world.level_data['objects']
     world.objects += extract_objects(world.map, world.objects_data)
+    spawn = object_by_char(world.objects, '@')
+    world.player = make_actor(name='self', x=spawn.x, y=spawn.y, color=(0,1,1), char='\x01')
+    remove_obj(spawn, world.objects)
     world.objects.append(world.player)
     # state = {'map': yaml.load(... #TODO переделать в виде явных данных
     #           'player' : make_actor ... 
     world.map = retile_map(world.map, world.level_data['map_tiles'])
     init_messages(world)
     load_rooms(world)
-    send_to_main_log(world.messages, 'Я оказался в ' + world.level_data['mapname'])
+    log_msg(world.level_data['mapname'], world)
+    send_to_main_log(world.messages, world.level_data['start_msg'])
 
 def init_messages(world):
     msgs = DotDict()
