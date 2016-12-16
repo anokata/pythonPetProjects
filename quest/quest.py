@@ -62,7 +62,7 @@ def load_map(map_file, world):
     spawn = object_by_char(world.objects, '@')
     world.player = make_actor(name='self', x=spawn.x, y=spawn.y, color=(0,1,1), char='\x01')
     remove_obj(spawn, world.objects)
-    world.objects.append(world.player)
+    world.objects.append(world.player) # TODO refactor. add_object
     # state = {'map': yaml.load(... #TODO переделать в виде явных данных
     #           'player' : make_actor ... 
     world.map = retile_map(world.map, world.level_data['map_tiles'])

@@ -7,9 +7,9 @@ map:
         .................##ww##
         .................#zzzz#
         ####ww#############+###
-        #fk,,p,,,c#==RR   ^^^X#
-        #Gd,,,,,ht#L         X#
-        #,,,,n,,,h#           #
+        #fk,,p,,,c#==RR # ^^^X#
+        #Gd,,,,,ht#L    #    X#
+        #,,,,n,,,h#     V     #
         #,b,,,K,,a#     #     #
         ###+#C#####     #DeE  #
         #_________^^   T#   @B#
@@ -146,12 +146,20 @@ objects:
         opened: False
         id: 4000
         key_id: 2
+    vdoor: &vdoor
+        <<: *door
+        close_char: 30
     C:
         <<: *door
         color: [1.0, 0.4, 0.4]
         passable: False
         key_id: 1
         need_key: True
+    V:
+        <<: *vdoor
+        color: [0.7, 0.4, 0.4]
+        passable: False
+        char: 30
     +:
         <<: *door
         color: [0.7, 0.4, 0.4]
@@ -228,6 +236,7 @@ objects:
         <<: *default 
         name: 'шкаф'
         passable: False
+        char: 2
     w:
         <<: *default 
         name: 'окно'
