@@ -97,12 +97,14 @@ def load_rooms(world):
 
 def init_map(map_file):
     world = DotDict()
+    world.tick = 0
     state.world = world
     world.stateSystem = stateSystem
     load_map(map_file, world)
     init_colors(world)
     world.inventory = list()
     world.inventory.append(get_object(world.objects_data, 'a')) # init inv in map?plr?
+    world.tick_events = make_recursive_dotdict(world.level_data['tick_events'])
 
 def init_states():
     stateSystem.addState('walk') 
@@ -197,6 +199,15 @@ def step(d):
 
 def update(world):
     world.messages.view_msg = describe_view(world.player, world.old_map, world.objects_data)
+    tick(world)
+
+def tick(world):
+    world.tick += 1
+    if world.tick_events.contain(str(world.tick)):
+        event = world.tick_events.get(str(world.tick))
+        if event.type == 'MSG':
+            send_to_main_log(world.messages, event.msg)
+    print(world.tick)
 
 def describe_view(actor, amap, objects_data):
     chars = chars_in_view(actor, amap)
