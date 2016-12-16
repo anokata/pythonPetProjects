@@ -68,7 +68,7 @@ def do_search(_, world):
                 for obj_in_container in obj.contain:
                     found += (obj.name + ' содержит ' + obj_in_container.name)
         elif obj.info_msg:
-            found += obj.search_msg
+            send_to_main_log(world.messages, obj.search_msg)
     if not found:
         log_msg('Ничего необычного', world)
     else:
@@ -183,7 +183,7 @@ def try_key_door(key, door, world):
         else:
             send_to_main_log(world.messages, 'Ключ не подходит')
     else:
-            send_to_main_log(world.messages, 'Дверь не заперта')
+            send_to_main_log(world.messages, door.name + ' не запертo')
     return True
 
 def inventory_view_action(world, obj):

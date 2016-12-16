@@ -36,26 +36,11 @@ def walk_to_obj(world, obj):
     if obj.walk_msg:
         send_to_main_log(world.messages, obj.walk_msg)
 
-
-def chars_in_view(actor, amap): #join
-    w = len(amap[0])
-    h = len(amap)
-    chars = set()
-    for i in (-1, 0, 1):
-        for j in (-1, 0, 1):
-            x = actor.x + i
-            y = actor.y + j
-            if 0 <= x < w and 0 <= y < h:
-                char = amap[y][x]
-                if char not in ' @':
-                    chars.add(char)
-    return chars
-
-def chars_describe(chars, objects): #test
+def describe_objects(objects, world): #test
     strings = 'Вижу:\n'
-    for c in chars:
-        if c in objects:
-            strings += "     " + objects[c]['name'] + '(%s)\n'%c
+    for o in objects:
+        if o.viewable:
+            strings += "     " + o.name + '(%s)\n'%o.char
     return strings
 
 def retile_map(m, pairs): #test

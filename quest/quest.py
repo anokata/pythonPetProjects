@@ -92,7 +92,7 @@ def init_colors(world):
 def load_rooms(world):
     rooms = make_recursive_dotdict(world.level_data['rooms'])
     world.rooms = rooms
-    world.rooms.current = get_room_at(world, 3, 3)
+    world.rooms.current = get_room_at(world, 0, 0)
     update_current_room(world)
 
 def init_map(map_file):
@@ -198,7 +198,7 @@ def step(d):
     glutTimerFunc(100, step, 1)
 
 def update(world):
-    world.messages.view_msg = describe_view(world.player, world.old_map, world.objects_data)
+    world.messages.view_msg = describe_view(world)
     tick(world)
 
 def tick(world):
@@ -209,9 +209,9 @@ def tick(world):
             send_to_main_log(world.messages, event.msg)
     print(world.tick)
 
-def describe_view(actor, amap, objects_data):
-    chars = chars_in_view(actor, amap)
-    return chars_describe(chars, objects_data)
+def describe_view(world):
+    objs = objects_in_view(world.player, world)
+    return describe_objects(objs, world)
 
 def draw_walk(world):
     draw_map(world.map, world.colors)

@@ -12,8 +12,9 @@ tick_events:
         msg: 'Не забыть поесть'
 map:
     - |
-        .................##ww##
-        .................#zzzz#
+        ^................##wW##
+        .................#zszz#
+        .................##z###
         ####ww#############+###
         #fk,,p,,,c#==RR # ^^^X#
         #Gd,,,,,ht#L    #    X#
@@ -34,6 +35,7 @@ map_tiles:
      ',', ' ',
      '_', ' ',
      'z', ' ',
+     's', ' ',
 
         ]
 rooms:
@@ -57,6 +59,12 @@ objects:
         info_msg: 'Нет информации.'
         need_key: False
         search_msg: ''
+        viewable: True
+        name: ' '
+    hidden_object: &hidden_object
+        <<: *default
+        passable: True
+        viewable: False
     def_object: &def_object
         <<: *default
         passable: True
@@ -194,6 +202,7 @@ objects:
         char: 3
         color: [0.8, 0.8, 0.8]
         walk_msg: 'Стена плотная - пройти не получится.'
+        viewable: False
     B:
         <<: *default
         name: 'кровать'
@@ -245,11 +254,25 @@ objects:
         name: 'шкаф'
         passable: False
         char: 2
-    w:
-        <<: *default 
+    window: &window
+        <<: *default
         name: 'окно'
         color: [0, 1, 1]
         passable: False
         take: False
         char: 6
+    w:
+        <<: *window 
         walk_msg: 'Окно закрыто. 29ый этаж - выйти отсюда таким способом не лучшая идея.'
+    W:
+        <<: *window 
+        walk_msg: 'Окна грязные'
+        search_msg: |
+            Перед вами открывается городской ландшавт, здания, улицы, парки.
+            Но вы замечаете что многие здания разрушены, вдали виднеются пожары,  
+            на улицах никого нет, машины побросаны прямо на дорогах.
+            Вам это начинает нравиться.
+    s: 
+        <<: *hidden_object
+        walk_msg: 'Тут можно осмотреться.'
+        char: ' '
