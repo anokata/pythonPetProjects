@@ -107,3 +107,17 @@ def objects_in_view(actor, world):
                 if o and o.name != 'self':
                     objs.add(o)
     return objs
+
+def get_room_at(world, x, y):
+    tile = world.old_map[y][x]
+    if world.rooms.contain(tile):
+        room = world.rooms.get(tile)
+        return room
+    return world.rooms.current
+
+def update_current_room(world):
+    old_room = world.rooms.current
+    new_room = get_room_at(world, world.player.x, world.player.y)
+    if old_room != new_room:
+        world.rooms.current = new_room
+        send_to_main_log(world.messages, 'Вхожу в ' + new_room.name)

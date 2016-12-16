@@ -47,9 +47,7 @@ def init():
     init_map(map_file)
     init_states()
 
-def init_map(map_file):
-    world = DotDict()
-    state.world = world
+def load_map(map_file, world):
     world.level_data = yaml.load(open(map_file)) # map load method, from string?
     world.map = world.level_data['map'][0].split('\n')
     world.map_width = len(world.map[0])
@@ -66,6 +64,11 @@ def init_map(map_file):
     # state = {'map': yaml.load(... #TODO переделать в виде явных данных
     #           'player' : make_actor ... 
     world.map = retile_map(world.map, world.level_data['map_tiles'])
+    init_messages(world)
+    load_rooms(world)
+    send_to_main_log(world.messages, 'Я оказался в ' + world.level_data['mapname'])
+
+def init_messages(world):
     msgs = DotDict()
     world.messages = msgs
     world.messages.view_msg = 'none'
@@ -76,39 +79,27 @@ def init_map(map_file):
     world.messages.log_y = world.map_height
     msgs.main_log_y = msgs.log_y+1
     world.messages.view_y = msgs.main_log_y + 10
-    send_to_main_log(world.messages, 'Я оказался в ' + world.level_data['mapname'])
+
+def init_colors(world):
     colors = DotDict()
     colors.color_multiplier = 1.0
     colors.color_multiplier_dir = True
     world.colors = colors
-    world.inventory = list()
-    world.inventory.append(get_object(world.objects_data, 'a'))
-    #rooms = DotDict(**world.level_data['rooms'])
+
+def load_rooms(world):
     rooms = make_recursive_dotdict(world.level_data['rooms'])
     world.rooms = rooms
     world.rooms.current = get_room_at(world, 3, 3)
     update_current_room(world)
 
-def make_recursive_dotdict(dct):
-    res = DotDict(**dct)
-    for k, v in dct.items():
-        if type(v) is dict:
-            res.set(k, make_recursive_dotdict(v))
-    return res
-
-def get_room_at(world, x, y):
-    tile = world.old_map[y][x]
-    if world.rooms.contain(tile):
-        room = world.rooms.get(tile)
-        return room
-    return world.rooms.current
-
-def update_current_room(world):
-    old_room = world.rooms.current
-    new_room = get_room_at(world, world.player.x, world.player.y)
-    if old_room != new_room:
-        world.rooms.current = new_room
-        send_to_main_log(world.messages, 'Вхожу в ' + new_room.name)
+def init_map(map_file):
+    world = DotDict()
+    state.world = world
+    world.stateSystem = stateSystem
+    load_map(map_file, world)
+    init_colors(world)
+    world.inventory = list()
+    world.inventory.append(get_object(world.objects_data, 'a')) # init inv in map?plr?
 
 def init_states():
     stateSystem.addState('walk') 
@@ -128,101 +119,6 @@ def init_states():
     stateSystem.setEventHandler('inventory_view_object', 'draw', draw_object_info)
     stateSystem.setEventHandler('inventory_view_object', 'keypress', wait_keypress)
 
-def do_take(_, world):
-    log_msg('Взять откуда?', world)
-    direction_do(world, take_from)
-
-def inventory_add(obj, inventory):
-    inventory.append(obj)
-
-def take_from(x, y, world, _):
-    obj = object_at_xy(x, y, world.objects)
-    if obj:
-        if obj.takeable:
-            log_msg('Беру ' + obj.name, world)
-            send_to_main_log(world.messages, 'Я взял ' + obj.name)
-            inventory_add(obj, world.inventory)
-            remove_obj(obj, world.objects)
-        else:
-            if obj.contain: # пока не содержат более одного объекта
-                if obj.need_key:
-                    send_to_main_log(world.messages, obj.name + ' заперт')
-                    return
-                contaiment = obj.contain[0]
-                log_msg('Беру из {} {}'.format(obj.name, contaiment.name), world)
-                send_to_main_log(world.messages, 'Я взял {} из {}'.format(contaiment.name, obj.name))
-                obj.contain = False
-                inventory_add(contaiment, world.inventory)
-            else:
-                log_msg('Это нельзя брать.', world)
-    else:
-        log_msg('Здесь нечего брать.', world)
-
-INVENTORY_VIEW_ITEM = 'v'
-INVENTORY_APPLY_ITEM = 'a'
-def do_inventory_action(world, action, object_index):
-    inventory_actions = {
-        INVENTORY_VIEW_ITEM: inventory_view_action,
-        INVENTORY_APPLY_ITEM: lambda w, x: direction_do(w, inventory_apply_action, x),
-            }
-    if object_index < len(world.inventory):
-        fun = inventory_actions.get(action, False)
-        if fun:
-            fun(world, world.inventory[object_index])
-
-def inventory_apply_action(x, y, world, applicator):
-    pacient = object_at_xy(x, y, world.objects)
-    if pacient:
-        applicator = applicator[0]
-        send_to_main_log(world.messages, 
-                "Пытаюсь применить {} к {}...".format(applicator.name, pacient.name))# не должен быть .messages?
-        result = object_apply(applicator, pacient, world)
-        if not result:
-            send_to_main_log(world.messages, "не получилось")
-    else:
-        log_msg('Не к чему применять', world)
-
-def object_apply(applicator, pacient, world):
-    objects_apply_table = { # to world?
-            4001: {
-                4000: try_key_door,
-                },
-        }
-    table2 = objects_apply_table.get(applicator.id, False)
-    if not table2:
-        return False
-    fun = table2.get(pacient.id, False)
-    if fun:
-        return fun(applicator, pacient, world)
-    else:
-        return False
-
-def try_key_door(key, door, world):
-    send_to_main_log(world.messages, 'Пытаюсь открыть '+ door.name +' ключом...')
-    if door.need_key:
-        if key.key_id == door.key_id:
-            send_to_main_log(world.messages, 'Ключ подошёл, отпираю.')
-            door.key_used = True
-            door.need_key = False
-        else:
-            send_to_main_log(world.messages, 'Ключ не подходит')
-    else:
-            send_to_main_log(world.messages, 'Дверь не заперта')
-    return True
-
-def inventory_view_action(world, obj):
-    world.messages.object_info = list()
-    world.messages.object_info.append(obj.name)
-    world.messages.object_info.append(obj.info_msg)
-    stateSystem.changeState('inventory_view_object')
-
-def go_inventory(key_sym, world):
-    stateSystem.changeState('inventory')
-    world.inventory_action = key_sym
-
-def draw_object_info(world):
-    draw_lines_tex(world.messages.object_info, 1, 1, (0, 1, 0.7))
-
 def wait_keypress(key_sym, world):
     stateSystem.changeState('walk')
 
@@ -238,22 +134,6 @@ def inventory_keypress(key_sym, world):
     if fun:
         fun(key_sym, world)
     stateSystem.changeState('walk')
-
-def direction_do(world, fun, *args):
-    world.direction_action = fun
-    world.direction_args = args
-    stateSystem.changeState('direction')
-
-def direction_keypress(key_sym, world):
-    direction = get_direction(key_sym)
-    if direction:
-        x, y = direction
-        x = world.player.x + x
-        y = world.player.y + y
-        world.direction_action(x, y, world, world.direction_args)
-        stateSystem.changeState('walk')
-    else:
-        log_msg('Неправильное направление. ', world)
 
 def walk_keypress(key_sym, world):
     keyboard_fun = {
@@ -273,20 +153,6 @@ def walk_keypress(key_sym, world):
     if fun:
         fun(key_sym, world)
         update_current_room(world)
-
-def get_direction(key_sym):
-    keyboard_fun = {
-            'j':lambda _: (0, 1),
-            'k':lambda _: (0, -1),
-            'h':lambda _: (-1, 0),
-            'l':lambda _: (1, 0),
-            '.':lambda _: (0, 0),
-            }
-    fun = keyboard_fun.get(key_sym, False)
-    if fun:
-        return fun(0)
-    else:
-        return False
 
 def door_open_keypress(key_sym, world):
     open_msg = ' '
@@ -308,14 +174,7 @@ def door_open_keypress(key_sym, world):
             send_to_main_log(world.messages, 'Я закрыл {}'.format(obj.name))
     stateSystem.changeState('walk')
     log_msg(open_msg, world)
-
-def door_action_start(key_sym, world): #передавать stateSys? объект у кот вызывать? передавать функ?
-    if key_sym == 'o':
-        log_msg('Открыть дверь в какой стороне?', world)
-    else:
-        log_msg('Закрыть дверь в какой стороне?', world)
-    stateSystem.changeState('open_door')
-
+##---##
 def ReSizeGLScene(Width, Height):
     state.w = w = Width
     state.h = h = Height
@@ -339,14 +198,6 @@ def update(world):
 def describe_view(actor, amap, objects_data):
     chars = chars_in_view(actor, amap)
     return chars_describe(chars, objects_data)
-
-def draw_inventory(world):
-    i = 1
-    for obj in world.inventory:
-        line = "{}: {}({})".format(i, obj.name, obj.char)
-        i += 1
-        clr = obj.color
-        draw_chars_tex(line, y=i, x=1, color=clr)
 
 def draw_walk(world):
     draw_map(world.map, world.colors)

@@ -40,3 +40,9 @@ class MutableNamedTuple():
 
 Mega = MutableNamedTuple
 DotDict = Mega
+def make_recursive_dotdict(dct):
+    res = DotDict(**dct)
+    for k, v in dct.items():
+        if type(v) is dict:
+            res.set(k, make_recursive_dotdict(v))
+    return res

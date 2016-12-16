@@ -48,3 +48,13 @@ def get_last_main_log(messages): #to log module
     return messages.main_log[-messages.main_log_maxview:]
 
 
+def draw_object_info(world):
+    draw_lines_tex(world.messages.object_info, 1, 1, (0, 1, 0.7))
+
+def draw_inventory(world):
+    i = 1
+    for obj in world.inventory:
+        line = "{}: {}({})".format(i, obj.name, obj.char)
+        i += 1
+        clr = obj.color
+        draw_chars_tex(line, y=i, x=1, color=clr)
