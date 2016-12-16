@@ -331,7 +331,7 @@ def ReSizeGLScene(Width, Height):
 def step(d):
     color_mul_step(state.world.colors)
     glutPostRedisplay()
-    glutTimerFunc(33, step, 1)
+    glutTimerFunc(100, step, 1)
 
 def update(world):
     world.messages.view_msg = describe_view(world.player, world.old_map, world.objects_data)
@@ -394,7 +394,7 @@ def mouse(button, state, x, y):
         glutPostRedisplay()
 
 def motion(x, y):
-    glutPostRedisplay()
+    pass
 
 def main():
     glutInit(sys.argv)
@@ -403,12 +403,12 @@ def main():
     glutInitWindowPosition(0, 0)
     state.window = glutCreateWindow("")
     glutDisplayFunc(DrawGLScene)
-    glutIdleFunc(DrawGLScene)
+    #glutIdleFunc(DrawGLScene)
     glutReshapeFunc(ReSizeGLScene)
     glutKeyboardFunc(keyPressed)
-    glutMouseFunc(mouse)
-    glutMotionFunc(motion)
-    glutTimerFunc(33, step, 1)
+    #glutMouseFunc(mouse)
+    #glutMotionFunc(motion)
+    glutTimerFunc(100, step, 1)
     InitGL(640, 480)
     init()
     glutMainLoop()

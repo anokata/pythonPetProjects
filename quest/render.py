@@ -16,10 +16,11 @@ def draw_map(lines, colors):
         t += 1
 
 def color_mul_step(colors): 
+    coeff = 0.1
     if colors.color_multiplier_dir:
-        colors.color_multiplier += 0.1
+        colors.color_multiplier += coeff
     else:
-        colors.color_multiplier -= 0.1
+        colors.color_multiplier -= coeff
     if colors.color_multiplier > 1.3:
         colors.color_multiplier_dir = False 
     if colors.color_multiplier < 0.7:
