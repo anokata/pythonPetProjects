@@ -34,6 +34,7 @@ a - применить
 v - осмотреть предмет
 ESQ - выход
 i - инвентарь
+m - сломать
 '''
 
 def make_actor(**kwargs):
@@ -153,6 +154,7 @@ def walk_keypress(key_sym, world):
             ',':do_take,
             'v':go_inventory,
             'a':go_inventory,
+            'm':do_smash,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:

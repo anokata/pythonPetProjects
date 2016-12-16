@@ -195,3 +195,18 @@ def inventory_view_action(world, obj):
 def go_inventory(key_sym, world):
     world.stateSystem.changeState('inventory')
     world.inventory_action = key_sym
+
+def do_smash(_, world):
+    log_msg('Сломать где?', world)
+    direction_do(world, smash_at)
+
+def smash_at(x, y, world, _):
+    obj = object_at_xy(x, y, world.objects)
+    if obj:
+        if obj.smashable:
+            send_to_main_log(world.messages, 'Вы пытаетесь сломать ' + obj.name)
+            #TODO
+        else:
+            send_to_main_log(world.messages, 'Это нельзя cломать')
+    else:
+        send_to_main_log(world.messages, 'Здесь нечего ломать')
