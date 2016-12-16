@@ -172,9 +172,9 @@ def door_open_keypress(key_sym, world):
         open_status, obj = try_open_door(x, y, world.player, world.objects)
         open_msg = open_messages[open_status]
         if open_status == OPEN_OPEND:
-            send_to_main_log(world.messages, 'Я открыл {}'.format(obj.name))
+            send_to_main_log(world.messages, 'Вы открыли {}'.format(obj.name))
         if open_status == OPEN_CLOSED:
-            send_to_main_log(world.messages, 'Я закрыл {}'.format(obj.name))
+            send_to_main_log(world.messages, 'Вы закрыли {}'.format(obj.name))
     stateSystem.changeState('walk')
     log_msg(open_msg, world)
 ##---##

@@ -83,7 +83,7 @@ def take_from(x, y, world, _):
     if obj:
         if obj.takeable:
             log_msg('Беру ' + obj.name, world)
-            send_to_main_log(world.messages, 'Я взял ' + obj.name)
+            send_to_main_log(world.messages, 'Вы берёте ' + obj.name)
             inventory_add(obj, world.inventory)
             remove_obj(obj, world.objects)
         else:
@@ -93,7 +93,7 @@ def take_from(x, y, world, _):
                     return
                 contaiment = obj.contain[0]
                 log_msg('Беру из {} {}'.format(obj.name, contaiment.name), world)
-                send_to_main_log(world.messages, 'Я взял {} из {}'.format(contaiment.name, obj.name))
+                send_to_main_log(world.messages, 'Вы берёте {} из {}'.format(contaiment.name, obj.name))
                 obj.contain = False
                 inventory_add(contaiment, world.inventory)
             else:
@@ -151,7 +151,7 @@ def inventory_apply_action(x, y, world, applicator):
     if pacient:
         applicator = applicator[0]
         send_to_main_log(world.messages, 
-                "Пытаюсь применить {} к {}...".format(applicator.name, pacient.name))# не должен быть .messages?
+                "Пытатетесь применить {} к {}...".format(applicator.name, pacient.name))# не должен быть .messages?
         result = object_apply(applicator, pacient, world)
         if not result:
             send_to_main_log(world.messages, "не получилось")
@@ -174,10 +174,10 @@ def object_apply(applicator, pacient, world):
         return False
 
 def try_key_door(key, door, world):
-    send_to_main_log(world.messages, 'Пытаюсь открыть '+ door.name +' ключом...')
+    send_to_main_log(world.messages, 'Пытатетесь открыть '+ door.name +' ключом...')
     if door.need_key:
         if key.key_id == door.key_id:
-            send_to_main_log(world.messages, 'Ключ подошёл, отпираю.')
+            send_to_main_log(world.messages, 'Ключ подошёл, отпирате.')
             door.key_used = True
             door.need_key = False
         else:

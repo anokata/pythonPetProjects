@@ -79,17 +79,17 @@ objects:
         name: 'spawn'
         passable: True
     E:
-        <<: *default
+        <<: *def_object
         name: 'рубашка'
         char: 23
         color: [0.8,0.2,0.1]
     e:
-        <<: *default
+        <<: *def_object
         name: 'штаны'
         char: 24
         color: [0.5,1,0]
     D:
-        <<: *default
+        <<: *def_object
         name: 'кросовки'
         char: 22
         color: [0,0,1]
