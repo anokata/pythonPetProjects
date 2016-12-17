@@ -213,6 +213,9 @@ objects:
         <<: *default 
         name: 'пол'
         passable: True
+        char: 32
+        color: [0.5, 0.5, 0.5]
+        viewable: False
     '#':
         <<: *default 
         name: 'стену'
