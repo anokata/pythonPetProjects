@@ -1,5 +1,6 @@
 from ByteFont import *
 from map_util import *
+import math
 
 dark_color = (0.3, 0.3, 0.3)
 
@@ -76,3 +77,16 @@ def draw_inventory(world):
         i += 1
         clr = obj.color
         draw_chars_tex(line, y=i, x=1, color=clr)
+
+def distance(a, b, c, d):
+    return math.sqrt((a-c)*(a-c)+(b-d)*(b-d))
+
+def make_ray_gen(ax, ay, bx, by, n):
+    dx = (bx-ax)/n
+    dy = (by-ay)/n
+    while ax != bx and ay != by:
+        ax += dx
+        ay += dy
+        yield (int(ax), int(ay))
+
+#def ray_(

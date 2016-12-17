@@ -87,6 +87,7 @@ def load_map(map_file, world):
     light_map[(0,3)] = True
     world.light_map = light_map
 
+
 def lines_to_xydict(amap):
     dict_map = dict()
     for x in range(len(amap[0])):
