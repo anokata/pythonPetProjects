@@ -1,15 +1,19 @@
 from mega import *
 from util import *
 from log import *
+from collections import defaultdict
 
 def object_by_char(objects, char): # ограничить полем видения
     for o in objects.values():
-        if o.char == char:
-            return o
+        if o[-1].char == char:
+            return o[-1]
     return False
 
 def object_at_xy(x, y, objects):
-    return objects.get((x, y), False)
+    obj = objects.get((x, y), False)
+    if obj:
+        return obj[-1]
+    return obj
 
 def remove_obj(obj, objects):
     objects.pop((obj.x, obj.y))
@@ -54,7 +58,7 @@ def object_char_translate(obj):
     return obj
 
 def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
-    objects = dict()
+    objects = defaultdict(list)
     for x in range(len(amap[0])):
         for y in range(len(amap)):
             char = amap[y][x]
@@ -76,7 +80,7 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
     return objects
 
 def add_object(objects, obj):
-    objects[(obj.x, obj.y)] = obj
+    objects[(obj.x, obj.y)].append(obj)
 
 def get_object(objects_data, name):
     obj = DotDict(**objects_data[name])

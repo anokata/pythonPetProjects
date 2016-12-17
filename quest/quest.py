@@ -52,6 +52,7 @@ def make_actor(**kwargs):
     actor.body = DotDict(**stats_init)
     actor.arms = DotDict(**stats_init)
     actor.legs = DotDict(**stats_init)
+    actor.passable = True
     return actor
 
 def init():
@@ -82,10 +83,20 @@ def load_map(map_file, world):
     load_rooms(world)
     log_msg(world.level_data['mapname'], world)
     send_to_main_log(world.messages, world.level_data['start_msg'])
-    light_map = dict() # так может это в свойстве тайла карты
-    light_map[(0,2)] = True
-    light_map[(0,3)] = True
+    light_map = dict() # так может это в свойстве тайла карты. наверно нет т.к. постоянно заного обновлять? или стат свет
     world.light_map = light_map
+    recalc_light(world)
+
+def recalc_light(world):
+    light_map = dict() 
+    world.light_map = light_map
+    px = world.player.x
+    py = world.player.y
+    light_map[(px, py)] = True
+    #for r in get_circle_rays(5):
+    for r in cast_rays(world):
+        for x,y in r:
+            light_map[(x+px, y+py)] = True
 
 
 def lines_to_xydict(amap):
@@ -184,6 +195,7 @@ def walk_keypress(key_sym, world):
     if fun:
         fun(key_sym, world)
         update_current_room(world)
+        recalc_light(world)
 
 def do_warmup(_, world):
     send_to_main_log(world.messages, 'Вы делаете зарядку.')
