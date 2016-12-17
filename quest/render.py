@@ -1,5 +1,7 @@
 from ByteFont import *
 
+dark_color = (0.3, 0.3, 0.3)
+
 def mul_color(cl, color_multiplier):
     r, g, b = cl
     r *= color_multiplier

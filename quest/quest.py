@@ -83,6 +83,13 @@ def load_map(map_file, world):
     load_rooms(world)
     log_msg(world.level_data['mapname'], world)
     send_to_main_log(world.messages, world.level_data['start_msg'])
+    light_map = dict()
+    light_map[(0,2)] = True
+    world.light_map = light_map
+
+def is_lighted(x, y, world):
+    return world.light_map.get((x, y), False)
+
 
 def init_messages(world):
     msgs = DotDict()
