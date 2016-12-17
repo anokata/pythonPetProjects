@@ -35,15 +35,23 @@ v - осмотреть предмет
 ESQ - выход
 i - инвентарь
 m - сломать
+J - разминка
 '''
 
 def make_actor(**kwargs):
+    stats_init={
+            'temp':36.6,
+            'strength':1,
+            'max_strength':2,
+            'stamina':10,
+            'max_stamina':10,
+            }
     actor = DotDict(**kwargs)
     actor.takeable = False
     actor.head = DotDict(temp=36.6)
-    actor.body = DotDict(temp=36.6, strength=1)
-    actor.hands = DotDict(temp=36.6, strength=1)
-    actor.legs = DotDict(temp=36.6, strength=1)
+    actor.body = DotDict(**stats_init)
+    actor.arms = DotDict(**stats_init)
+    actor.legs = DotDict(**stats_init)
     return actor
 
 def init():
@@ -159,11 +167,39 @@ def walk_keypress(key_sym, world):
             'v':go_inventory,
             'a':go_inventory,
             'm':do_smash,
+            'J':do_warmup,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
         fun(key_sym, world)
         update_current_room(world)
+
+def do_warmup(_, world):
+    send_to_main_log(world.messages, 'Вы делаете зарядку.')
+    actor = world.player
+    if warm_up_all(actor):
+        send_to_main_log(world.messages, 'Вы чувствуете себя сильнее.')
+    else:
+        send_to_main_log(world.messages, 'Никакого эффекта, только устали.')
+        
+def warm_up_all(actor):
+    b = warm_up_part(actor.body)
+    l = warm_up_part(actor.legs)
+    a = warm_up_part(actor.arms)
+    return any([b,l,a])
+
+def warm_up_part(part):
+    if part.stamina == part.max_stamina:
+        return add_strength_part(part)
+    return False
+
+def add_strength_part(part):
+    if part.strength == part.max_strength:
+        return False
+    part.strength += 1
+    if part.strength > part.max_strength:
+        part.strength = part.max_strength
+    return True
 
 def door_open_keypress(key_sym, world):
     open_msg = ' '
@@ -257,6 +293,7 @@ def keyPressed(*args):
         print('Switch to Latin keyboard layout. Переключите на латинскую раскладку.')
         return
     key_sym = bytes.decode(args[0])
+    #print(key_sym, ord(args[0]))
     stateSystem.handleEvent('keypress', key_sym, state.world)
     update(state.world) # handle update
 
