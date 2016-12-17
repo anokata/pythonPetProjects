@@ -63,9 +63,9 @@ def init():
 def load_map(map_file, world):
     world.level_data = yaml.load(open(map_file)) # map load method, from string?
     world.map = world.level_data['map'][0].split('\n')
+    world.map = [line for line in world.map if line != '']
     world.map_width = len(world.map[0])
     world.map_height = len(world.map)
-    world.map = [line for line in world.map if line != '']
     world.rooms_map = world.map
     world.objects = list()
     world.level_data['objects']
@@ -78,17 +78,24 @@ def load_map(map_file, world):
     # state = {'map': yaml.load(... #TODO переделать в виде явных данных
     #           'player' : make_actor ... 
     world.map = retile_map(world.map, world.level_data['map_tiles'])
+    world.map = lines_to_xydict(world.map)
     init_messages(world)
     load_rooms(world)
     log_msg(world.level_data['mapname'], world)
     send_to_main_log(world.messages, world.level_data['start_msg'])
-    light_map = dict()
+    light_map = dict() # так может это в свойстве тайла карты
     light_map[(0,2)] = True
     world.light_map = light_map
 
 def is_lighted(x, y, world):
     return world.light_map.get((x, y), False)
 
+def lines_to_xydict(amap):
+    dict_map = dict()
+    for x in range(len(amap[0])):
+        for y in range(len(amap)):
+            dict_map[(x,y)] = amap[y][x]
+    return dict_map
 
 def init_messages(world):
     msgs = DotDict()
@@ -262,7 +269,7 @@ def describe_view(world):
     return describe_objects(objs, world)
 
 def draw_walk(world):
-    draw_map(world.map, world.colors)
+    draw_map(world, world.colors) # почти не нужно
     draw_objects(world.objects)
     draw_help(world.messages.help_mgs)
     draw_view(world.messages)

@@ -9,11 +9,14 @@ def mul_color(cl, color_multiplier):
     b *= color_multiplier
     return (r, g, b)
 
-def draw_map(lines, colors):
+def draw_map(world, colors):
     t = 0
     cl = (0.0, 0.3, 0.4)
     cl = mul_color(cl, colors.color_multiplier)
-    for line in lines:
+    for y in range(world.map_height):
+        line = ''
+        for x in range(world.map_width):
+            line += world.map[(x, y)]
         draw_chars_tex(line, y=t, color=cl)
         t += 1
 
