@@ -1,4 +1,5 @@
 from ByteFont import *
+from map_util import *
 
 dark_color = (0.3, 0.3, 0.3)
 
@@ -31,10 +32,14 @@ def color_mul_step(colors):
     if colors.color_multiplier < 0.7:
         colors.color_multiplier_dir = True 
 
-def draw_objects(objects):
-    for o in objects:
-        clr = tuple(o.color)
-        draw_chars_tex(o.char, y=o.y, x=o.x, color=clr)
+def draw_objects(world):
+    objects  = world.objects
+    for x in range(world.map_width):
+        for y in range(world.map_height):
+            o = object_at_xy(x, y, objects)
+            if o:
+                clr = tuple(o.color)
+                draw_chars_tex(o.char, y=o.y, x=o.x, color=clr)
 
 def draw_help(help_mgs):
     draw_chars_tex(help_mgs, y=0, x=27, color=(1.0, 1, 1))

@@ -38,10 +38,10 @@ def try_open_door(x, y, actor, objects): #describe status
     else:
         return OPEN_NODOOR, obj
 
-def go_down(_, world): 
+def go_down(_, world):  # TODO все движущиеся должны менять и на карте положение
     actor = world.player
     if can_be_there(actor.x, actor.y + 1, world):
-        actor.y += 1
+        actor.y += 1 # move_to(x, y, obj, objects)
 
 def go_up(_, world): 
     actor = world.player

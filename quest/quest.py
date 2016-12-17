@@ -67,14 +67,13 @@ def load_map(map_file, world):
     world.map_width = len(world.map[0])
     world.map_height = len(world.map)
     world.rooms_map = world.map
-    world.objects = list()
     world.level_data['objects']
     world.objects_data = world.level_data['objects']
-    world.objects += extract_objects(world.map, world.objects_data)
+    world.objects = extract_objects(world.map, world.objects_data)
     spawn = object_by_char(world.objects, '@')
     world.player = make_actor(name='self', x=spawn.x, y=spawn.y, color=(0,1,1), char='\x01')
     remove_obj(spawn, world.objects)
-    world.objects.append(world.player) # TODO refactor. add_object
+    add_object(world.objects, world.player)
     # state = {'map': yaml.load(... #TODO переделать в виде явных данных
     #           'player' : make_actor ... 
     world.map = retile_map(world.map, world.level_data['map_tiles'])
@@ -270,7 +269,7 @@ def describe_view(world):
 
 def draw_walk(world):
     draw_map(world, world.colors) # почти не нужно
-    draw_objects(world.objects)
+    draw_objects(world)
     draw_help(world.messages.help_mgs)
     draw_view(world.messages)
     draw_main_log(world.messages)

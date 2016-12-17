@@ -2,32 +2,29 @@ from mega import *
 from util import *
 from log import *
 
-def object_by_char(objects, char):
-    for o in objects:
+def object_by_char(objects, char): # ограничить полем видения
+    for o in objects.values():
         if o.char == char:
             return o
     return False
 
 def object_at_xy(x, y, objects):
-    for o in objects:
-        if o.x == x and o.y == y:
-            return o
-    return False
+    return objects.get((x, y), False)
 
 def remove_obj(obj, objects):
-    objects.remove(obj)
+    objects.pop((obj.x, obj.y))
 
 def object_at(point, objects): 
     x, y = point.x, point.y
-    for o in objects:
-        if o.x == x and o.y == y and o.name != 'self':
-            return o
+    o = object_at_xy(x, y, objects)
+    if o and o.name != 'self':
+        return o
     return False
 
 def can_be_there(x, y, world):
     objects = world.objects
     obj = object_at_xy(x, y, objects)
-    if not obj:
+    if not obj or obj.name == 'self':
         return True
     walk_to_obj(world, obj)
     return obj.passable
@@ -57,7 +54,7 @@ def object_char_translate(obj):
     return obj
 
 def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
-    objects = list()
+    objects = dict()
     for x in range(len(amap[0])):
         for y in range(len(amap)):
             char = amap[y][x]
@@ -73,9 +70,13 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
                         object_char_translate(contaiment)
                         cont.append(contaiment)
                     obj.contain = cont
-                objects.append(obj)
+                #objects.append(obj)
+                add_object(objects, obj)
                 amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
     return objects
+
+def add_object(objects, obj):
+    objects[(obj.x, obj.y)] = obj
 
 def get_object(objects_data, name):
     obj = DotDict(**objects_data[name])
