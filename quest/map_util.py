@@ -84,7 +84,7 @@ def get_object(objects_data, name):
     return obj
 
 def objects_in_view(actor, world): 
-    amap = world.old_map
+    amap = world.map
     objects = world.objects
     w = len(amap[0])
     h = len(amap)
@@ -100,7 +100,7 @@ def objects_in_view(actor, world):
     return objs
 
 def get_room_at(world, x, y):
-    tile = world.old_map[y][x]
+    tile = world.rooms_map[y][x]
     if world.rooms.contain(tile):
         room = world.rooms.get(tile)
         return room

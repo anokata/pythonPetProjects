@@ -65,9 +65,8 @@ def load_map(map_file, world):
     world.map = world.level_data['map'][0].split('\n')
     world.map_width = len(world.map[0])
     world.map_height = len(world.map)
-    world.old_map = world.level_data['map'][0].split('\n')
     world.map = [line for line in world.map if line != '']
-    world.old_map = [line for line in world.old_map if line != '']
+    world.rooms_map = world.map
     world.objects = list()
     world.level_data['objects']
     world.objects_data = world.level_data['objects']
