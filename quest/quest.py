@@ -84,10 +84,8 @@ def load_map(map_file, world):
     send_to_main_log(world.messages, world.level_data['start_msg'])
     light_map = dict() # так может это в свойстве тайла карты
     light_map[(0,2)] = True
+    light_map[(0,3)] = True
     world.light_map = light_map
-
-def is_lighted(x, y, world):
-    return world.light_map.get((x, y), False)
 
 def lines_to_xydict(amap):
     dict_map = dict()

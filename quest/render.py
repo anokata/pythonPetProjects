@@ -38,8 +38,16 @@ def draw_objects(world):
         for y in range(world.map_height):
             o = object_at_xy(x, y, objects)
             if o:
-                clr = tuple(o.color)
+                if is_lighted(x, y, world):
+                    clr = tuple(o.color)
+                else:
+                    clr = dark_color
+                    clr = tuple(o.color) #
+                    #if visible in dark? or is not passable
                 draw_chars_tex(o.char, y=o.y, x=o.x, color=clr)
+
+def is_lighted(x, y, world):
+    return world.light_map.get((x, y), False)
 
 def draw_help(help_mgs):
     draw_chars_tex(help_mgs, y=0, x=27, color=(1.0, 1, 1))
