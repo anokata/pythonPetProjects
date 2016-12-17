@@ -84,10 +84,9 @@ def get_object(objects_data, name):
     return obj
 
 def objects_in_view(actor, world): 
-    amap = world.map
     objects = world.objects
-    w = len(amap[0])
-    h = len(amap)
+    w = world.map_width
+    h = world.map_height
     objs = set()
     for i in (-1, 0, 1):
         for j in (-1, 0, 1):
