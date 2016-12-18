@@ -49,10 +49,10 @@ def make_actor(**kwargs):
             }
     actor = DotDict(**kwargs)
     actor.takeable = False
-    actor.head = DotDict(temp=36.6)
-    actor.body = DotDict(**stats_init)
-    actor.arms = DotDict(**stats_init)
-    actor.legs = DotDict(**stats_init)
+    actor.head = DotDict(temp=36.6, name='голова')
+    actor.body = DotDict(**stats_init, name='тело')
+    actor.arms = DotDict(**stats_init, name='руки')
+    actor.legs = DotDict(**stats_init, name='ноги')
     actor.passable = True
     return actor
 
@@ -118,7 +118,7 @@ def init_messages(world):
     world.messages.log_y = world.map_height
     msgs.main_log_y = msgs.log_y+1
     world.messages.view_y = msgs.main_log_y + 10
-    world.side_help = True
+    world.side_help = False
 
 def init_colors(world):
     colors = DotDict()

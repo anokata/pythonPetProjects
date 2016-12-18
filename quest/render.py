@@ -74,16 +74,16 @@ def update_char_info(world):
     info = ''
     player = world.player
     dinfo = (
-            'Голова\n  температура:{}',(player.head.temp,),
-            'Тело\n  температура:{}',(player.body.temp,),
-            '  сила:({}/{})',(player.body.strength, player.body.max_strength),
-            '  выносливость:({}/{})',(player.body.stamina, player.body.max_stamina),
-            'Руки\n  температура:{}',(player.arms.temp,),
-            '  сила:({}/{})',(player.arms.strength, player.arms.max_strength),
-            '  выносливость:({}/{})',(player.arms.stamina, player.arms.max_stamina),
-            'Ноги\n  температура:{}',(player.legs.temp,),
-            '  сила:({}/{})',(player.legs.strength, player.legs.max_strength),
-            '  выносливость:({}/{})',(player.legs.stamina, player.legs.max_stamina),
+            'Голова\n  температура:{:.2f}',(player.head.temp,),
+            'Тело\n  температура:{:.2f}',(player.body.temp,),
+            '  сила:({:.2f}/{:.2f})',(player.body.strength, player.body.max_strength),
+            '  выносливость:({:.2f}/{:.2f})',(player.body.stamina, player.body.max_stamina),
+            'Руки\n  температура:{:.2f}',(player.arms.temp,),
+            '  сила:({:.2f}/{:.2f})',(player.arms.strength, player.arms.max_strength),
+            '  выносливость:({:.2f}/{:.2f})',(player.arms.stamina, player.arms.max_stamina),
+            'Ноги\n  температура:{:.2f}',(player.legs.temp,),
+            '  сила:({:.2f}/{:.2f})',(player.legs.strength, player.legs.max_strength),
+            '  выносливость:({:.2f}/{:.2f})',(player.legs.stamina, player.legs.max_stamina),
             'Время {}', (world.tick,),
             )
     for k, v in zip(dinfo[::2], dinfo[1::2]):

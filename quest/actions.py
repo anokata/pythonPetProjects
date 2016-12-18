@@ -42,21 +42,25 @@ def go_down(_, world):  # TODO все движущиеся должны меня
     actor = world.player
     if can_be_there(actor.x, actor.y + 1, world):
         actor.y += 1 # move_to(x, y, obj, objects)
+        tire(world.player.legs)
 
 def go_up(_, world): 
     actor = world.player
     if can_be_there(actor.x, actor.y - 1, world):
         actor.y -= 1
+        tire(world.player.legs)
 
 def go_left(_, world):
     actor = world.player
     if can_be_there(actor.x - 1, actor.y, world):
         actor.x -= 1
+        tire(world.player.legs)
 
 def go_right(_, world): 
     actor = world.player
     if can_be_there(actor.x + 1, actor.y, world):
         actor.x += 1
+        tire(world.player.legs)
 
 def do_search(_, world): 
     objs = objects_in_view(world.player, world)
@@ -233,3 +237,11 @@ def calc_smash_probablity(strength, need, probablity):
 def take_chance(probablity):
     dice = random.random()
     return dice < probablity
+
+def tire(part, amount=0.1):
+    part.stamina -= amount
+    if part.stamina < 0:
+        part.stamina = 0
+
+def tired(part):
+    return part.stamina == 0
