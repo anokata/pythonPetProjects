@@ -43,6 +43,8 @@ def draw_objects(world):
                     clr = tuple(o.color)
                 else:
                     clr = dark_color
+                    if o.takeable:
+                        continue
                     #clr = tuple(o.color) #
                     #if visible in dark? or is not passable
                 draw_chars_tex(o.char, y=o.y, x=o.x, color=clr)
