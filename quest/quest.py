@@ -53,7 +53,8 @@ def make_actor(**kwargs):
     actor.arms = DotDict(**stats_init, name='руки')
     actor.legs = DotDict(**stats_init, name='ноги')
     actor.passable = True
-    actor.food_stock = 10
+    actor.available_energy = 10
+    actor.stock_energy = 10
     return actor
 
 def init():
@@ -192,6 +193,7 @@ def walk_keypress(key_sym, world):
             'a':go_inventory,
             'm':do_smash,
             'J':do_warmup,
+            'r':do_rest,
             'H':help_turn,
             }
     fun = keyboard_fun.get(key_sym, False)
@@ -199,6 +201,17 @@ def walk_keypress(key_sym, world):
         fun(key_sym, world)
         update_current_room(world)
         recalc_light(world)
+
+def do_rest(_, world):
+    rest(1, world)
+    send_to_main_log(world.messages, 'Вы отдыхаете...')
+
+def rest(n, world):
+    for i in range(n):
+        tick(world)
+        #TODO
+        restore = world.player.legs.max_stamina/100.0
+
 
 def help_turn(_, world):
     world.side_help = not world.side_help

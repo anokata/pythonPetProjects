@@ -240,6 +240,8 @@ def take_chance(probablity):
     dice = random.random()
     return dice < probablity
 
+
+
 def tire(part, amount=0.1):
     part.stamina -= amount
     if part.stamina < 0:
