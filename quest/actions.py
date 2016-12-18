@@ -243,7 +243,9 @@ def take_chance(probablity):
 def tire(part, amount=0.1):
     part.stamina -= amount
     if part.stamina < 0:
+        amount = part.stamina + amount
         part.stamina = 0
+    sub_strength_part(part, amount/10.0)
 
 def tired(part):
     return part.stamina == 0
@@ -268,6 +270,11 @@ def warm_up_part(part):
         return add_strength_part(part)
     tire(part)
     return False
+
+def sub_strength_part(part, amount):
+    part.strength -= amount
+    if part.strength < 0:
+        part.strength = 0
 
 def add_strength_part(part):
     if part.strength == part.max_strength:

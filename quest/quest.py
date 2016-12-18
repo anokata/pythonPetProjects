@@ -38,7 +38,6 @@ m - сломать
 J - разминка ?
 H - помощь выкл.
 '''
-
 def make_actor(**kwargs):
     stats_init={
             'temp':36.6,
@@ -54,6 +53,7 @@ def make_actor(**kwargs):
     actor.arms = DotDict(**stats_init, name='руки')
     actor.legs = DotDict(**stats_init, name='ноги')
     actor.passable = True
+    actor.food_stock = 10
     return actor
 
 def init():
