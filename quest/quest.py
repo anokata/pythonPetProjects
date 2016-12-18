@@ -203,33 +203,6 @@ def walk_keypress(key_sym, world):
 def help_turn(_, world):
     world.side_help = not world.side_help
 
-def do_warmup(_, world):
-    send_to_main_log(world.messages, 'Вы делаете зарядку.')
-    actor = world.player
-    if warm_up_all(actor):
-        send_to_main_log(world.messages, 'Вы чувствуете себя сильнее.')
-    else:
-        send_to_main_log(world.messages, 'Никакого эффекта, только устали.')
-        
-def warm_up_all(actor):
-    b = warm_up_part(actor.body)
-    l = warm_up_part(actor.legs)
-    a = warm_up_part(actor.arms)
-    return any([b,l,a])
-
-def warm_up_part(part):
-    if part.stamina == part.max_stamina:
-        return add_strength_part(part)
-    return False
-
-def add_strength_part(part):
-    if part.strength == part.max_strength:
-        return False
-    part.strength += 1
-    if part.strength > part.max_strength:
-        part.strength = part.max_strength
-    return True
-
 def door_open_keypress(key_sym, world):
     open_msg = ' '
     open_messages = {

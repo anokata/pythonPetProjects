@@ -32,6 +32,7 @@ def try_open_door(x, y, actor, objects): #describe status
                 return OPEN_NEED_KEY, obj
             else:
                 status = open_door(obj)
+                tire(actor.arms)
                 return status, obj
         else:
             return OPEN_CANNOT, obj
@@ -91,6 +92,7 @@ def take_from(x, y, world, _):
             send_to_main_log(world.messages, 'Вы берёте ' + obj.name)
             inventory_add(obj, world.inventory)
             remove_obj(obj, world.objects)
+            tire(world.player.arms)
         else:
             if obj.contain: # пока не содержат более одного объекта
                 if obj.need_key:
@@ -101,6 +103,7 @@ def take_from(x, y, world, _):
                 send_to_main_log(world.messages, 'Вы берёте {} из {}'.format(contaiment.name, obj.name))
                 obj.contain = False
                 inventory_add(contaiment, world.inventory)
+                tire(world.player.arms)
             else:
                 log_msg('Это нельзя брать.', world)
     else:
@@ -181,6 +184,7 @@ def object_apply(applicator, pacient, world):
 def try_key_door(key, door, world):
     send_to_main_log(world.messages, 'Пытатетесь открыть '+ door.name +' ключом...')
     if door.need_key:
+        tire(world.player.arms)
         if key.key_id == door.key_id:
             send_to_main_log(world.messages, 'Ключ подошёл, отпирате.')
             door.key_used = True
@@ -210,8 +214,8 @@ def smash_at(x, y, world, _):
     if obj:
         if obj.smashable:
             send_to_main_log(world.messages, 'Вы пытаетесь сломать ' + obj.name)
-            #TODO obj.smash_probability obj.need_leg_strength world.player.legs.strength
-            #надо чтобы дополнительная сила увеличивала вероятнсоть(как? конкретные значения) а малая уменьшала и тогда может не надо будет требований?(для инфы надо)
+            #TODO усталость? или статус и потом обработка или сообщение
+            tire(world.player.legs, 0.5)
             if obj.need_strength_type == 'LEG':
                 strength = world.player.legs.strength
             actual_probability = calc_smash_probablity(strength, obj.need_strength, obj.smash_probability)
@@ -221,10 +225,8 @@ def smash_at(x, y, world, _):
                 obj.smashable = False
                 obj.walk_msg = ''
                 obj.search_msg = obj.smashed_msg
-
             else:
                 send_to_main_log(world.messages, 'Неполучилось сломать')
-                #TODO усталость? или статус и потом обработка или сообщение
         else:
             send_to_main_log(world.messages, 'Это нельзя cломать')
     else:
@@ -245,3 +247,32 @@ def tire(part, amount=0.1):
 
 def tired(part):
     return part.stamina == 0
+
+def do_warmup(_, world):
+    send_to_main_log(world.messages, 'Вы делаете зарядку.')
+    actor = world.player
+    if warm_up_all(actor):
+        send_to_main_log(world.messages, 'Вы чувствуете себя сильнее.')
+    else:
+        send_to_main_log(world.messages, 'Никакого эффекта, только устали.')
+        
+def warm_up_all(actor):
+    b = warm_up_part(actor.body)
+    l = warm_up_part(actor.legs)
+    a = warm_up_part(actor.arms)
+    return any([b,l,a])
+
+def warm_up_part(part):
+    if part.stamina == part.max_stamina:
+        tire(part)
+        return add_strength_part(part)
+    tire(part)
+    return False
+
+def add_strength_part(part):
+    if part.strength == part.max_strength:
+        return False
+    part.strength += 1
+    if part.strength > part.max_strength:
+        part.strength = part.max_strength
+    return True
