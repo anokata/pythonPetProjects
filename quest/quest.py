@@ -36,7 +36,7 @@ ESQ - выход
 i - инвентарь
 m - сломать
 J - разминка ?
-
+H - помощь выкл.
 '''
 
 def make_actor(**kwargs):
@@ -118,6 +118,7 @@ def init_messages(world):
     world.messages.log_y = world.map_height
     msgs.main_log_y = msgs.log_y+1
     world.messages.view_y = msgs.main_log_y + 10
+    world.side_help = True
 
 def init_colors(world):
     colors = DotDict()
@@ -191,12 +192,16 @@ def walk_keypress(key_sym, world):
             'a':go_inventory,
             'm':do_smash,
             'J':do_warmup,
+            'H':help_turn,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:
         fun(key_sym, world)
         update_current_room(world)
         recalc_light(world)
+
+def help_turn(_, world):
+    world.side_help = not world.side_help
 
 def do_warmup(_, world):
     send_to_main_log(world.messages, 'Вы делаете зарядку.')
@@ -282,7 +287,7 @@ def describe_view(world):
 def draw_walk(world):
     draw_map(world, world.colors) # почти не нужно
     draw_objects(world)
-    draw_help(world.messages.help_mgs)
+    draw_side_info(world)
     draw_view(world.messages)
     draw_main_log(world.messages)
 

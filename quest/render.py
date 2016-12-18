@@ -1,6 +1,7 @@
 from ByteFont import *
 from map_util import *
 import math
+from collections import OrderedDict
 
 dark_color = (0.3, 0.3, 0.3)
 
@@ -45,7 +46,7 @@ def draw_objects(world):
                     clr = dark_color
                     if o.takeable:
                         continue
-                    #clr = tuple(o.color) #
+                    #clr = tuple(o.color) #TODO off lighting setting on key. world.settings
                     #if visible in dark? or is not passable
                 draw_chars_tex(o.char, y=o.y, x=o.x, color=clr)
     o = world.player
@@ -56,8 +57,38 @@ def draw_objects(world):
 def is_lighted(x, y, world):
     return world.light_map.get((x, y), False)
 
-def draw_help(help_mgs):
-    draw_chars_tex(help_mgs, y=0, x=27, color=(1.0, 1, 1))
+def draw_help(world):
+    draw_chars_tex(world.messages.help_mgs, y=0, x=world.map_width + 1, color=(1.0, 1, 1))
+
+def draw_side_info(world):
+    if world.side_help:
+        draw_help(world)
+    else:
+        draw_char_info(world)
+
+def draw_char_info(world):
+    update_char_info(world) #TODO update if надо
+    draw_chars_tex(world.messages.char_info, y=0, x=world.map_width + 1, color=(1.0, 1, 1))
+
+def update_char_info(world):
+    info = ''
+    player = world.player
+    dinfo = (
+            'Голова\n  температура:{}',(player.head.temp,),
+            'Тело\n  температура:{}',(player.body.temp,),
+            '  сила:({}/{})',(player.body.strength, player.body.max_strength),
+            '  выносливость:({}/{})',(player.body.stamina, player.body.max_stamina),
+            'Руки\n  температура:{}',(player.arms.temp,),
+            '  сила:({}/{})',(player.arms.strength, player.arms.max_strength),
+            '  выносливость:({}/{})',(player.arms.stamina, player.arms.max_stamina),
+            'Ноги\n  температура:{}',(player.legs.temp,),
+            '  сила:({}/{})',(player.legs.strength, player.legs.max_strength),
+            '  выносливость:({}/{})',(player.legs.stamina, player.legs.max_stamina),
+            'Время {}', (world.tick,),
+            )
+    for k, v in zip(dinfo[::2], dinfo[1::2]):
+        info += k.format(*v) + '\n'
+    world.messages.char_info = info
 
 def draw_view(messages):
     draw_chars_tex(messages.log_msg, y=messages.log_y, x=1, color=(0.9, 0.5, 0.1))
