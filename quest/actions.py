@@ -247,16 +247,56 @@ def tick(world):
         if event.type == 'MSG':
             send_to_main_log(world.messages, event.msg)
     print(world.tick)
+    if not world.player.live:
+        print('you not live, bye')
+        exit()
+    energy_exchange(world.player)
+
+def energy_exchange(player):
+    spend_energy(player, 0.01)
+    if player.available_energy < player.max_available/3:
+        energy_flow(player, 1)
+    #TODO
+    pass    
+
+def energy_flow(player, val):
+    if not dec_stock_energy(player, val):
+        player.available_energy += val
+        if player.available_energy > player.max_available:
+            player.available_energy = player.max_available
+
+def dec_stock_energy(player, val):
+    player.stock_energy -= val
+    if player.stock_energy <= 0:
+        player.stock_energy = 0
+        return True
+    return False
+
+def dec_available_energy(player, val):
+    player.available_energy -= val
+    if player.available_energy < 0.0 and player.stock_energy > 0.0:
+        player.stock_energy -= 0.1
+        player.available_energy += 0.1
+
+def spend_energy(player, val):
+    if player.available_energy > 0.0:
+        dec_available_energy(player, val)
+    #tick()
+    if not (player.available_energy > 0.0 or player.stock_energy > 0.0):
+        player.live = False
+        log_main('Ваша энегрия иссякла, вы больше не можете функционировать.')
 
 def rest(n, world):
     for i in range(n):
-        tick(world)
-        restore = world.player.legs.max_stamina/100.0
-        rest_part(world.player.legs, restore)
-        restore = world.player.arms.max_stamina/100.0
-        rest_part(world.player.arms, restore)
-        restore = world.player.body.max_stamina/100.0
-        rest_part(world.player.body, restore)
+        if world.player.available_energy > 0.0:
+            spend_energy(world.player, 0.1)
+            tick(world)
+            restore = world.player.legs.max_stamina/100.0
+            rest_part(world.player.legs, restore)
+            restore = world.player.arms.max_stamina/100.0
+            rest_part(world.player.arms, restore)
+            restore = world.player.body.max_stamina/100.0
+            rest_part(world.player.body, restore)
 
 def rest_part(part, val):
     part.stamina += val

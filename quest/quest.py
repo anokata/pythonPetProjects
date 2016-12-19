@@ -54,8 +54,10 @@ def make_actor(**kwargs):
     actor.arms = DotDict(**stats_init, name='руки')
     actor.legs = DotDict(**stats_init, name='ноги')
     actor.passable = True
-    actor.available_energy = 10
-    actor.stock_energy = 10
+    actor.available_energy = 1
+    actor.max_available = 10
+    actor.stock_energy = 2
+    actor.live = True
     return actor
 
 def init():

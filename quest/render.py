@@ -84,6 +84,8 @@ def update_char_info(world):
             'Ноги\n  температура:{:.2f}',(player.legs.temp,),
             '  сила:({:.2f}/{:.2f})',(player.legs.strength, player.legs.max_strength),
             '  выносливость:({:.2f}/{:.2f})',(player.legs.stamina, player.legs.max_stamina),
+            #'', (,),
+            'Энегрия({:.2f}/{:.2f}/{:.2f})', (player.available_energy, player.max_available, player.stock_energy),
             'Время {}', (world.tick,),
             )
     for k, v in zip(dinfo[::2], dinfo[1::2]):
