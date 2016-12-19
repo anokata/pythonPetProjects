@@ -211,6 +211,14 @@ def rest(n, world):
         tick(world)
         #TODO
         restore = world.player.legs.max_stamina/100.0
+        rest_part(world.player.legs, restore)
+        rest_part(world.player.arms, restore)
+        rest_part(world.player.body, restore)
+
+def rest_part(part, val):
+    part.stamina += val
+    if part.stamina > part.max_stamina:
+        part.stamina = part.max_stamina
 
 
 def help_turn(_, world):
