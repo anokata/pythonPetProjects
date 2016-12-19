@@ -58,6 +58,7 @@ def make_actor(**kwargs):
     actor.max_available = 10
     actor.stock_energy = 5
     actor.live = True
+    actor.water_level = 100 #100/100
     return actor
 
 def init():

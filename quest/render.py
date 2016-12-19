@@ -111,7 +111,10 @@ def draw_object_info(world):
 def draw_inventory(world):
     i = 1
     for obj in world.inventory:
-        line = "{}: {}({})".format(i, obj.name, obj.char)
+        line = "{}: {}".format(i, obj.name)
+        if obj.contain:
+            pass
+            line += "({})".format(obj.contain[0].name)
         i += 1
         clr = obj.color
         draw_text(line, y=i, x=1, color=clr)
