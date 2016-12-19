@@ -2,6 +2,7 @@ from ByteFont import *
 from map_util import *
 import math
 from collections import OrderedDict
+from actions import calc_avg_temp
 
 dark_color = (0.3, 0.3, 0.3)
 
@@ -86,6 +87,8 @@ def update_char_info(world):
             '  выносливость:({:.2f}/{:.2f})',(player.legs.stamina, player.legs.max_stamina),
             #'', (,),
             'Энегрия({:.2f}/{:.2f}/{:.2f})', (player.available_energy, player.max_available, player.stock_energy),
+            'средняя температура {}', (calc_avg_temp(player),),
+            'вода {}%', (player.water_level,),
             'Время {}', (world.tick,),
             )
     for k, v in zip(dinfo[::2], dinfo[1::2]):

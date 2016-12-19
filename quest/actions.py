@@ -302,6 +302,19 @@ def rest_part(part, val):
     if part.stamina > part.max_stamina:
         part.stamina = part.max_stamina
 
+def calc_water_loss(world):
+    player_temp = calc_avg_temp(world.player)
+    env_temp = world.rooms.current.temp
+    #TODO
+    return (env_temp**2)/400
+
+def water_loss(world):
+    world.player.water_level -= calc_water_loss(world)
+    #TODO
+
+def calc_avg_temp(player):
+    return (player.body.temp + player.legs.temp + player.arms.temp + player.head.temp) / 4
+
 def tire(world, part, amount=0.1):
     part.stamina -= amount
     if part.stamina <= 0.01:
@@ -313,6 +326,7 @@ def tire(world, part, amount=0.1):
     sub_strength_part(part, amount/10.0)
     train_stamina(part, amount)
     train_strength(part, amount)
+    water_loss(world)
 
 def tired(part):
     return part.stamina == 0

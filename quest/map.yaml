@@ -42,12 +42,16 @@ map_tiles:
 rooms:
     ',':
         name: 'кухня'
+        temp: 18
     '_':
         name: 'прихожая'
+        temp: 18
     'z':
         name: 'балкон'
+        temp: 15
     '^':
         name: 'спальня'
+        temp: 20
 objects:
     default: &default
         id: 0
