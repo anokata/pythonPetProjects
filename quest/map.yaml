@@ -99,6 +99,8 @@ objects:
     o:
         <<: *def_object
         name: 'бутылка'
+        char: 28
+        color: [0.7,0.8,1]
         contain:
             - 0: 
                 name: 'вода'
