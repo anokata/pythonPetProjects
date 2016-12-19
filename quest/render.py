@@ -58,7 +58,7 @@ def is_lighted(x, y, world):
     return world.light_map.get((x, y), False)
 
 def draw_help(world):
-    draw_chars_tex(world.messages.help_mgs, y=0, x=world.map_width + 1, color=(1.0, 1, 1))
+    draw_text(world.messages.help_mgs, y=0, x=world.map_width*1.7 + 1, color=(1.0, 1, 1))
 
 def draw_side_info(world):
     if world.side_help:
@@ -68,7 +68,7 @@ def draw_side_info(world):
 
 def draw_char_info(world):
     update_char_info(world) #TODO update if надо
-    draw_text(world.messages.char_info, y=0, x=world.map_width*2 + 1, color=(1.0, 1, 1))
+    draw_text(world.messages.char_info, y=0, x=world.map_width*1.7 + 1, color=(1.0, 1, 1))
 
 def update_char_info(world):
     info = ''
@@ -102,7 +102,6 @@ def draw_main_log(messages):
 
 def get_last_main_log(messages): #to log module
     return messages.main_log[-messages.main_log_maxview:]
-
 
 def draw_object_info(world):
     draw_lines_text(world.messages.object_info, 1, 1, (0, 1, 0.7))

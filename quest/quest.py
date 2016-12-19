@@ -286,7 +286,6 @@ def draw_walk(world):
     draw_side_info(world)
     draw_view(world.messages)
     draw_main_log(world.messages)
-    draw_chars_tex_font(state.font10x16, 'АЯая', y=30, x=1 + 1, color=(1.0, 0, 0))
 
 def gl_draw_pre():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
