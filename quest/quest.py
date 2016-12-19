@@ -20,6 +20,7 @@ state = MutableNamedTuple()
 state.window = 0
 map_file = 'map.yaml'
 font_file = 'font1.png'
+font_file10x16 = 'font10x16.png'
 help_mgs = '''Управление:
 h - влево
 l - вправо
@@ -59,7 +60,8 @@ def make_actor(**kwargs):
 
 def init():
     state.font = init_font(font_file, 16, 16)
-    set_font(state.font)
+    state.font10x16 = init_font(font_file10x16, 10, 16)
+    set_fonts(state.font, state.font10x16)
     init_map(map_file)
     init_states()
 
@@ -284,6 +286,7 @@ def draw_walk(world):
     draw_side_info(world)
     draw_view(world.messages)
     draw_main_log(world.messages)
+    draw_chars_tex_font(state.font10x16, 'АЯая', y=30, x=1 + 1, color=(1.0, 0, 0))
 
 def gl_draw_pre():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)

@@ -68,7 +68,7 @@ def draw_side_info(world):
 
 def draw_char_info(world):
     update_char_info(world) #TODO update if надо
-    draw_chars_tex(world.messages.char_info, y=0, x=world.map_width + 1, color=(1.0, 1, 1))
+    draw_text(world.messages.char_info, y=0, x=world.map_width*2 + 1, color=(1.0, 1, 1))
 
 def update_char_info(world):
     info = ''
@@ -91,13 +91,13 @@ def update_char_info(world):
     world.messages.char_info = info
 
 def draw_view(messages):
-    draw_chars_tex(messages.log_msg, y=messages.log_y, x=1, color=(0.9, 0.5, 0.1))
-    draw_chars_tex(messages.view_msg, y=messages.view_y, x=1, color=(0, 0.5, 1))
+    draw_text(messages.log_msg, y=messages.log_y, x=1, color=(0.9, 0.5, 0.1))
+    draw_text(messages.view_msg, y=messages.view_y, x=1, color=(0, 0.5, 1))
 
 def draw_main_log(messages):
     y = messages.main_log_y
     for m in get_last_main_log(messages):
-        draw_chars_tex(m, y=y, x=1, color=(0.5, 0.5, 0.5))
+        draw_text(m, y=y, x=1, color=(0.5, 0.5, 0.5))
         y += 1
 
 def get_last_main_log(messages): #to log module
@@ -105,7 +105,7 @@ def get_last_main_log(messages): #to log module
 
 
 def draw_object_info(world):
-    draw_lines_tex(world.messages.object_info, 1, 1, (0, 1, 0.7))
+    draw_lines_text(world.messages.object_info, 1, 1, (0, 1, 0.7))
 
 def draw_inventory(world):
     i = 1
@@ -113,7 +113,7 @@ def draw_inventory(world):
         line = "{}: {}({})".format(i, obj.name, obj.char)
         i += 1
         clr = obj.color
-        draw_chars_tex(line, y=i, x=1, color=clr)
+        draw_text(line, y=i, x=1, color=clr)
 
 def distance(a, b, c, d):
     return math.sqrt((a-c)*(a-c)+(b-d)*(b-d))
