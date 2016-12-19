@@ -22,7 +22,7 @@ def open_door(door):
         door.char = door.open_char
         return OPEN_OPEND
 
-def try_open_door(x, y, actor, objects): #describe status
+def try_open_door(world, x, y, actor, objects): #describe status
     x += actor.x
     y += actor.y
     obj = object_at(Point(x, y), objects)
@@ -74,7 +74,7 @@ def do_search(_, world):
                 for obj_in_container in obj.contain:
                     found += (obj.name + ' содержит ' + obj_in_container.name)
         elif obj.info_msg:
-            send_to_main_log(world.messages, obj.search_msg)
+            log_main(obj.search_msg, lblue)
     if not found:
         log_msg('Ничего необычного', world)
     else:
@@ -89,18 +89,18 @@ def take_from(x, y, world, _):
     if obj:
         if obj.takeable:
             log_msg('Беру ' + obj.name, world)
-            send_to_main_log(world.messages, 'Вы берёте ' + obj.name)
+            log_main('Вы берёте ' + obj.name, lblue)
             inventory_add(obj, world.inventory)
             remove_obj(obj, world.objects)
             tire(world, world.player.arms)
         else:
             if obj.contain: # пока не содержат более одного объекта
                 if obj.need_key:
-                    send_to_main_log(world.messages, obj.name + ' заперт')
+                    log_main(obj.name + ' заперт', lred)
                     return
                 contaiment = obj.contain[0]
                 log_msg('Беру из {} {}'.format(obj.name, contaiment.name), world)
-                send_to_main_log(world.messages, 'Вы берёте {} из {}'.format(contaiment.name, obj.name))
+                log_main('Вы берёте {} из {}'.format(contaiment.name, obj.name))
                 obj.contain = False
                 inventory_add(contaiment, world.inventory)
                 tire(world, world.player.arms)
@@ -158,11 +158,10 @@ def inventory_apply_action(x, y, world, applicator):
     pacient = object_at_xy(x, y, world.objects)
     if pacient:
         applicator = applicator[0]
-        send_to_main_log(world.messages, 
-                "Пытатетесь применить {} к {}...".format(applicator.name, pacient.name))# не должен быть .messages?
+        log_main("Пытатетесь применить {} к {}...".format(applicator.name, pacient.name))
         result = object_apply(applicator, pacient, world)
         if not result:
-            send_to_main_log(world.messages, "не получилось")
+            log_main("не получилось", lred)
     else:
         log_msg('Не к чему применять', world)
 
@@ -182,17 +181,17 @@ def object_apply(applicator, pacient, world):
         return False
 
 def try_key_door(key, door, world):
-    send_to_main_log(world.messages, 'Пытатетесь открыть '+ door.name +' ключом...')
+    log_main('Пытатетесь открыть '+ door.name +' ключом...')
     if door.need_key:
         tire(world, world.player.arms)
         if key.key_id == door.key_id:
-            send_to_main_log(world.messages, 'Ключ подошёл, отпирате.')
+            log_main('Ключ подошёл, отпирате.', lgreen)
             door.key_used = True
             door.need_key = False
         else:
-            send_to_main_log(world.messages, 'Ключ не подходит')
+            log_main('Ключ не подходит', lred)
     else:
-            send_to_main_log(world.messages, door.name + ' не запертo')
+            log_main(door.name + ' не запертo')
     return True
 
 def inventory_view_action(world, obj):
@@ -213,24 +212,24 @@ def smash_at(x, y, world, _):
     obj = object_at_xy(x, y, world.objects)
     if obj:
         if obj.smashable:
-            send_to_main_log(world.messages, 'Вы пытаетесь сломать ' + obj.name)
+            log_main('Вы пытаетесь сломать ' + obj.name)
             #TODO усталость? или статус и потом обработка или сообщение
             tire(world, world.player.legs, 0.5)
             if obj.need_strength_type == 'LEG':
                 strength = world.player.legs.strength
             actual_probability = calc_smash_probablity(strength, obj.need_strength, obj.smash_probability)
             if take_chance(actual_probability):
-                send_to_main_log(world.messages, 'Получилось сломать')
+                log_main('Получилось сломать', lgreen)
                 obj.can_open = True
                 obj.smashable = False
                 obj.walk_msg = ''
                 obj.search_msg = obj.smashed_msg
             else:
-                send_to_main_log(world.messages, 'Неполучилось сломать')
+                log_main('Неполучилось сломать', lred)
         else:
-            send_to_main_log(world.messages, 'Это нельзя cломать')
+            log_main('Это нельзя cломать')
     else:
-        send_to_main_log(world.messages, 'Здесь нечего ломать')
+        log_main('Здесь нечего ломать')
 
 def calc_smash_probablity(strength, need, probablity):
     p = strength/need * probablity
@@ -245,7 +244,7 @@ def tick(world):
     if world.tick_events.contain(str(world.tick)):
         event = world.tick_events.get(str(world.tick))
         if event.type == 'MSG':
-            send_to_main_log(world.messages, event.msg)
+            log_main(event.msg, blue)
     print(world.tick)
     if not world.player.live:
         print('you not live, bye')
@@ -284,7 +283,7 @@ def spend_energy(player, val):
     #tick()
     if not (player.available_energy > 0.0 or player.stock_energy > 0.0):
         player.live = False
-        log_main('Ваша энегрия иссякла, вы больше не можете функционировать.')
+        log_main('Ваша энегрия иссякла, вы больше не можете функционировать.', red)
 
 def rest(n, world):
     for i in range(n):
@@ -308,9 +307,9 @@ def tire(world, part, amount=0.1):
     if part.stamina <= 0.01:
         amount = part.stamina + amount
         part.stamina = 0
-        log_main('Ваши {} полностью устали, вы упали без сил'.format(part.name))
+        log_main('Ваши {} полностью устали, вы упали без сил'.format(part.name), red)
         rest(10, world)
-        log_main('Вы немного отдохнули')
+        log_main('Вы немного отдохнули', lred)
     sub_strength_part(part, amount/10.0)
     train_stamina(part, amount)
     train_strength(part, amount)
@@ -325,12 +324,12 @@ def train_strength(part, amount):
     part.max_strength += amount/20.0
 
 def do_warmup(_, world):
-    send_to_main_log(world.messages, 'Вы делаете зарядку.')
+    log_main('Вы делаете зарядку.', lgreen)
     actor = world.player
     if warm_up_all(world, actor):
-        send_to_main_log(world.messages, 'Вы чувствуете себя сильнее.')
+        log_main('Вы чувствуете себя сильнее.', green)
     else:
-        send_to_main_log(world.messages, 'Никакого эффекта, только устали.')
+        log_main('Никакого эффекта, только устали.', lred)
         
 def warm_up_all(world, actor):
     b = warm_up_part(world, actor.body)

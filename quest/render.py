@@ -98,8 +98,8 @@ def draw_view(messages):
 
 def draw_main_log(messages):
     y = messages.main_log_y
-    for m in get_last_main_log(messages):
-        draw_text(m, y=y, x=1, color=(0.5, 0.5, 0.5))
+    for msg, color in get_last_main_log(messages):
+        draw_text(msg, y=y, x=1, color=color)
         y += 1
 
 def get_last_main_log(messages): #to log module

@@ -44,7 +44,7 @@ def make_actor(**kwargs):
             'temp':36.6,
             'strength':1,
             'max_strength':2,
-            'stamina':1,
+            'stamina':3,
             'max_stamina':10,
             }
     actor = DotDict(**kwargs)
@@ -54,9 +54,9 @@ def make_actor(**kwargs):
     actor.arms = DotDict(**stats_init, name='руки')
     actor.legs = DotDict(**stats_init, name='ноги')
     actor.passable = True
-    actor.available_energy = 1
+    actor.available_energy = 5
     actor.max_available = 10
-    actor.stock_energy = 2
+    actor.stock_energy = 5
     actor.live = True
     return actor
 
@@ -88,7 +88,7 @@ def load_map(map_file, world):
     init_messages(world)
     load_rooms(world)
     log_msg(world.level_data['mapname'], world)
-    send_to_main_log(world.messages, world.level_data['start_msg'])
+    log_main(world.level_data['start_msg'], white)
     light_map = dict() # так может это в свойстве тайла карты. наверно нет т.к. постоянно заного обновлять? или стат свет
     world.light_map = light_map
     recalc_light(world)
@@ -209,7 +209,7 @@ def walk_keypress(key_sym, world):
 
 def do_rest(_, world):
     rest(1, world)
-    send_to_main_log(world.messages, 'Вы отдыхаете...')
+    log_main('Вы отдыхаете...', lgreen)
 
 def help_turn(_, world):
     world.side_help = not world.side_help
@@ -226,12 +226,12 @@ def door_open_keypress(key_sym, world):
     direction = get_direction(key_sym)
     if direction:
         x, y = direction
-        open_status, obj = try_open_door(x, y, world.player, world.objects)
+        open_status, obj = try_open_door(world, x, y, world.player, world.objects)
         open_msg = open_messages[open_status]
         if open_status == OPEN_OPEND:
-            send_to_main_log(world.messages, 'Вы открыли {}'.format(obj.name))
+            log_main('Вы открыли {}'.format(obj.name))
         if open_status == OPEN_CLOSED:
-            send_to_main_log(world.messages, 'Вы закрыли {}'.format(obj.name))
+            log_main('Вы закрыли {}'.format(obj.name))
     stateSystem.changeState('walk')
     log_msg(open_msg, world)
 

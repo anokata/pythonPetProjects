@@ -35,7 +35,7 @@ def can_be_there(x, y, world):
 
 def walk_to_obj(world, obj):
     if obj.walk_msg:
-        send_to_main_log(world.messages, obj.walk_msg)
+        log_main(obj.walk_msg)
 
 def describe_objects(objects, world): #test
     strings = 'Вижу:\n'
@@ -115,4 +115,4 @@ def update_current_room(world):
     new_room = get_room_at(world, world.player.x, world.player.y)
     if old_room != new_room:
         world.rooms.current = new_room
-        send_to_main_log(world.messages, 'Вхожу в ' + new_room.name)
+        log_main('Вхожу в ' + new_room.name)
