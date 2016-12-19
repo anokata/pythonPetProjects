@@ -250,6 +250,7 @@ def tick(world):
         print('you not live, bye')
         exit()
     energy_exchange(world.player)
+    water_loss(world)
 
 def energy_exchange(player):
     spend_energy(player, 0.01)
@@ -306,16 +307,25 @@ def calc_water_loss(world):
     player_temp = calc_avg_temp(world.player)
     env_temp = world.rooms.current.temp
     #TODO
-    return (env_temp**2)/400
+    loss = (env_temp**2)/400
+    return loss if loss > 0.1 else 0.1
 
 def water_loss(world):
     world.player.water_level -= calc_water_loss(world)
-    #TODO
+    if world.player.water_level < 0:
+        world.player.water_level = 0
+
+def calc_weak_coeff(world):
+    coef = 1.0
+    if world.player.water_level < 30:
+        coef = 40/(world.player.water_level + 10)
+    return coef
 
 def calc_avg_temp(player):
     return (player.body.temp + player.legs.temp + player.arms.temp + player.head.temp) / 4
 
 def tire(world, part, amount=0.1):
+    amount *= calc_weak_coeff(world)
     part.stamina -= amount
     if part.stamina <= 0.01:
         amount = part.stamina + amount
@@ -326,7 +336,6 @@ def tire(world, part, amount=0.1):
     sub_strength_part(part, amount/10.0)
     train_stamina(part, amount)
     train_strength(part, amount)
-    water_loss(world)
 
 def tired(part):
     return part.stamina == 0
