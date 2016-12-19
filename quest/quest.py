@@ -44,7 +44,7 @@ def make_actor(**kwargs):
             'temp':36.6,
             'strength':1,
             'max_strength':2,
-            'stamina':10,
+            'stamina':1,
             'max_stamina':10,
             }
     actor = DotDict(**kwargs)
@@ -122,6 +122,7 @@ def init_messages(world):
     msgs.main_log_y = msgs.log_y+1
     world.messages.view_y = msgs.main_log_y + 10
     world.side_help = False
+    set_main_log(world.messages)
 
 def init_colors(world):
     colors = DotDict()
@@ -208,21 +209,6 @@ def do_rest(_, world):
     rest(1, world)
     send_to_main_log(world.messages, 'Вы отдыхаете...')
 
-def rest(n, world):
-    for i in range(n):
-        tick(world)
-        #TODO
-        restore = world.player.legs.max_stamina/100.0
-        rest_part(world.player.legs, restore)
-        rest_part(world.player.arms, restore)
-        rest_part(world.player.body, restore)
-
-def rest_part(part, val):
-    part.stamina += val
-    if part.stamina > part.max_stamina:
-        part.stamina = part.max_stamina
-
-
 def help_turn(_, world):
     world.side_help = not world.side_help
 
@@ -246,18 +232,6 @@ def door_open_keypress(key_sym, world):
             send_to_main_log(world.messages, 'Вы закрыли {}'.format(obj.name))
     stateSystem.changeState('walk')
     log_msg(open_msg, world)
-##---##
-def ReSizeGLScene(Width, Height):
-    state.w = w = Width
-    state.h = h = Height
-    if Height == 0:                     
-        Height = 1
-    glViewport(0, 0, Width, Height)     
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    glOrtho(0, w, h, 0, 100.0, -100.0)
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
 
 def step(d):
     color_mul_step(state.world.colors)
@@ -267,14 +241,6 @@ def step(d):
 def update(world):
     world.messages.view_msg = describe_view(world)
     tick(world)
-
-def tick(world):
-    world.tick += 1
-    if world.tick_events.contain(str(world.tick)):
-        event = world.tick_events.get(str(world.tick))
-        if event.type == 'MSG':
-            send_to_main_log(world.messages, event.msg)
-    print(world.tick)
 
 def describe_view(world):
     objs = objects_in_view(world.player, world)
@@ -287,6 +253,7 @@ def draw_walk(world):
     draw_view(world.messages)
     draw_main_log(world.messages)
 
+##---##
 def gl_draw_pre():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()                    
@@ -328,6 +295,18 @@ def mouse(button, state, x, y):
 
 def motion(x, y):
     pass
+
+def ReSizeGLScene(Width, Height):
+    state.w = w = Width
+    state.h = h = Height
+    if Height == 0:                     
+        Height = 1
+    glViewport(0, 0, Width, Height)     
+    glMatrixMode(GL_PROJECTION)
+    glLoadIdentity()
+    glOrtho(0, w, h, 0, 100.0, -100.0)
+    glMatrixMode(GL_MODELVIEW)
+    glLoadIdentity()
 
 def main():
     glutInit(sys.argv)
