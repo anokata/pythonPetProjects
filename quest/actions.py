@@ -144,15 +144,31 @@ def get_direction(key_sym):
 
 INVENTORY_VIEW_ITEM = 'v'
 INVENTORY_APPLY_ITEM = 'a'
+INVENTORY_EAT_ITEM = 'e'
 def do_inventory_action(world, action, object_index):
     inventory_actions = {
         INVENTORY_VIEW_ITEM: inventory_view_action,
         INVENTORY_APPLY_ITEM: lambda w, x: direction_do(w, inventory_apply_action, x),
+        INVENTORY_EAT_ITEM: inventory_eat_action,
             }
     if object_index < len(world.inventory):
         fun = inventory_actions.get(action, False)
         if fun:
             fun(world, world.inventory[object_index])
+            
+def inventory_eat_action(world, obj):
+    world.stateSystem.changeState('walk')
+    if obj.eatable:
+        log_main('Вы едите {}'.format(obj.name))
+        tire(world, world.player.body, obj.digestion_energy)
+        add_energy(world.player, obj.sugar)
+        #TODO lipids to stock_energy and complex_carbons and proteins
+        remove_obj_from_inventory(world, obj)
+    else:
+        log_main('{} не съедобно'.format(obj.name))
+
+def remove_obj_from_inventory(world, obj):
+    world.inventory.remove(obj)
 
 def inventory_apply_action(x, y, world, applicator):
     pacient = object_at_xy(x, y, world.objects)
@@ -251,6 +267,12 @@ def tick(world):
         exit()
     energy_exchange(world.player)
     water_loss(world)
+
+def add_energy(player, val):
+    player.available_energy += val
+    if player.available_energy > player.max_available:
+        player.stock_energy += player.available_energy - player.max_available
+        player.available_energy = player.max_available
 
 def energy_exchange(player):
     spend_energy(player, 0.01)

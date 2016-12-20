@@ -37,6 +37,7 @@ ESQ - выход
 i - инвентарь
 m - сломать
 J - разминка ?
+e - съесть
 H - помощь выкл.
 '''
 def make_actor(**kwargs):
@@ -200,6 +201,7 @@ def walk_keypress(key_sym, world):
             'm':do_smash,
             'J':do_warmup,
             'r':do_rest,
+            'e':go_inventory,
             'H':help_turn,
             }
     fun = keyboard_fun.get(key_sym, False)

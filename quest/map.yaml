@@ -67,6 +67,7 @@ objects:
         viewable: True
         name: ' '
         smashable: False
+        eatable: False
     hidden_object: &hidden_object
         <<: *default
         passable: True
@@ -279,6 +280,9 @@ objects:
         takeable: True
         color: [1.0, 0.0, 0.0]
         info_msg: 'Просто фрукт.'
+        eatable: True
+        sugar: 3
+        digestion_energy: 1
     c:
         <<: *default
         name: 'чашка'
