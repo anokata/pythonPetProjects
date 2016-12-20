@@ -125,46 +125,6 @@ def draw_inventory(world):
 def distance(a, b, c, d):
     return math.sqrt((a-c)*(a-c)+(b-d)*(b-d))
 
-def _gen_ray(alpha, R):
-    r = 0.5
-    while r <= R:
-        x, y = math.cos(math.radians(alpha))*r, math.sin(math.radians(alpha))*r
-        r += 0.5
-        yield int(x), int(y)
-
-def get_ray(alpha, R):
-    ray = list(_gen_ray(alpha, R))
-    sray = list()
-    for r in ray:
-        if r not in sray:
-            sray.append(r)
-    return sray
-
-def get_circle_rays(R): #TODO static calc
-    rays = list()
-    for alpha in range(0, 370, 10):
-        rays.append(get_ray(alpha, R))
-    return rays
-
-def cast_rays(world):
-    R = 8
-    px = world.player.x #TODO get_player_pos
-    py = world.player.y
-    rays = list()
-    for ray in get_circle_rays(R):
-        new_ray = list()
-        for x, y in ray:
-            obj = object_at_xy(x + px, y + py, world.objects) #TODO just world?.get_objects
-            if not obj:
-                new_ray.append((x, y))
-            elif obj.passable:
-                new_ray.append((x, y))
-            else:
-                new_ray.append((x, y))
-                break
-        rays.append(new_ray)
-    return rays
-
 if __name__=='__main__':
     print(get_ray(30, 5)) #TODO TEST
     print(get_circle_rays(5))

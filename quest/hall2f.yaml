@@ -1,0 +1,97 @@
+mapname: 'подъезд'
+start_msg: |
+    Вы вышли из квартиры
+tick_events:
+    '2':
+        type: 'MSG'
+        msg: ''
+map:
+    - |
+        ___#..
+        #__#..
+        #@_#..
+        #__#..
+        ####..
+map_tiles:
+    ['#',3,
+     '_', ' ',
+
+        ]
+rooms:
+    '_':
+        name: 'пол'
+        temp: 15
+objects:
+    default: &default
+        id: 0
+        passable: False
+        takeable: False
+        color: [1,1,1]
+        can_open: False
+        contain: False
+        walk_msg: False
+        info_msg: 'Нет информации.'
+        need_key: False
+        search_msg: ''
+        viewable: True
+        name: ' '
+        smashable: False
+        eatable: False
+        reminder: False
+    hidden_object: &hidden_object
+        <<: *default
+        passable: True
+        viewable: False
+    def_object: &def_object
+        <<: *default
+        passable: True
+        takeable: True
+    key: &key
+        <<: *default
+        key_id: 0
+        name: 'ключ'
+        char: 8
+        passable: True
+        takeable: True
+        id: 4001
+    '@':
+        <<: *default
+        name: 'spawn'
+        passable: True
+    door: &door
+        <<: *default
+        id: 4000
+        name: 'дверь'
+        can_open: True
+        need_key: False
+        opened: False
+        open_char: '/'
+        close_char: 6
+        char: 6
+        key_used: False
+    locked: &locked
+        <<: *default
+        can_open: True
+        need_key: True
+        opened: False
+        id: 4000
+        key_id: 2
+    +:
+        <<: *door
+        color: [0.7, 0.4, 0.4]
+        passable: False
+    '#':
+        <<: *default 
+        name: 'стену'
+        passable: False
+        char: 3
+        color: [0.8, 0.8, 0.8]
+        walk_msg: 'Стена плотная - пройти не получится.'
+        viewable: False
+    window: &window
+        <<: *default
+        name: 'окно'
+        color: [0, 1, 1]
+        passable: False
+        take: False
+        char: 6

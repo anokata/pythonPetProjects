@@ -21,13 +21,14 @@ map:
         #,,,,n,,,h#  :::v::::o#
         #,b,,,K,,a#  :::#:::::#
         ###+#C#####  :::#:DeE:#
-        #_________^^:::T#:::@B#
+        #_________^^:::T#T::@B#
         #__________############
         #_________O#.....::::::
         ##H##+##+###.....::::::
         #.N.# V r#.............
-        #...######............Z
-        #......................
+        #TT#######............Z
+        .......................
+        .......................
 map_tiles:
     ['#',3,
      'B', 2,
@@ -69,6 +70,7 @@ objects:
         smashable: False
         eatable: False
         reminder: False
+        walk_action: False
     hidden_object: &hidden_object
         <<: *default
         passable: True
@@ -98,6 +100,14 @@ objects:
         char: 16
         info_msg: | 
             Мир уничтожен.
+    T:
+        <<: *default
+        name: 'map_teleport'
+        char: ' '
+        viewable: False
+        passable: True
+        map_dest: 'hall2f.yaml'
+        walk_action: 'map_load'
     '@':
         <<: *default
         name: 'spawn'

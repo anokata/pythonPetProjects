@@ -21,25 +21,6 @@ state.window = 0
 map_file = 'map.yaml'
 font_file = 'font1.png'
 font_file10x16 = 'font10x16.png'
-help_mgs = '''Управление:
-h - влево
-l - вправо
-j - вниз
-k - вверх
-, - взять
-o - открыть
-c - закрыть
-s - исследовать
-i - инвентарь
-a - применить
-v - осмотреть предмет
-ESQ - выход
-i - инвентарь
-m - сломать
-J - разминка ?
-e - съесть
-H - помощь выкл.
-'''
 def make_actor(**kwargs):
     stats_init={
             'temp':36.6,
@@ -73,75 +54,11 @@ def init_player(world, x, y):
     world.player = make_actor(name='self', x=x, y=y, color=(0,1,1), char='\x01')
     add_object(world.objects, world.player)
 
-def load_map(map_file, world):
-    # state = {'map': yaml.load(... #TODO переделать в виде явных данных
-    #           'player' : make_actor ... 
-    world.level_data = yaml.load(open(map_file)) # map load method, from string?
-    world.map = world.level_data['map'][0].split('\n')
-    world.map = [line for line in world.map if line != '']
-    world.map_width = len(world.map[0])
-    world.map_height = len(world.map)
-    world.rooms_map = world.map
-    world.level_data['objects']
-    world.objects_data = world.level_data['objects']
-    world.objects = extract_objects(world.map, world.objects_data)
-    spawn = object_by_char(world.objects, '@')
-    sx, sy = spawn.x, spawn.y
-    remove_obj(spawn, world.objects)
-    world.map = retile_map(world.map, world.level_data['map_tiles'])
-    world.map = lines_to_xydict(world.map)
-    init_messages(world)
-    load_rooms(world)
-    log_msg(world.level_data['mapname'], world)
-    log_main(world.level_data['start_msg'], white)
-    light_map = dict() # так может это в свойстве тайла карты. наверно нет т.к. постоянно заного обновлять? или стат свет
-    world.light_map = light_map
-    #recalc_light(world)
-    return sx, sy
-
-def recalc_light(world):
-    light_map = dict() 
-    world.light_map = light_map
-    px = world.player.x
-    py = world.player.y
-    light_map[(px, py)] = True
-    #for r in get_circle_rays(5):
-    for r in cast_rays(world):
-        for x,y in r:
-            light_map[(x+px, y+py)] = True
-
-
-def lines_to_xydict(amap):
-    dict_map = dict()
-    for x in range(len(amap[0])):
-        for y in range(len(amap)):
-            dict_map[(x,y)] = amap[y][x]
-    return dict_map
-
-def init_messages(world):
-    msgs = DotDict()
-    world.messages = msgs
-    world.messages.view_msg = 'none'
-    world.messages.log_msg = '...'
-    world.messages.help_mgs = help_mgs
-    world.messages.main_log = list()
-    world.messages.main_log_maxview = 10
-    world.messages.log_y = world.map_height
-    msgs.main_log_y = msgs.log_y+1
-    world.messages.view_y = msgs.main_log_y + 10
-    world.side_help = False
-    set_main_log(world.messages)
-
 def init_colors(world):
     colors = DotDict()
     colors.color_multiplier = 1.0
     colors.color_multiplier_dir = True
     world.colors = colors
-
-def load_rooms(world):
-    rooms = make_recursive_dotdict(world.level_data['rooms'])
-    world.rooms = rooms
-    world.rooms.current = get_room_at(world, 0, 0)
 
 def init_map(map_file):
     world = DotDict()
