@@ -60,7 +60,7 @@ char_to_objects_names:
         'N', 'newspaper',
         'T', 'map_teleport_hall',
         '@', 'spawn',
-        'o', 'bottle',
+        'o', 'bottle1',
         'E', 'shirt',
         'e', 'pants',
         'D', 'kross',

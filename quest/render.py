@@ -88,7 +88,7 @@ def update_char_info(world):
             #'', (,),
             'Энегрия({:.2f}/{:.2f}/{:.2f})', (player.available_energy, player.max_available, player.stock_energy),
             'средняя температура {}', (calc_avg_temp(player),),
-            'вода {}%', (player.water_level,),
+            'вода {:.1f}%', (player.water_level,),
             'Время {}', (world.tick,),
             )
     for k, v in zip(dinfo[::2], dinfo[1::2]):

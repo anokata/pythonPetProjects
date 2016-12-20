@@ -94,13 +94,19 @@ objects:
         <<: *default
         name: 'spawn'
         passable: True
-    bottle:
+    bottle: &bottle
         <<: *def_object
         name: 'бутылка'
         char: 28
         color: [0.7,0.8,1]
+        eatable: True
+        reminder: 
+                <<: *bottle
+                name: 'пустая бутылка'
+    bottle1:
+        <<: *bottle
         contain:
-            - 0: 
+            - water: 
                 name: 'вода'
                 clean: True
                 volume: 1

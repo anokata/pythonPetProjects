@@ -158,7 +158,12 @@ def do_inventory_action(world, action, object_index):
             
 def inventory_eat_action(world, obj):
     world.stateSystem.changeState('walk')
-    if obj.eatable:
+    if obj.contain: #water max=2
+        log_main('Вы пьёте {}, оставляя {}'.format(obj.name, obj.reminder.name))
+        water_get(world.player, obj.contain[0].volume/2 * 100)
+        inventory_add(obj.reminder, world.inventory)
+        remove_obj_from_inventory(world, obj)
+    elif obj.eatable:
         log_main('Вы едите {}, оставляя {}'.format(obj.name, obj.reminder.name))
         tire(world, world.player.body, obj.digestion_energy)
         add_energy(world.player, obj.sugar)
@@ -330,8 +335,14 @@ def calc_water_loss(world):
     player_temp = calc_avg_temp(world.player)
     env_temp = world.rooms.current.temp
     #TODO
-    loss = (env_temp**2)/400
+    loss = (env_temp**2)/4000
     return loss if loss > 0.1 else 0.1
+
+def water_get(player, val):
+    player.water_level += val
+    if player.water_level > 100.0:
+        player.water_level = 100
+        log_main('Выпили слишком много, всё не осилили, зря потратили')
 
 def water_loss(world):
     world.player.water_level -= calc_water_loss(world)
