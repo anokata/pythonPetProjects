@@ -71,7 +71,7 @@ def init_map(map_file):
     recalc_light(world)
     update_current_room(world)
     world.inventory = list()
-    inventory_add(get_object(world.objects_data, 'a'), world.inventory)# init inv in map?plr?
+    inventory_add(get_object(world, 'apple'), world.inventory)# init inv in map?plr?
     world.tick_events = make_recursive_dotdict(world.level_data['tick_events'])
 
 def init_states():

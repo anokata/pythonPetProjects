@@ -53,6 +53,45 @@ rooms:
     '^':
         name: 'спальня'
         temp: 20
+char_to_objects_names:
+    [
+        '#', 'wall',
+        'n', 'note1',
+        'N', 'newspaper',
+        'T', 'map_teleport',
+        '@', 'spawn',
+        'o', 'bottle',
+        'E', 'shirt',
+        'e', 'pants',
+        'D', 'kross',
+        'R', 'heater',
+        'L', 'lamp',
+        'G', 'plita',
+        'f', 'fringe',
+        'r', 'sink',
+        't', 'table',
+        'h', 'chair',
+        'C', 'door_key1',
+        'V', 'vertical_door',
+        'v', 'vertical_broke_door',
+        '+', 'horiz_door',
+        'k', 'key2',
+        'K', 'key3',
+        'H', 'door_key1',
+        ':', 'floor',
+        'B', 'bed',
+        'p', 'plant_pot',
+        'd', 'case',
+        'b', 'box',
+        'a', 'apple',
+        'c', 'cup',
+        'X', 'comode',
+        'w', 'window1',
+        'W', 'window2',
+        's', 'msg2',
+        '', '',
+        '', '',
+    ]
 objects:
     default: &default
         id: 0
@@ -87,92 +126,6 @@ objects:
         passable: True
         takeable: True
         id: 4001
-    n:
-        <<: *def_object
-        name: 'Записка #1'
-        char: 16
-        info_msg: | 
-           Привет Я из будущего, это Я из прошлого пишу тебе. 
-           Ты оказался тут забыв всё, не паникуй.
-    N:
-        <<: *def_object
-        name: 'Газета'
-        char: 16
-        info_msg: | 
-            Мир уничтожен.
-    T:
-        <<: *default
-        name: 'map_teleport'
-        char: 132
-        viewable: False
-        passable: False
-        map_dest: 'hall2f.yaml'
-        walk_action: 'map_load'
-    '@':
-        <<: *default
-        name: 'spawn'
-        passable: True
-    o:
-        <<: *def_object
-        name: 'бутылка'
-        char: 28
-        color: [0.7,0.8,1]
-        contain:
-            - 0: 
-                name: 'вода'
-                clean: True
-                volume: 1
-                char: 32
-    E:
-        <<: *def_object
-        name: 'рубашка'
-        char: 23
-        color: [0.8,0.2,0.1]
-    e:
-        <<: *def_object
-        name: 'штаны'
-        char: 24
-        color: [0.5,1,0]
-    D:
-        <<: *def_object
-        name: 'кросовки'
-        char: 22
-        color: [0,0,1]
-    R:
-        <<: *default
-        name: 'батарея'
-        char: 25
-    L:
-        <<: *default
-        name: 'лампа'
-        char: 27
-        color: [1,1,0]
-    G:
-        <<: *default
-        name: 'плита'
-        char: 29
-    f:
-        <<: *default
-        name: 'холодильник'
-        char: 11
-    r:
-        <<: *default
-        name: 'раковина'
-        char: 7
-    t:
-        <<: *default 
-        name: 'стол'
-        action_msg: 'забраться под стол или на стол?'
-        passable: False
-        color: [0.7, 0.4, 0.4]
-        char: 4
-    h:
-        <<: *default 
-        name: 'стул'
-        char: 'h'
-        color: [0.8, 0.5, 0]
-        passable: True
-        take: True
     door: &door
         <<: *default
         id: 4000
@@ -194,18 +147,111 @@ objects:
     vdoor: &vdoor
         <<: *door
         close_char: 30
-    C:
+    window: &window
+        <<: *default
+        name: 'окно'
+        color: [0, 1, 1]
+        passable: False
+        take: False
+        char: 6
+    note1:
+        <<: *def_object
+        name: 'Записка #1'
+        char: 16
+        info_msg: | 
+           Привет Я из будущего, это Я из прошлого пишу тебе. 
+           Ты оказался тут забыв всё, не паникуй.
+    newspaper:
+        <<: *def_object
+        name: 'Газета'
+        char: 16
+        info_msg: | 
+            Мир уничтожен.
+    map_teleport:
+        <<: *default
+        name: 'map_teleport'
+        char: 132
+        viewable: False
+        passable: False
+        map_dest: 'hall2f.yaml'
+        walk_action: 'map_load'
+    spawn:
+        <<: *default
+        name: 'spawn'
+        passable: True
+    bottle:
+        <<: *def_object
+        name: 'бутылка'
+        char: 28
+        color: [0.7,0.8,1]
+        contain:
+            - 0: 
+                name: 'вода'
+                clean: True
+                volume: 1
+                char: 32
+    shirt:
+        <<: *def_object
+        name: 'рубашка'
+        char: 23
+        color: [0.8,0.2,0.1]
+    pants:
+        <<: *def_object
+        name: 'штаны'
+        char: 24
+        color: [0.5,1,0]
+    kross:
+        <<: *def_object
+        name: 'кросовки'
+        char: 22
+        color: [0,0,1]
+    heater:
+        <<: *default
+        name: 'батарея'
+        char: 25
+    lamp:
+        <<: *default
+        name: 'лампа'
+        char: 27
+        color: [1,1,0]
+    plita:
+        <<: *default
+        name: 'плита'
+        char: 29
+    fringe:
+        <<: *default
+        name: 'холодильник'
+        char: 11
+    sink:
+        <<: *default
+        name: 'раковина'
+        char: 7
+    table:
+        <<: *default 
+        name: 'стол'
+        action_msg: 'забраться под стол или на стол?'
+        passable: False
+        color: [0.7, 0.4, 0.4]
+        char: 4
+    chair:
+        <<: *default 
+        name: 'стул'
+        char: 'h'
+        color: [0.8, 0.5, 0]
+        passable: True
+        take: True
+    door_key1:
         <<: *door
         color: [1.0, 0.4, 0.4]
         passable: False
         key_id: 1
         need_key: True
-    V:
+    vertical_door:
         <<: *vdoor
         color: [0.7, 0.4, 0.4]
         passable: False
         char: 30
-    v:
+    vertical_broke_door:
         <<: *vdoor
         color: [0.7, 0.4, 0.4]
         passable: False
@@ -218,33 +264,33 @@ objects:
         need_strength: 1
         need_strength_type: 'LEG'
         smash_probability: 0.5
-    +:
+    horiz_door:
         <<: *door
         color: [0.7, 0.4, 0.4]
         passable: False
-    k:  
+    key2:  
         <<: *key
         key_id: 2
         color: [0.1, 0.2, 0.8]
-    K:  
+    key3:  
         <<: *key
         key_id: 3
         char: 17
-    H:
+    door_key1:
         <<: *door
         color: [1.0, 0.3, 0.2]
         passable: False
         need_key: True
         key_id: 1
         char: '='
-    ':':
+    floor:
         <<: *default 
         name: 'пол'
         passable: True
         char: 32
         color: [0.5, 0.5, 0.5]
         viewable: False
-    '#':
+    wall:
         <<: *default 
         name: 'стену'
         passable: False
@@ -252,17 +298,17 @@ objects:
         color: [0.8, 0.8, 0.8]
         walk_msg: 'Стена плотная - пройти не получится.'
         viewable: False
-    B:
+    bed:
         <<: *default
         name: 'кровать'
         char: 21
-    p: 
+    plant_pot: 
         <<: *default
         name: 'растение в горшке'
         search_msg: 'Зелёная фукиция'
         char: 20
         color: [1.0, 1.0, 1.0]
-    d:  
+    case:  
         <<: *locked
         name: 'чемодан'
         color: [0.1, 0.2, 0.8]
@@ -273,7 +319,7 @@ objects:
                 <<: *def_object
                 name: 'камень'
                 char: 19
-    b:  
+    box:  
         <<: *default
         name: 'коробка'
         char: 9
@@ -283,7 +329,7 @@ objects:
                 char: 8
                 key_id: 1
                 color: [1.0, 0.4, 0.4]
-    a: 
+    apple: 
         <<: *def_object
         name: 'яблоко'
         char: 15
@@ -299,29 +345,22 @@ objects:
             name: 'огрызок'
             char: 15
             color: [0.7, 0.7, 0.2]
-    c:
+    cup:
         <<: *default
         name: 'чашка'
         char: 14
         passable: True
         takeable: True
         color: [0.0, 0.3, 0.8]
-    X:
+    comode:
         <<: *default 
         name: 'шкаф'
         passable: False
         char: 2
-    window: &window
-        <<: *default
-        name: 'окно'
-        color: [0, 1, 1]
-        passable: False
-        take: False
-        char: 6
-    w:
+    window1:
         <<: *window 
         walk_msg: 'Окно закрыто. 2ой этаж - выйти отсюда таким способом не лучшая идея.'
-    W:
+    window2:
         <<: *window 
         walk_msg: 'Окна грязные'
         search_msg: |
@@ -329,7 +368,7 @@ objects:
             Но вы замечаете что многие здания разрушены, вдали виднеются пожары,  
             на улицах никого нет, машины побросаны прямо на дорогах.
             Вам это начинает нравиться.
-    s: 
+    msg2: 
         <<: *hidden_object
         walk_msg: 'Тут можно осмотреться.'
         char: ' '

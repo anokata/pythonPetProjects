@@ -65,7 +65,7 @@ def load_map(map_file, world):
     world.rooms_map = world.map
     world.level_data['objects']
     world.objects_data = world.level_data['objects']
-    world.objects = extract_objects(world.map, world.objects_data)
+    world.objects = extract_objects(world)
     spawn = object_by_char(world.objects, '@')
     sx, sy = spawn.x, spawn.y
     remove_obj(spawn, world.objects)
@@ -182,12 +182,27 @@ def convert_object(obj): #yaml dict to mega
         obj.reminder = DotDict(**obj.reminder)
     object_char_translate(obj)
 
-def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
+def extract_objects(world, floor_char=' '): #test, join? extract?
+    objects_data = world.objects_data
+    amap = world.map
+    char2obj = world.level_data['char_to_objects_names']
+    char2obj = dict(zip(char2obj[::2], char2obj[1::2]))
+    world.char2obj = char2obj #TODO extract
     objects = defaultdict(list)
     for x in range(len(amap[0])):
         for y in range(len(amap)):
             char = amap[y][x]
+            if char in char2obj:
+                obj_name = char2obj[char]
+                obj = DotDict(x=x, y=y, char=char)
+                obj.update(objects_data[obj_name]) #TODO recursive. make obj
+                convert_object(obj)
+                add_object(objects, obj)
+                amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
+                continue
+
             if char in objects_data:
+                print('char')
                 obj = DotDict(x=x, y=y, char=char)
                 obj.update(objects_data[char]) #TODO recursive. make obj
                 convert_object(obj)
@@ -198,8 +213,8 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
 def add_object(objects, obj):
     objects[(obj.x, obj.y)].append(obj)
 
-def get_object(objects_data, name):
-    obj = DotDict(**objects_data[name])
+def get_object(world, name):
+    obj = DotDict(**world.objects_data[name])
     convert_object(obj)
     return obj
 

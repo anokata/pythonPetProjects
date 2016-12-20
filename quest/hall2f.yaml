@@ -23,6 +23,7 @@ rooms:
     '_':
         name: 'пол'
         temp: 15
+char_to_objects_names: []
 objects:
     default: &default
         id: 0
