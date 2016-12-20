@@ -1,0 +1,280 @@
+objects:
+    default: &default
+        id: 0
+        passable: False
+        takeable: False
+        color: [1,1,1]
+        can_open: False
+        contain: False
+        walk_msg: False
+        info_msg: 'Нет информации.'
+        need_key: False
+        search_msg: ''
+        viewable: True
+        name: ' '
+        smashable: False
+        eatable: False
+        reminder: False
+        walk_action: False
+    hidden_object: &hidden_object
+        <<: *default
+        passable: True
+        viewable: False
+    def_object: &def_object
+        <<: *default
+        passable: True
+        takeable: True
+    key: &key
+        <<: *default
+        key_id: 0
+        name: 'ключ'
+        char: 8
+        passable: True
+        takeable: True
+        id: 4001
+    door: &door
+        <<: *default
+        id: 4000
+        name: 'дверь'
+        can_open: True
+        need_key: False
+        opened: False
+        open_char: '/'
+        close_char: 6
+        char: 6
+        key_used: False
+    locked: &locked
+        <<: *default
+        can_open: True
+        need_key: True
+        opened: False
+        id: 4000
+        key_id: 2
+    vdoor: &vdoor
+        <<: *door
+        close_char: 30
+    window: &window
+        <<: *default
+        name: 'окно'
+        color: [0, 1, 1]
+        passable: False
+        take: False
+        char: 6
+    note1:
+        <<: *def_object
+        name: 'Записка #1'
+        char: 16
+        info_msg: | 
+           Привет Я из будущего, это Я из прошлого пишу тебе. 
+           Ты оказался тут забыв всё, не паникуй.
+    newspaper:
+        <<: *def_object
+        name: 'Газета'
+        char: 16
+        info_msg: | 
+            Мир уничтожен.
+    map_teleport:
+        <<: *default
+        name: 'map_teleport'
+        char: 132
+        viewable: False
+        passable: False
+        map_dest: 'hall2f.yaml'
+        walk_action: 'map_load'
+    spawn:
+        <<: *default
+        name: 'spawn'
+        passable: True
+    bottle:
+        <<: *def_object
+        name: 'бутылка'
+        char: 28
+        color: [0.7,0.8,1]
+        contain:
+            - 0: 
+                name: 'вода'
+                clean: True
+                volume: 1
+                char: 32
+    shirt:
+        <<: *def_object
+        name: 'рубашка'
+        char: 23
+        color: [0.8,0.2,0.1]
+    pants:
+        <<: *def_object
+        name: 'штаны'
+        char: 24
+        color: [0.5,1,0]
+    kross:
+        <<: *def_object
+        name: 'кросовки'
+        char: 22
+        color: [0,0,1]
+    heater:
+        <<: *default
+        name: 'батарея'
+        char: 25
+    lamp:
+        <<: *default
+        name: 'лампа'
+        char: 27
+        color: [1,1,0]
+    plita:
+        <<: *default
+        name: 'плита'
+        char: 29
+    fringe:
+        <<: *default
+        name: 'холодильник'
+        char: 11
+    sink:
+        <<: *default
+        name: 'раковина'
+        char: 7
+    table:
+        <<: *default 
+        name: 'стол'
+        action_msg: 'забраться под стол или на стол?'
+        passable: False
+        color: [0.7, 0.4, 0.4]
+        char: 4
+    chair:
+        <<: *default 
+        name: 'стул'
+        char: 'h'
+        color: [0.8, 0.5, 0]
+        passable: True
+        take: True
+    door_key1:
+        <<: *door
+        color: [1.0, 0.4, 0.4]
+        passable: False
+        key_id: 1
+        need_key: True
+    vertical_door:
+        <<: *vdoor
+        color: [0.7, 0.4, 0.4]
+        passable: False
+        char: 30
+    vertical_broke_door:
+        <<: *vdoor
+        color: [0.7, 0.4, 0.4]
+        passable: False
+        char: 30
+        can_open: False
+        search_msg: 'Замок сломан, не открыть'
+        walk_msg: 'Не получается открыть'
+        smashed_msg: 'сломана'
+        smashable: True
+        need_strength: 1
+        need_strength_type: 'LEG'
+        smash_probability: 0.5
+    horiz_door:
+        <<: *door
+        color: [0.7, 0.4, 0.4]
+        passable: False
+    key2:  
+        <<: *key
+        key_id: 2
+        color: [0.1, 0.2, 0.8]
+    key3:  
+        <<: *key
+        key_id: 3
+        char: 17
+    door_key1:
+        <<: *door
+        color: [1.0, 0.3, 0.2]
+        passable: False
+        need_key: True
+        key_id: 1
+        char: '='
+    floor:
+        <<: *default 
+        name: 'пол'
+        passable: True
+        char: 32
+        color: [0.5, 0.5, 0.5]
+        viewable: False
+    wall:
+        <<: *default 
+        name: 'стену'
+        passable: False
+        char: 3
+        color: [0.8, 0.8, 0.8]
+        walk_msg: 'Стена плотная - пройти не получится.'
+        viewable: False
+    bed:
+        <<: *default
+        name: 'кровать'
+        char: 21
+    plant_pot: 
+        <<: *default
+        name: 'растение в горшке'
+        search_msg: 'Зелёная фукиция'
+        char: 20
+        color: [1.0, 1.0, 1.0]
+    case:  
+        <<: *locked
+        name: 'чемодан'
+        color: [0.1, 0.2, 0.8]
+        key_id: 2
+        char: 18
+        contain:
+            - s:
+                <<: *def_object
+                name: 'камень'
+                char: 19
+    box:  
+        <<: *default
+        name: 'коробка'
+        char: 9
+        contain:
+            - k:
+                <<: *key
+                char: 8
+                key_id: 1
+                color: [1.0, 0.4, 0.4]
+    apple: 
+        <<: *def_object
+        name: 'яблоко'
+        char: 15
+        passable: True
+        takeable: True
+        color: [1.0, 0.0, 0.0]
+        info_msg: 'Просто фрукт.'
+        eatable: True
+        sugar: 3
+        digestion_energy: 1
+        reminder: 
+            <<: *def_object
+            name: 'огрызок'
+            char: 15
+            color: [0.7, 0.7, 0.2]
+    cup:
+        <<: *default
+        name: 'чашка'
+        char: 14
+        passable: True
+        takeable: True
+        color: [0.0, 0.3, 0.8]
+    comode:
+        <<: *default 
+        name: 'шкаф'
+        passable: False
+        char: 2
+    window1:
+        <<: *window 
+        walk_msg: 'Окно закрыто. 2ой этаж - выйти отсюда таким способом не лучшая идея.'
+    window2:
+        <<: *window 
+        walk_msg: 'Окна грязные'
+        search_msg: |
+            Перед вами открывается городской ландшавт, здания, улицы, парки.
+            Но вы замечаете что многие здания разрушены, вдали виднеются пожары,  
+            на улицах никого нет, машины побросаны прямо на дорогах.
+            Вам это начинает нравиться.
+    msg2: 
+        <<: *hidden_object
+        walk_msg: 'Тут можно осмотреться.'
+        char: ' '

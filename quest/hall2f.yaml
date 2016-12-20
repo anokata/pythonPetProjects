@@ -23,79 +23,42 @@ rooms:
     '_':
         name: 'пол'
         temp: 15
-char_to_objects_names: []
-objects:
-    default: &default
-        id: 0
-        passable: False
-        takeable: False
-        color: [1,1,1]
-        can_open: False
-        contain: False
-        walk_msg: False
-        info_msg: 'Нет информации.'
-        need_key: False
-        search_msg: ''
-        viewable: True
-        name: ' '
-        smashable: False
-        eatable: False
-        reminder: False
-        walk_action: False
-    hidden_object: &hidden_object
-        <<: *default
-        passable: True
-        viewable: False
-    def_object: &def_object
-        <<: *default
-        passable: True
-        takeable: True
-    key: &key
-        <<: *default
-        key_id: 0
-        name: 'ключ'
-        char: 8
-        passable: True
-        takeable: True
-        id: 4001
-    '@':
-        <<: *default
-        name: 'spawn'
-        passable: True
-    door: &door
-        <<: *default
-        id: 4000
-        name: 'дверь'
-        can_open: True
-        need_key: False
-        opened: False
-        open_char: '/'
-        close_char: 6
-        char: 6
-        key_used: False
-    locked: &locked
-        <<: *default
-        can_open: True
-        need_key: True
-        opened: False
-        id: 4000
-        key_id: 2
-    +:
-        <<: *door
-        color: [0.7, 0.4, 0.4]
-        passable: False
-    '#':
-        <<: *default 
-        name: 'стену'
-        passable: False
-        char: 3
-        color: [0.8, 0.8, 0.8]
-        walk_msg: 'Стена плотная - пройти не получится.'
-        viewable: False
-    window: &window
-        <<: *default
-        name: 'окно'
-        color: [0, 1, 1]
-        passable: False
-        take: False
-        char: 6
+char_to_objects_names:
+    [
+        '#', 'wall',
+        'n', 'note1',
+        'N', 'newspaper',
+        'T', 'map_teleport',
+        '@', 'spawn',
+        'o', 'bottle',
+        'E', 'shirt',
+        'e', 'pants',
+        'D', 'kross',
+        'R', 'heater',
+        'L', 'lamp',
+        'G', 'plita',
+        'f', 'fringe',
+        'r', 'sink',
+        't', 'table',
+        'h', 'chair',
+        'C', 'door_key1',
+        'V', 'vertical_door',
+        'v', 'vertical_broke_door',
+        '+', 'horiz_door',
+        'k', 'key2',
+        'K', 'key3',
+        'H', 'door_key1',
+        ':', 'floor',
+        'B', 'bed',
+        'p', 'plant_pot',
+        'd', 'case',
+        'b', 'box',
+        'a', 'apple',
+        'c', 'cup',
+        'X', 'comode',
+        'w', 'window1',
+        'W', 'window2',
+        's', 'msg2',
+        '', '',
+        '', '',
+    ]

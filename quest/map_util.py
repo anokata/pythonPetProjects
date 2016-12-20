@@ -63,8 +63,8 @@ def load_map(map_file, world):
     world.map_width = len(world.map[0])
     world.map_height = len(world.map)
     world.rooms_map = world.map
-    world.level_data['objects']
-    world.objects_data = world.level_data['objects']
+    #world.level_data['objects']
+    world.objects_data = yaml.load(open('objects.yaml'))['objects']
     world.objects = extract_objects(world)
     spawn = object_by_char(world.objects, '@')
     sx, sy = spawn.x, spawn.y
@@ -200,14 +200,6 @@ def extract_objects(world, floor_char=' '): #test, join? extract?
                 add_object(objects, obj)
                 amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
                 continue
-
-            if char in objects_data:
-                print('char')
-                obj = DotDict(x=x, y=y, char=char)
-                obj.update(objects_data[char]) #TODO recursive. make obj
-                convert_object(obj)
-                add_object(objects, obj)
-                amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
     return objects
 
 def add_object(objects, obj):
