@@ -23,9 +23,9 @@ map:
         ###+#C#####  :::#:DeE:#
         #_________^^:::T#T::@B#
         #__________############
-        #_________O#.....::::::
+        #_N_______O#.....::::::
         ##H##+##+###.....::::::
-        #.N.# V r#.............
+        #...# V r#.............
         #TT#######............Z
         .......................
         .......................
@@ -103,9 +103,9 @@ objects:
     T:
         <<: *default
         name: 'map_teleport'
-        char: ' '
+        char: 132
         viewable: False
-        passable: True
+        passable: False
         map_dest: 'hall2f.yaml'
         walk_action: 'map_load'
     '@':

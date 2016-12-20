@@ -139,14 +139,15 @@ def can_be_there(x, y, world):
     obj = object_at_xy(x, y, objects)
     if not obj or obj.name == 'self':
         return True
-    walk_to_obj(world, obj)
-    return obj.passable
+    return walk_to_obj(world, obj)
 
 def walk_to_obj(world, obj):
     if obj.walk_msg:
         log_main(obj.walk_msg)
     if obj.walk_action and obj.walk_action == 'map_load':
         new_map_load(obj.map_dest, world)
+        return False
+    return obj.passable
 
 def describe_objects(objects, world): #test
     strings = 'Вижу:\n'

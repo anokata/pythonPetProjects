@@ -7,11 +7,13 @@ tick_events:
         msg: ''
 map:
     - |
-        ___#..
-        #__#..
-        #@_#..
-        #__#..
-        ####..
+        _.............
+        ..####..#TT#..
+        ..#..####@_#..
+        ..#..V..V__#..
+        ..#####=#+##..
+        ..#..#==#..#..
+        ..#..#=T#..#..
 map_tiles:
     ['#',3,
      '_', ' ',
@@ -38,6 +40,7 @@ objects:
         smashable: False
         eatable: False
         reminder: False
+        walk_action: False
     hidden_object: &hidden_object
         <<: *default
         passable: True
