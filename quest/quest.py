@@ -69,7 +69,13 @@ def init():
     init_map(map_file)
     init_states()
 
+def init_player(world, x, y):
+    world.player = make_actor(name='self', x=x, y=y, color=(0,1,1), char='\x01')
+    add_object(world.objects, world.player)
+
 def load_map(map_file, world):
+    # state = {'map': yaml.load(... #TODO переделать в виде явных данных
+    #           'player' : make_actor ... 
     world.level_data = yaml.load(open(map_file)) # map load method, from string?
     world.map = world.level_data['map'][0].split('\n')
     world.map = [line for line in world.map if line != '']
@@ -80,11 +86,8 @@ def load_map(map_file, world):
     world.objects_data = world.level_data['objects']
     world.objects = extract_objects(world.map, world.objects_data)
     spawn = object_by_char(world.objects, '@')
-    world.player = make_actor(name='self', x=spawn.x, y=spawn.y, color=(0,1,1), char='\x01')
+    sx, sy = spawn.x, spawn.y
     remove_obj(spawn, world.objects)
-    add_object(world.objects, world.player)
-    # state = {'map': yaml.load(... #TODO переделать в виде явных данных
-    #           'player' : make_actor ... 
     world.map = retile_map(world.map, world.level_data['map_tiles'])
     world.map = lines_to_xydict(world.map)
     init_messages(world)
@@ -93,7 +96,8 @@ def load_map(map_file, world):
     log_main(world.level_data['start_msg'], white)
     light_map = dict() # так может это в свойстве тайла карты. наверно нет т.к. постоянно заного обновлять? или стат свет
     world.light_map = light_map
-    recalc_light(world)
+    #recalc_light(world)
+    return sx, sy
 
 def recalc_light(world):
     light_map = dict() 
@@ -138,15 +142,17 @@ def load_rooms(world):
     rooms = make_recursive_dotdict(world.level_data['rooms'])
     world.rooms = rooms
     world.rooms.current = get_room_at(world, 0, 0)
-    update_current_room(world)
 
 def init_map(map_file):
     world = DotDict()
     world.tick = 0
     state.world = world
     world.stateSystem = stateSystem
-    load_map(map_file, world)
+    x, y = load_map(map_file, world)
+    init_player(world, x, y)
     init_colors(world)
+    recalc_light(world)
+    update_current_room(world)
     world.inventory = list()
     inventory_add(get_object(world.objects_data, 'a'), world.inventory)# init inv in map?plr?
     world.tick_events = make_recursive_dotdict(world.level_data['tick_events'])
