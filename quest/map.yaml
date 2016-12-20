@@ -68,6 +68,7 @@ objects:
         name: ' '
         smashable: False
         eatable: False
+        reminder: False
     hidden_object: &hidden_object
         <<: *default
         passable: True
@@ -273,7 +274,7 @@ objects:
                 key_id: 1
                 color: [1.0, 0.4, 0.4]
     a: 
-        <<: *default
+        <<: *def_object
         name: 'яблоко'
         char: 15
         passable: True
@@ -283,6 +284,11 @@ objects:
         eatable: True
         sugar: 3
         digestion_energy: 1
+        reminder: 
+            <<: *def_object
+            name: 'огрызок'
+            char: 15
+            color: [0.7, 0.7, 0.2]
     c:
         <<: *default
         name: 'чашка'

@@ -57,6 +57,19 @@ def object_char_translate(obj):
         obj.close_char = chr(obj.close_char)
     return obj
 
+def convert_object(obj): #yaml dict to mega
+    if obj.contain:
+        cont = list()
+        for obj_in_container in obj.contain:
+            _, obj_in = obj_in_container.popitem()
+            contaiment = DotDict(**obj_in)
+            object_char_translate(contaiment)
+            cont.append(contaiment)
+        obj.contain = cont
+    if obj.eatable and obj.reminder:
+        obj.reminder = DotDict(**obj.reminder)
+    object_char_translate(obj)
+
 def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
     objects = defaultdict(list)
     for x in range(len(amap[0])):
@@ -64,17 +77,8 @@ def extract_objects(amap, objects_data, floor_char=' '): #test, join? extract?
             char = amap[y][x]
             if char in objects_data:
                 obj = DotDict(x=x, y=y, char=char)
-                obj.update(objects_data[char]) #TODO recursive
-                object_char_translate(obj)
-                if obj.contain:
-                    cont = list()
-                    for obj_in_container in obj.contain:
-                        _, obj_in = obj_in_container.popitem()
-                        contaiment = DotDict(**obj_in)
-                        object_char_translate(contaiment)
-                        cont.append(contaiment)
-                    obj.contain = cont
-                #objects.append(obj)
+                obj.update(objects_data[char]) #TODO recursive. make obj
+                convert_object(obj)
                 add_object(objects, obj)
                 amap[y] = amap[y][:x] + floor_char + amap[y][x+1:]
     return objects
@@ -84,8 +88,7 @@ def add_object(objects, obj):
 
 def get_object(objects_data, name):
     obj = DotDict(**objects_data[name])
-    if type(obj.char) is int:
-        obj.char = chr(obj.char)
+    convert_object(obj)
     return obj
 
 def objects_in_view(actor, world): 

@@ -159,9 +159,10 @@ def do_inventory_action(world, action, object_index):
 def inventory_eat_action(world, obj):
     world.stateSystem.changeState('walk')
     if obj.eatable:
-        log_main('Вы едите {}'.format(obj.name))
+        log_main('Вы едите {}, оставляя {}'.format(obj.name, obj.reminder.name))
         tire(world, world.player.body, obj.digestion_energy)
         add_energy(world.player, obj.sugar)
+        inventory_add(obj.reminder, world.inventory)
         #TODO lipids to stock_energy and complex_carbons and proteins
         remove_obj_from_inventory(world, obj)
     else:
