@@ -73,7 +73,7 @@ objects:
         char: 16
         info_msg: | 
             Мир уничтожен.
-    map_teleport:
+    map_telep: &map_telep
         <<: *default
         name: 'map_teleport'
         char: 132
@@ -81,6 +81,15 @@ objects:
         passable: False
         map_dest: 'hall2f.yaml'
         walk_action: 'map_load'
+    map_teleport_hall:
+        <<: *map_telep
+        map_dest: 'hall2f.yaml'
+    map_teleport_room21:
+        <<: *map_telep
+        map_dest: 'room21.yaml'
+    map_teleport_map:
+        <<: *map_telep
+        map_dest: 'map.yaml'
     spawn:
         <<: *default
         name: 'spawn'
@@ -182,11 +191,20 @@ objects:
         <<: *key
         key_id: 3
         char: 17
-    door_key1:
+    door_key: &door_key
         <<: *door
         color: [1.0, 0.3, 0.2]
         passable: False
         need_key: True
+        key_id: 1
+    door_key921:
+        <<: *door_key
+        color: [1.0, 0.3, 1.2]
+        key_id: 921
+        char: '='
+    door_key1:
+        <<: *door_key
+        color: [1.0, 0.3, 0.2]
         key_id: 1
         char: '='
     floor:

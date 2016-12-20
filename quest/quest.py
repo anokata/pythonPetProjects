@@ -60,12 +60,18 @@ def init_colors(world):
     colors.color_multiplier_dir = True
     world.colors = colors
 
+def init_bed_spawn(world):
+    spawn = object_by_char(world.objects, chr(21))
+    sx, sy = spawn.x-1, spawn.y
+    return sx, sy
+
 def init_map(map_file):
     world = DotDict()
     world.tick = 0
     state.world = world
     world.stateSystem = stateSystem
-    x, y = load_map(map_file, world)
+    load_map(map_file, world)
+    x, y = init_bed_spawn(world)
     init_player(world, x, y)
     init_colors(world)
     recalc_light(world)
