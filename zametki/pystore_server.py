@@ -32,7 +32,7 @@ def get():
 def get_all():
     al = str()
     for k, v in st.items():
-        al += (str(k) + ' : ' + str(v) + '\n<br>')
+        al += (str(k) + ' : ' + str(v) + '\n')
     return al
 
 @route(get_books, method='GET')
@@ -42,7 +42,7 @@ def get_bks():
         k = str(k)
         if k.startswith('book_'):
             try:
-                al += (str(k).split('_', 1)[1] + ' : ' + str(v).split('_', 1)[1] + '\n<br>')
+                al += (str(k).split('_', 1)[1] + ' : ' + str(v).split('_', 1)[1] + '\n')
             except:
                 pass
     return al
