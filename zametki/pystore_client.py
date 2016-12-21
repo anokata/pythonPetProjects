@@ -7,11 +7,17 @@ lib_dir = os.path.join(work_dir, './lib')
 sys.path.append(lib_dir)
 from pystore_urls import *
 import argparse
+import subprocess
+exc = subprocess.getoutput
+
+def get_clipboard():
+    return exc('xclip -o')
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--command', help='one of: load, save, book, all, books')
-parser.add_argument('-n', help='name of value')
+parser.add_argument('-name', help='name of value')
 parser.add_argument('-s', help='script mode')
+parser.add_argument('-c', help='get data from clipboard')
 args = parser.parse_args()
 
 def load(name):
@@ -33,16 +39,14 @@ def save(name, data):
 def book(name, page):
     save('book_'+name, 'page_'+page)
 
-def save_cmd(name):
-    if name == None:
-        name = input('enter name:')
-    data = input('enter data:')
-    save(name, data)
+def save_cmd(args):
+    args.name = get_name(args)
+    data = get_data(args) 
+    save(args.name, data)
 
-def load_cmd(name):
-    if name == None:
-        name = input('enter name:')
-    print(load(name))
+def load_cmd(args):
+    args.name = get_name(args)
+    print(load(args.name))
 
 def all_cmd(_):
     print(get_all())
@@ -50,11 +54,10 @@ def all_cmd(_):
 def books_cmd(_):
     print(get_books())
 
-def book_cmd(name):
-    if name == None:
-        name = input('enter name:')
-    page = input('enter page:')
-    book(name, page)
+def book_cmd(args):
+    args.name = get_name(args)
+    data = get_data(args) 
+    book(args.name, data)
 
 cmds = {
         'save': save_cmd,
@@ -72,12 +75,24 @@ cmds = {
         'b':book_cmd,
         'book':book_cmd,
         }
-def exec_cmd(command, name):
-    cmd = cmds.get(command, False)
+def exec_cmd(args):
+    cmd = cmds.get(args.command, False)
     if cmd:
-        cmd(name)
+        cmd(args)
     else:
         print('no that cmd')
+
+def get_data(args):
+    if args.c:
+        data = get_clipboard()
+    else:
+        data = input('enter data:')
+    return data
+
+def get_name(args):
+    if args.name == None:
+        args.name = input('enter name:')
+    return args.name
 
 def menu():
     print('Avaliable commands')
@@ -89,12 +104,12 @@ def menu():
         command = input('Enter command:')
         cmd = cmds.get(command, False)
         if cmd:
-            cmd(None)
+            cmd(args)
         else:
             print('no that cmd')
 
 if __name__=='__main__':
     if args.s:
-        exec_cmd(args.command, args.n)
+        exec_cmd(args)
     else:
         menu()
