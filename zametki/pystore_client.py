@@ -9,8 +9,9 @@ from pystore_urls import *
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('command', help='one of: load, save')
+parser.add_argument('--command', help='one of: load, save, book, all, books')
 parser.add_argument('-n', help='name of value')
+parser.add_argument('-s', help='script mode')
 args = parser.parse_args()
 
 def load(name):
@@ -55,25 +56,45 @@ def book_cmd(name):
     page = input('enter page:')
     book(name, page)
 
-if __name__=='__main__':
-    cmds = {
-            'save': save_cmd,
-            's': save_cmd,
-            'store': save_cmd,
-            'set': save_cmd,
-            'l': load_cmd,
-            'load': load_cmd,
-            'get': load_cmd,
-            'g': load_cmd,
-            'all':all_cmd,
-            'a':all_cmd,
-            'books':books_cmd,
-            'bs':books_cmd,
-            'b':book_cmd,
-            'book':book_cmd,
-            }
-    cmd = cmds.get(args.command, False)
+cmds = {
+        'save': save_cmd,
+        's': save_cmd,
+        'store': save_cmd,
+        'set': save_cmd,
+        'l': load_cmd,
+        'load': load_cmd,
+        'get': load_cmd,
+        'g': load_cmd,
+        'all':all_cmd,
+        'a':all_cmd,
+        'books':books_cmd,
+        'bs':books_cmd,
+        'b':book_cmd,
+        'book':book_cmd,
+        }
+def exec_cmd(command, name):
+    cmd = cmds.get(command, False)
     if cmd:
-        cmd(args.n)
+        cmd(name)
     else:
         print('no that cmd')
+
+def menu():
+    print('Avaliable commands')
+    for k in cmds.keys():
+        print(k, end=',')
+    print('\n')
+    command = ''
+    while command not in cmds.keys():
+        command = input('Enter command:')
+        cmd = cmds.get(command, False)
+        if cmd:
+            cmd(None)
+        else:
+            print('no that cmd')
+
+if __name__=='__main__':
+    if args.s:
+        exec_cmd(args.command, args.n)
+    else:
+        menu()
