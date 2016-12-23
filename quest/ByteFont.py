@@ -1,6 +1,7 @@
 from PIL import Image
 from OpenGL.GL import *
 from gl_texture import texture_init, draw_tex_quad
+from StringUtil import *
 
 current_font = None
 second_font = None
@@ -59,12 +60,17 @@ def gl_draw_char_tex(font, code, x, y, color=(1,0,0)):
 def draw_chars_tex(s, x=0, y=0, color=(0,0,1)):
     return draw_chars_tex_font(current_font, s, x, y, color)
 
-def draw_text(s, x=0, y=0, color=(0,0,1)):
+def draw_text(s, x=0, y=0, color=(0,0,1), wrap=False):
+    if wrap:
+        s = wrap_string(s, wrap)
     return draw_chars_tex_font(second_font, s, x, y, color)
 
-def draw_lines_text(lines, x=0, y=0, color=(0,0,1)):
+def draw_lines_text(lines, x=0, y=0, color=(0,0,1), wrap=False):
     y = y
     for line in lines:
+        if wrap:
+            line = wrap_string(line, wrap)
+            #TODO y + len(line)?
         draw_text(line, x, y, color)
         y += 1
 
@@ -115,22 +121,3 @@ def draw_chars(font, s, x=0, y=0):
         glDrawPixels(dw, dh, GL_RGBA, GL_UNSIGNED_BYTE, data)   
         x += cw
 
-#TODO: word wrap
-def wrap_string(line, max_len):
-    wraped_line = ''
-    words = line.split(' ')
-    line_len = 0
-    last = 0
-    for i, w in enumerate(words):
-        if line_len >= max_len:
-            wraped_line += ' '.join(words[last:i]) + '\n' 
-            last = i
-            line_len = 0
-        line_len += len(w) + 1
-    wraped_line += ' '.join(words[last:]) + '\n' 
-
-    return wraped_line
-#test ww
-if __name__=='__main__':
-    a = wrap_string('12345 123 12 i i i i i 123     dd     dd     dd    ', 3)
-    print(a)
