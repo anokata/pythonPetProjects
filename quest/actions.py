@@ -75,6 +75,8 @@ def do_search(_, world):
                     found += (obj.name + ' содержит ' + obj_in_container.name)
         elif obj.info_msg:
             log_main(obj.search_msg, lblue)
+        if obj.search_msg:
+            log_main(obj.search_msg, lblue)
     if not found:
         log_msg('Ничего необычного', world)
     else:
@@ -192,6 +194,9 @@ def object_apply(applicator, pacient, world):
             4001: {
                 4000: try_key_door,
                 },
+            5002:{
+                4002: extract_with_hammer,
+                }
         }
     table2 = objects_apply_table.get(applicator.id, False)
     if not table2:
@@ -201,6 +206,18 @@ def object_apply(applicator, pacient, world):
         return fun(applicator, pacient, world)
     else:
         return False
+
+def extract_with_hammer(hammer, wall, world):
+    if wall.contain:
+        log_main('Извлекаете с помощью {} из {} {}'.format(hammer.name, wall.name, wall.contain[0].name), lgreen)
+        inventory_add(wall.contain[0], world.inventory)
+        wall.contain = False
+        tire(world, world.player.arms, 0.5)
+        wall.walk_msg = wall.search_msg = wall.empty_msg
+    else:
+        log_main('Ничего нет')
+    return True
+
 
 def try_key_door(key, door, world):
     log_main('Пытатетесь открыть '+ door.name +' ключом...')
@@ -219,7 +236,8 @@ def try_key_door(key, door, world):
 def inventory_view_action(world, obj):
     world.messages.object_info = list()
     world.messages.object_info.append(obj.name)
-    world.messages.object_info.append(obj.info_msg)
+    if obj.info_msg:
+        world.messages.object_info.append(obj.info_msg)
     world.stateSystem.changeState('inventory_view_object')
 
 def go_inventory(key_sym, world):

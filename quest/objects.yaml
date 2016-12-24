@@ -7,9 +7,9 @@ objects:
         can_open: False
         contain: False
         walk_msg: False
-        info_msg: 'Нет информации.'
+        info_msg: False
         need_key: False
-        search_msg: ''
+        search_msg: False
         viewable: True
         name: ' '
         smashable: False
@@ -220,6 +220,33 @@ objects:
         char: 32
         color: [0.5, 0.5, 0.5]
         viewable: False
+    hammer:
+        <<: *def_object
+        name: 'молоток'
+        color: [0.8, 0.5, 0.5]
+        char: 135
+        key_id: 5
+        id: 5002
+    wall_with_key:
+        <<: *default 
+        name: 'стенa с чем-то'
+        passable: False
+        char: 134
+        color: [0.8, 0.8, 0.8]
+        walk_msg: 'Кажется в стене что то есть.'
+        search_msg: 'Кажется в стене что то есть.'
+        empty_msg: 'Уже ничего нет кроме дырки.'
+        viewable: True
+        need_key: True
+        key_id: 5
+        id: 4002
+        contain:
+            - k:
+                <<: *key
+                char: 8
+                key_id: 3
+                color: [0.0, 0.4, 1.0]
+
     wall:
         <<: *default 
         name: 'стену'

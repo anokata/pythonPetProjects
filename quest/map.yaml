@@ -15,9 +15,9 @@ map:
         ^................##wW##
         .................#zszz#
         .................##z###
-        ####ww#############+###
+        ####ww##3##########+###
         #fk,,p,,,c#==RR # ^^^X#
-        #Gd,,,,,ht#L    #    X#
+        #Gd,,,,,ht#Lm   #    X#
         #,,,,n,,,h#  :::v::::o#
         #,b,,,K,,a#  :::#:::::#
         ###+#C#####  :::#:DeE:#
@@ -56,6 +56,8 @@ rooms:
 char_to_objects_names:
     [
         '#', 'wall',
+        '3', 'wall_with_key',
+        'm', 'hammer',
         'n', 'note1',
         'N', 'newspaper',
         'T', 'map_teleport_hall',
