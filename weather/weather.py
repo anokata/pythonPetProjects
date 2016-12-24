@@ -2,11 +2,16 @@ import subprocess
 import xml.etree.ElementTree as ET
 import requests as req
 exc = subprocess.getoutput
+place = 'Russia/Yaroslavl/Rybinsk/'
+place2 = 'Russia/Krasnodar/Sochi/'
 
-def getWeather():
+def getWeather(place):
     # получаем текущую дату - день.
     day = int(exc('date +%d'))
-    url = 'http://www.yr.no/place/Russia/Yaroslavl/Rybinsk/forecast_hour_by_hour.xml'
+    hour = int(exc('date +%H'))
+    if 18 < hour:
+        day = int(exc('date --date="1 day" +%d'))
+    url = 'http://www.yr.no/place/{}forecast_hour_by_hour.xml'.format(place)
     # Берём данные xml.  weatherdata.forecast.tabular .time
     try:
         res = req.get(url)
@@ -34,5 +39,11 @@ def getWeather():
     wind /= periods
     return (avgTemp, perc, wind)
 
+def say_weather(place):
+    temp, perc, wind = getWeather(place)
+    print("Сегодняшняя средняя погода в %s: T: %.1f  Осадки: %.1f  Ветер: %.1f м/c" %
+            (place, temp, perc, wind))
+
 if __name__ == '__main__':
-    print(getWeather())
+    print(getWeather(place))
+    say_weather(place2)
