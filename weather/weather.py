@@ -5,12 +5,17 @@ exc = subprocess.getoutput
 place = 'Russia/Yaroslavl/Rybinsk/'
 place2 = 'Russia/Krasnodar/Sochi/'
 
-def getWeather(place):
+def get_day():
     # получаем текущую дату - день.
     day = int(exc('date +%d'))
     hour = int(exc('date +%H'))
     if 18 < hour:
         day = int(exc('date --date="1 day" +%d'))
+    return day
+
+
+def getWeather(place):
+    day = get_day()
     url = 'http://www.yr.no/place/{}forecast_hour_by_hour.xml'.format(place)
     # Берём данные xml.  weatherdata.forecast.tabular .time
     try:

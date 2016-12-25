@@ -12,6 +12,13 @@ sys.path.append(lib_dir)
 import currency
 import weather
 test = len(sys.argv) > 1
+def qry():
+    yn = '[y/n]:'
+    r = input('Выполнить автозапуск? [y/n]')
+    if r[0] != 'y':
+        print('Ну ладно...')
+        exit()
+    print('Поехали!')
 #TODO if atel is off - turn. If time of statistic is not nowday then open, and weather simily
 
 def atel_status():
@@ -23,23 +30,29 @@ def inet_on():
         print('Подключаем интернет #1')
         #exc('inet.sh')
         exc('nmcli connection up atel')
+        print('Подождём сек...')
+        exc('sleep 1')
 
 def is_new(filename):
     now_day = time.localtime().tm_mday
     file_day = time.localtime(os.path.getmtime('.')).tm_mday
-    return file_day == nowday
+    return file_day == now_day
+
+def is_once_nowday_started():
+    return is_new('~/start_end.log')
 
 def show_weather():
     if not is_new('avansert_meteogram.png'):
         pogoda()
-    #TODO
+        print('Смотри какая сегодня погода! :)')
+        exc('weather.sh')
 
 def pogoda():
     if (0,0,0) == weather.getWeather(weather.place):
         print("Нет погоды")
         return
     temp, perc, wind = weather.getWeather(weather.place)
-    print("Сегодняшняя средняя погда: T: %.1f  Осадки: %.1f  Ветер: %.1f м/c" % (temp, perc, wind))
+    print("Сегодняшняя средняя погода: T: %.1f  Осадки: %.1f  Ветер: %.1f м/c" % (temp, perc, wind))
     print("Запишу погоду на сегодня для статистики в ~/weather.cvs")
     dmy = exc('date +%d.%m.%Y')
     with open('/home/ksi/weather.cvs', 'at') as fout:
@@ -61,38 +74,34 @@ def greating():
     print("Доброго %s %s!"%(daypart, name))
     return daypart
 
-daypart = greating()
-
-def qry():
-    yn = '[y/n]:'
-    r = input('Выполнить автозапуск? [y/n]')
-    if r[0] != 'y':
-        print('Ну ладно...')
-        exit()
-    print('Поехали!')
-
-#TODO: сканирование всех разделов и монтирование в созданные каталоги
-#print('Монтируем раздел данных...')
-#exc('datamount.sh')
-inet_on()
-if not test:
-    print('Подождём сек...')
-    exc('sleep 1')
-    pogoda()
-    print('Текущий курс доллара: {}'.format(currency.getUSD_RUB()))
-    print('Смотри какая сегодня погода! :)')
-    exc('weather.sh')
+def stat_open():
     print('Запишем статистику')
-    statistic = '?.gnumeric'
+    #statistic = '?.gnumeric'
     exc('gnumeric')
 
+def info():
+    print('Текущий курс доллара: {}'.format(currency.getUSD_RUB()))
+
+def start(test):
+    inet_on()
+    if is_once_nowday_started():
+        return
+    daypart = greating()
+    show_weather()
+    info()
+    stat_open()
+    exc('pday.py start')
+    print('Удачного %s! vim txthub/live.org' % daypart)
+    input('Press enter...')
+
+if __name__=='__main__':
+    start(test) 
+    exc('tmux attach -t base || tmux new -s base')
 
 #print('Установим обои')
 #exc('wallpaperText.py --file "/home/ksi/txthub/doings.txt" \
     #--bg "/home/ksi/Downloads/bg1.png" --fontsize 17 \
     #--fontcolor "(10,100,0)"')
 #exc('qiv -z /usr/local/share/backgrounds/black-and-white-city-skyline-buildings.jpg') 
-
-exc('pday.py start')
-
-print('Удачного %s! vim txthub/live.org' % daypart)
+#print('Монтируем раздел данных...')
+#exc('datamount.sh')
