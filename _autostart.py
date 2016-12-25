@@ -19,7 +19,7 @@ def atel_status():
     return status == 'activated'
 
 def inet_on():
-    if not atel_status:
+    if not atel_status():
         print('Подключаем интернет #1')
         #exc('inet.sh')
         exc('nmcli connection up atel')
@@ -77,7 +77,7 @@ def qry():
 inet_on()
 if not test:
     print('Подождём сек...')
-    exc('sleep 2')
+    exc('sleep 1')
     pogoda()
     print('Текущий курс доллара: {}'.format(currency.getUSD_RUB()))
     print('Смотри какая сегодня погода! :)')
