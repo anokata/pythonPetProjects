@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../modules')
 from ByteFont import *
 from map_util import *
 import math

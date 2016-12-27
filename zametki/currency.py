@@ -1,9 +1,17 @@
 import requests as req
-
-def getUSD_RUB():
-    currency_url = 'http://api.fixer.io/latest?symbols=RUB&base=USD'
-    res = req.get(currency_url).json()
+currency_url = 'http://api.fixer.io/latest?symbols=RUB&base={}'
+def request_pair(base):
+    res = req.get(currency_url.format(base)).json()
     return res['rates']['RUB']
 
-#print(getUSD_RUB())
+def get_EUR_RUB():
+    return request_pair('EUR')
+
+
+def get_USD_RUB():
+    return request_pair('USD')
+
+if __name__=='__main__':
+    print(get_USD_RUB())
+    print(get_EUR_RUB())
 

@@ -2,12 +2,11 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import sys
+sys.path.append('../modules')
 import random
 from mega import *
 from ByteFont import *
-from gl_texture import draw_tex_quad
 from gl_main import *
-sys.path.append('../modules')
 import stateSystem
 from map_util import *
 from actions import *

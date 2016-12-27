@@ -1,17 +1,29 @@
 #!/usr/bin/python3
 #TODO: проверять первый запуск. записывать ежедневный файл, поставить в авто запуск и смотреть есть ли запись за сегодня и предлагать уже в зависимости.
 import os
-import time
 import subprocess
-exc = subprocess.getoutput
 import sys
+import time
 work_dir = sys.path[0]
 lib_dir = os.path.join(work_dir, './lib')
 sys.path.append('./weather')
+sys.path.append('./zametki')
+sys.path.append('.')
 sys.path.append(lib_dir)
 import currency
 import weather
+import pytest
+exc = subprocess.getoutput
 test = len(sys.argv) > 1
+home = '/home/ksi/'
+
+def test_this():
+    import random
+    temp_file = '.fileN{}N.tmp'.format(random.randint(0,100))
+    exc('touch {}'.format(temp_file))
+    print(get_file_day(temp_file))
+    exc('rm {}'.format(temp_file))
+
 def qry():
     yn = '[y/n]:'
     r = input('Выполнить автозапуск? [y/n]')
@@ -19,7 +31,6 @@ def qry():
         print('Ну ладно...')
         exit()
     print('Поехали!')
-#TODO if atel is off - turn. If time of statistic is not nowday then open, and weather simily
 
 def atel_status():
     status = exc('nmcli connection show atel | grep GENERAL.STATE | cut -d: -f2 | tr -d [:blank:]')
@@ -33,16 +44,23 @@ def inet_on():
         print('Подождём сек...')
         exc('sleep 1')
 
+weather_csv = '/home/ksi/weather.cvs'
+
+def get_file_day(filename):
+    #TODO exists if os.
+    return time.localtime(os.path.getmtime(filename)).tm_mday
+
 def is_new(filename):
     now_day = time.localtime().tm_mday
-    file_day = time.localtime(os.path.getmtime('.')).tm_mday
+    file_day = get_file_day(filename)
     return file_day == now_day
 
 def is_once_nowday_started():
-    return is_new('~/start_end.log')
+    log = home+'start_end.log'
+    return is_new(weather_csv)
 
 def show_weather():
-    if not is_new('avansert_meteogram.png'):
+    if not is_new(home+'bin/avansert_meteogram.png'):
         pogoda()
         print('Смотри какая сегодня погода! :)')
         exc('weather.sh')
@@ -53,9 +71,10 @@ def pogoda():
         return
     temp, perc, wind = weather.getWeather(weather.place)
     print("Сегодняшняя средняя погода: T: %.1f  Осадки: %.1f  Ветер: %.1f м/c" % (temp, perc, wind))
+    print("погода в Сочи: T: {:.1f}  Осадки: {:.1f} Ветер: {:.1f} м/c".format(weather.getWeather(weather.place2)))
     print("Запишу погоду на сегодня для статистики в ~/weather.cvs")
     dmy = exc('date +%d.%m.%Y')
-    with open('/home/ksi/weather.cvs', 'at') as fout:
+    with open(weather_csv, 'at') as fout:
         fout.write(dmy + "|%.1f|%.1f|%.1f\n" % (temp, perc, wind))
 
 def greating():
@@ -80,7 +99,8 @@ def stat_open():
     exc('gnumeric')
 
 def info():
-    print('Текущий курс доллара: {}'.format(currency.getUSD_RUB()))
+    print('Текущий курс доллара: {}'.format(currency.get_USD_RUB()))
+    print('Текущий курс euro: {}'.format(currency.get_EUR_RUB()))
 
 def start(test):
     inet_on()
@@ -95,7 +115,10 @@ def start(test):
     input('Press enter...')
 
 if __name__=='__main__':
-    start(test) 
+    if len(sys.argv)>1:
+        test_this()
+    else:
+        start(test) 
     exc('tmux attach -t base || tmux new -s base')
 
 #print('Установим обои')
