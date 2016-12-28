@@ -6,7 +6,10 @@ import stateSystem
 #import mega
 import ByteFont
 data_dir = 'data/'
+#TODO make test and write TZ and clean up it
+#### DEVELOP AREA START #### (future to refactor)
 
+#### DEVELOP AREA END ####
 def std_keypress(key_sym, world=None):
     keyboard_fun = {
             'H':lambda x, y: x,
