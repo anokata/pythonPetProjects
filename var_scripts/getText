@@ -1,0 +1,1 @@
+zenity --entry 2> /dev/null
