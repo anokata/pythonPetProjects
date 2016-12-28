@@ -71,7 +71,7 @@ def pogoda():
         return
     temp, perc, wind = weather.getWeather(weather.place)
     print("Сегодняшняя средняя погода: T: %.1f  Осадки: %.1f  Ветер: %.1f м/c" % (temp, perc, wind))
-    print("погода в Сочи: T: {:.1f}  Осадки: {:.1f} Ветер: {:.1f} м/c".format(weather.getWeather(weather.place2)))
+    #print("погода в Сочи: T: {:.1f}  Осадки: {:.1f} Ветер: {:.1f} м/c".format(weather.getWeather(weather.place2)))
     print("Запишу погоду на сегодня для статистики в ~/weather.cvs")
     dmy = exc('date +%d.%m.%Y')
     with open(weather_csv, 'at') as fout:
