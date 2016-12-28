@@ -1,7 +1,12 @@
+import sys
+sys.path.append('../modules')
 from PIL import Image
 from OpenGL.GL import *
 from gl_texture import texture_init, draw_tex_quad
 from StringUtil import *
+
+font_file10x16 = 'font10x16.png'
+font_file = 'font1.png'
 
 current_font = None
 second_font = None

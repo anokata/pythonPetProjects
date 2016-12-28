@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../modules')
 from StringUtil import *
 red = (1, 0, 0)
 green = (0, 1, 0)
