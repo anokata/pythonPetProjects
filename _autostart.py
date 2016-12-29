@@ -57,10 +57,10 @@ def is_new(filename):
 
 def is_once_nowday_started():
     log = home+'start_end.log'
-    return is_new(weather_csv)
+    return is_new(log)
 
 def show_weather():
-    if not is_new(home+'bin/avansert_meteogram.png'):
+    if not is_new(home+'avansert_meteogram.png'):
         pogoda()
         print('Смотри какая сегодня погода! :)')
         exc('weather.sh')
