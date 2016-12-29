@@ -105,12 +105,13 @@ def info():
 def start(test):
     inet_on()
     if is_once_nowday_started():
+        exc('pday.py start')
         return
+    exc('pday.py start')
     daypart = greating()
     show_weather()
     info()
     stat_open()
-    exc('pday.py start')
     print('Удачного %s! vim txthub/live.org' % daypart)
     input('Press enter...')
 
