@@ -3,7 +3,7 @@ sys.path.append('../modules')
 import gl_main
 import stateSystem
 #import yaml
-#import mega
+import mega
 import ByteFont
 data_dir = 'data/'
 #TODO make test and write TZ and clean up it
@@ -16,7 +16,7 @@ def std_keypress(key_sym, world=None):
             }
     keyboard_fun.get(key_sym, lambda x, y: x)(key_sym, world)
 
-def std_draw(_):
+def std_draw(render_data):
     ByteFont.draw_text('a', y=0, x=1, color=(1, 1, 1))
     ByteFont.draw_text('b', y=0, x=2, color=(1, 0, 0))
     ByteFont.draw_text('c', y=1, x=1, color=(0, 0, 1))
