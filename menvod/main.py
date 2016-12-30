@@ -6,10 +6,21 @@ import stateSystem
 import mega
 import ByteFont
 import lists
+import datetime
 
 data_dir = 'data/'
 #TODO make test and write TZ and clean up it
 #### DEVELOP AREA START #### (future to refactor)
+def build_status_str():
+    s = "{time}"
+    time = datetime.datetime.now()
+    time = "{}:{}".format(time.hour, time.minute)
+    params = {'time': time,
+            }
+    return s.format(**params)
+
+def render_status():
+    ByteFont.draw_text(build_status_str(), y=0, x=0, color=(1, 1, 1))
 
 #### DEVELOP AREA END ####
 def std_keypress(key_sym, world=None):
@@ -20,10 +31,7 @@ def std_keypress(key_sym, world=None):
     keyboard_fun.get(key_sym, lambda x, y: x)(key_sym, world)
 
 def std_draw(render_data):
-    ByteFont.draw_text('a', y=0, x=1, color=(1, 1, 1))
-    ByteFont.draw_text('b', y=0, x=2, color=(1, 0, 0))
-    ByteFont.draw_text('c', y=1, x=1, color=(0, 0, 1))
-    ByteFont.draw_text('d', y=1, x=2, color=(0, 1, 0))
+    render_status()
     lists.render()
 
 ####
