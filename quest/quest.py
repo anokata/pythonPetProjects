@@ -42,6 +42,8 @@ def make_actor(**kwargs):
     actor.water_level = 100 #100/100
     return actor
 
+##new zone start##
+##new zone end##
 def init():
     state.font = init_font(font_file, 16, 16)
     state.font10x16 = init_font(font_file10x16, 10, 16)
@@ -131,6 +133,7 @@ def walk_keypress(key_sym, world):
             'r':do_rest,
             'e':go_inventory,
             'H':help_turn,
+            'W':go_inventory,
             }
     fun = keyboard_fun.get(key_sym, False)
     if fun:

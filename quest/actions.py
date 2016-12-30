@@ -144,14 +144,20 @@ def get_direction(key_sym):
     else:
         return False
 
+def inventory_wear_action(world, obj):
+    world.stateSystem.changeState('walk')
+    print('wear', obj.name)
+
 INVENTORY_VIEW_ITEM = 'v'
 INVENTORY_APPLY_ITEM = 'a'
 INVENTORY_EAT_ITEM = 'e'
+INVENTORY_WEAR_ITEM = 'W'
 def do_inventory_action(world, action, object_index):
     inventory_actions = {
         INVENTORY_VIEW_ITEM: inventory_view_action,
         INVENTORY_APPLY_ITEM: lambda w, x: direction_do(w, inventory_apply_action, x),
         INVENTORY_EAT_ITEM: inventory_eat_action,
+        INVENTORY_WEAR_ITEM: inventory_wear_action,
             }
     if object_index < len(world.inventory):
         fun = inventory_actions.get(action, False)

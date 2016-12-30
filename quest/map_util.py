@@ -22,6 +22,7 @@ m - сломать
 J - разминка ?
 e - съесть
 H - помощь выкл.
+W - надеть
 '''
 def recalc_light(world):
     light_map = dict() 
