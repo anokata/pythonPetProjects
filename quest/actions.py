@@ -155,8 +155,9 @@ def inventory_wear_action(world, obj):
             'body':world.player.body,
             'legs':world.player.legs,
             }
-    part = parts.get(obj.part)
-    part.weared = obj
+    part = parts.get(obj.part, False)
+    if part:
+        part.weared = obj
 
 INVENTORY_VIEW_ITEM = 'v'
 INVENTORY_APPLY_ITEM = 'a'
