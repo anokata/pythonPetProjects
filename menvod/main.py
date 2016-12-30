@@ -5,6 +5,8 @@ import stateSystem
 #import yaml
 import mega
 import ByteFont
+import lists
+
 data_dir = 'data/'
 #TODO make test and write TZ and clean up it
 #### DEVELOP AREA START #### (future to refactor)
@@ -21,6 +23,8 @@ def std_draw(render_data):
     ByteFont.draw_text('b', y=0, x=2, color=(1, 0, 0))
     ByteFont.draw_text('c', y=1, x=1, color=(0, 0, 1))
     ByteFont.draw_text('d', y=1, x=2, color=(0, 1, 0))
+    l = lists.init(2, 4, 'ab', 'cd', '3.21')
+    lists.render()
 
 ####
 def init():
