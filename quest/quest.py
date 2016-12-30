@@ -27,6 +27,7 @@ def make_actor(**kwargs):
             'max_strength':2,
             'stamina':3,
             'max_stamina':10,
+            'weared':None,
             }
     actor = DotDict(**kwargs)
     actor.takeable = False

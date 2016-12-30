@@ -78,7 +78,8 @@ def update_char_info(world):
     player = world.player
     dinfo = (
             'Голова\n  температура:{:.2f}',(player.head.temp,),
-            'Тело\n  температура:{:.2f}',(player.body.temp,),
+            'Тело ({})\n  температура:{:.2f}',('non' if player.body.weared == None else
+                player.body.weared.name, player.body.temp,),
             '  сила:({:.2f}/{:.2f})',(player.body.strength, player.body.max_strength),
             '  выносливость:({:.2f}/{:.2f})',(player.body.stamina, player.body.max_stamina),
             'Руки\n  температура:{:.2f}',(player.arms.temp,),
@@ -120,6 +121,8 @@ def draw_inventory(world):
         if obj.contain:
             pass
             line += "({})".format(obj.contain[0].name)
+        if obj.wearable and obj.weared:
+            line += "(одето)"
         i += 1
         clr = obj.color
         draw_text(line, y=i, x=1, color=clr)

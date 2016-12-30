@@ -16,6 +16,7 @@ objects:
         eatable: False
         reminder: False
         walk_action: False
+        wearable: False
     hidden_object: &hidden_object
         <<: *default
         passable: True
@@ -24,6 +25,11 @@ objects:
         <<: *default
         passable: True
         takeable: True
+    def_shmot: &def_shmot
+        <<: *def_object
+        weared: False
+        part: 'body'
+        wearable: True
     key: &key
         <<: *default
         key_id: 0
@@ -112,20 +118,23 @@ objects:
                 volume: 1
                 char: 32
     shirt:
-        <<: *def_object
+        <<: *def_shmot
         name: 'рубашка'
         char: 23
         color: [0.8,0.2,0.1]
+        part: 'body'
     pants:
-        <<: *def_object
+        <<: *def_shmot
         name: 'штаны'
         char: 24
         color: [0.5,1,0]
+        part: 'legs'
     kross:
-        <<: *def_object
+        <<: *def_shmot
         name: 'кросовки'
         char: 22
         color: [0,0,1]
+        part: 'foot'
     heater:
         <<: *default
         name: 'батарея'

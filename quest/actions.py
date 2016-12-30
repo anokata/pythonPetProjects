@@ -146,7 +146,17 @@ def get_direction(key_sym):
 
 def inventory_wear_action(world, obj):
     world.stateSystem.changeState('walk')
-    print('wear', obj.name)
+    if not obj.wearable:
+        log_main('Нельзя надеть {}'.format(obj.name))
+        return False
+    log_main('Надеваю {}'.format(obj.name))
+    obj.weared = True
+    parts = {
+            'body':world.player.body,
+            'legs':world.player.legs,
+            }
+    part = parts.get(obj.part)
+    part.weared = obj
 
 INVENTORY_VIEW_ITEM = 'v'
 INVENTORY_APPLY_ITEM = 'a'
