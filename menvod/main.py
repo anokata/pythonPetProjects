@@ -15,6 +15,7 @@ data_dir = 'data/'
 def std_keypress(key_sym, world=None):
     keyboard_fun = {
             'H':lambda x, y: x,
+            'j':lambda x, y: lists.next(),
             }
     keyboard_fun.get(key_sym, lambda x, y: x)(key_sym, world)
 
@@ -23,7 +24,6 @@ def std_draw(render_data):
     ByteFont.draw_text('b', y=0, x=2, color=(1, 0, 0))
     ByteFont.draw_text('c', y=1, x=1, color=(0, 0, 1))
     ByteFont.draw_text('d', y=1, x=2, color=(0, 1, 0))
-    l = lists.init(2, 4, 'ab', 'cd', '3.21')
     lists.render()
 
 ####
@@ -35,6 +35,7 @@ def init():
     font = ByteFont.init_font(data_dir + ByteFont.font_file, 10, 16)
     font10x16 = ByteFont.init_font(data_dir + ByteFont.font_file10x16, 10, 16)
     ByteFont.set_fonts(font, font10x16)
+    lists.init(2, 4, 'ab', 'cd', '3.21')
 
 def DrawGLScene():
     gl_main.gl_draw_pre()
@@ -50,6 +51,7 @@ def keyPressed(*args):
     key_sym = bytes.decode(args[0])
     #print(key_sym, ord(args[0]))
     stateSystem.handleEvent('keypress', key_sym, None)
+    DrawGLScene()
 
 def main():
     gl_main.gl_main(name='menvod', draw_func=DrawGLScene, key_func=keyPressed)
