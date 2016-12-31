@@ -12,12 +12,24 @@ data_dir = 'data/'
 #TODO make test and write TZ and clean up it
 #### DEVELOP AREA START #### (future to refactor)
 def build_status_str():
-    s = "{time}"
+    s = "{time}|{life_days}|{remain}"
     time = datetime.datetime.now()
     time = "{}:{}".format(time.hour, time.minute)
+
+    birth_date = datetime.date(1988, 11, 29)
+    end_date = datetime.date(2050, 11, 29)
+    life_days = (datetime.date.today() - birth_date).days
+    remain_days = (end_date - datetime.date.today()).days 
+    all_days = (end_date - birth_date).days 
+    remain_days = "remain:{} days ({:.1f}%)".format(remain_days, life_days*100/all_days)
+    life_days = "Life:{} days".format(life_days)
+
     params = {'time': time,
+            'life_days': life_days,
+            'remain': remain_days,
             }
     return s.format(**params)
+#TODO сколько дней прошло с рождения и сколько дней осталось до даты
 
 def render_status():
     ByteFont.draw_text(build_status_str(), y=0, x=0, color=(1, 1, 1))
