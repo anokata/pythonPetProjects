@@ -35,6 +35,7 @@ def get_all():
         al += (str(k) + ' : ' + str(v) + '\n')
     return al
 
+#TODO get started with
 @route(get_books, method='GET')
 def get_bks():
     al = str()

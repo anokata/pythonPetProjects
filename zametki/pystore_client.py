@@ -39,6 +39,11 @@ def save(name, data):
 def book(name, page):
     save('book_'+name, 'page_'+page)
 
+#TODO get book
+
+def get_urls():
+    pass
+
 def save_cmd(args):
     args.name = get_name(args)
     data = get_data(args) 

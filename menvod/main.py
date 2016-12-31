@@ -29,7 +29,6 @@ def build_status_str():
             'remain': remain_days,
             }
     return s.format(**params)
-#TODO сколько дней прошло с рождения и сколько дней осталось до даты
 
 def render_status():
     ByteFont.draw_text(build_status_str(), y=0, x=0, color=(1, 1, 1))
