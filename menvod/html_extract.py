@@ -16,7 +16,7 @@ def extract_text(elements):
     text = list()
     for e in elements:
         text.append(e.text_content())
-        text.append('\n')
+        text.append('\n'*2)
     return ''.join(text)
 
 def save_text(filename, text):
@@ -35,8 +35,8 @@ def extract_new_name(path, extension=None):
     name = re.sub('[:|\s\.\,]', '', real_name)[::4]
     pth = os.path.split(path)[0] + os.path.sep
     end_name = pth + name + part1 + numbers + extension
-    if os.path.exists(end_name):
-        return None
+    #if os.path.exists(end_name):
+    #    return None
     return end_name
 
 def html_p_texts(pattern):
