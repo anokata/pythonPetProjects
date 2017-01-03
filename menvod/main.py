@@ -16,7 +16,7 @@ def build_status_str():
     time = datetime.datetime.now()
     time = "{}:{}".format(time.hour, time.minute)
 
-    birth_date = datetime.date(1988, 11, 29)
+    birth_date = datetime.date(1989, 12, 29)
     end_date = datetime.date(2050, 11, 29)
     life_days = (datetime.date.today() - birth_date).days
     remain_days = (end_date - datetime.date.today()).days 
