@@ -271,3 +271,9 @@
 как они живут. если есть все условия то растут постепенно множа некоторые
 части (множимые) давая плоды\семена, (семена могу прорастать) накапливая в
 частях вещества.
+      in_water: bool
+      all need water, soil, air, light(intensity)
+            get_lightening(x, y, map): float 0-...
+            object soil contain plants
+      grow(plant, env)
+сперва листья.

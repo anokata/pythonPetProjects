@@ -139,6 +139,31 @@ objects:
         <<: *default
         name: 'батарея'
         char: 25
+    leaf:
+        <<: *default
+        passable: True
+        name: 'лист'
+        color: [0, 0.9, 0.4]
+        char: 136
+        sugar: 1
+    moss: &moss
+        <<: *default
+        passable: True
+        name: 'мох'
+        color: [0, 0.9, 0.4]
+        char: 136
+        leafs: [leaf, leaf]
+    soil: 
+        <<: *default
+        passable: True
+        name: 'почва'
+        char: 133   
+        color: [1, 0.8, 0.5]
+        contain: 
+            - moss1:
+                <<: *moss
+
+
     lamp:
         <<: *default
         name: 'лампа'
