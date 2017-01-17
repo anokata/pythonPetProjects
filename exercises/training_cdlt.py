@@ -16,3 +16,19 @@ def solution(A):
             min = diff
     return min
         
+    
+def solution(A):
+    a = sorted(A, key=abs)
+    m = a[-1] * a[-2] * a[-3]
+    if m >= 0:
+        return m
+    i = -3
+    while a[i] < 0:
+        i -= 1
+    if a[-1] * a[-2] > 0:
+        m = a[-1] * a[-2] * a[i]
+    elif a[-1] < 0:
+        m = a[-3] * a[-2] * a[i]
+    else:
+        m = a[-1] * a[-3] * a[i]
+    return m
