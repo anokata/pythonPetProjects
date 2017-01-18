@@ -19,7 +19,19 @@ def solution(A):
             return A[i] + 1
     return A[-1] + 1
     
-assert(            
+assert(solution([1]) == 2)
+assert(solution([2]) == 1)
+assert(solution([2,1]) == 3)
+assert(solution([1,2,1]) == 3)
+assert(solution([-1,2,1]) == 3)
+assert(solution([-1,2,-1]) == 1)
+assert(solution([-1,1,-1]) == 2)
+assert(solution([-1,-1,-1]) == 1)
+assert(solution([-1]) == 1)
+assert(solution([1,1,1]) == 2)
+assert(solution([2,2,3]) == 1)
             
+import random
+
         
     
