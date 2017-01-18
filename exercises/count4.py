@@ -10,6 +10,8 @@ def solution(A):
         else:
             return 2
     print(A, A[-1])
+    if A[-1] < 0:
+        return 1
     for i in xrange(n-1):
         if A[i] < 0 and A[i+1] > 1:
             return 1
@@ -17,7 +19,7 @@ def solution(A):
             return A[i] + 1
     return A[-1] + 1
     
-            
+assert(            
             
         
     
