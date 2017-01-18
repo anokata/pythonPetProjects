@@ -104,7 +104,7 @@ def info():
 
 def start(test):
     inet_on()
-    if is_once_nowday_started():
+    if is_once_nowday_started() and not test:
         exc('pday.py start')
         return
     exc('pday.py start')
@@ -116,10 +116,10 @@ def start(test):
     input('Press enter...')
 
 if __name__=='__main__':
-    if len(sys.argv)>1:
-        test_this()
-    else:
-        start(test) 
+    #if len(sys.argv)>1:
+        #test_this()
+    #else:
+    start(test) 
     exc('tmux attach -t base || tmux new -s base')
 
 #print('Установим обои')

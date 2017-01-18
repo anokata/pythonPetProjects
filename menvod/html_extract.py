@@ -29,7 +29,12 @@ def get_star_files(path):
 def extract_new_name(path, extension=None):
     if extension == None:
         extension = re.search('\.[a-zA-Z]*', path).group()
-    numbers = re.search('\d+', path).group()
+    print(path)
+    numbers = re.search('\d+', path)
+    if numbers == None:
+        numbers = ''
+    else:
+        numbers = numbers.group()
     part1 = ''.join(re.findall('/[a-zA-Z]', path)).replace('/', '')
     real_name = os.path.split(path)[1]
     name = re.sub('[:|\s\.\,]', '', real_name)[::4]
@@ -56,7 +61,7 @@ def html_p_texts(pattern):
 
 #if __name__=='__main__':
 
-path = '/home/ksi/Downloads/html/Mother of Learning Chapter'
+path = '/home/ksi/Downloads/html/Mother of Learning'
 f = file_to_html('/home/ksi/Downloads/html/Mother of Learning Chapter 58: Questions and Answers, a fantasy fiction | FictionPress.html')
 t = get_all_tags(f, 'p')
 x = extract_text(t)

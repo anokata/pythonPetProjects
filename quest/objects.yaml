@@ -159,7 +159,8 @@ objects:
         name: 'почва'
         char: 133   
         color: [1, 0.8, 0.5]
-        contain: 
+        water: 1
+        plants: 
             - moss1:
                 <<: *moss
 
