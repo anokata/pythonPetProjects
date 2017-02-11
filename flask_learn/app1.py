@@ -4,6 +4,7 @@ from flask import render_template
 from flask_wtf import FlaskForm
 from wtforms import TextField, BooleanField
 from wtforms.validators import Required
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object('config')
