@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+{% if links %}
+<div>
+    {% for link in links %}
+    <div>{{ link }} </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
