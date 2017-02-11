@@ -32,7 +32,8 @@ def login():
         return redirect('/index')
     return render_template('login.html',
                             title = 'Sign In',
-                            form = form)
+                            form = form,
+                            providers = app.config['OPENID_PROVIDERS'])
 
 @app.route("/")
 def root():
