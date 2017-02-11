@@ -3,6 +3,16 @@ from flask import request
 from flask import render_template
 app = Flask(__name__)
 
+records = {
+        'user1': {
+            'links': [
+                'http://example.com',
+                'http://google.com',
+                'http://som.com',
+            ]
+        }
+}
+
 @app.route("/")
 def root():
     return "<h1>x</h1>"
@@ -17,16 +27,21 @@ def sub_root(dir, num):
                          'NAME: ', name_arg,
                          "</h2>"))
 
-@app.route("/template1/")
-def templ1(methods=['POST', 'GET']):
+@app.route("/template1/", methods=['POST', 'GET'])
+def templ1():
     if request.method == 'GET':
         num_arg = request.args.get('num', 0)
         return render_template('app1.html', num=num_arg)
     elif request.method == 'POST':
-        return render_template('app1.html', num=num_arg)
+        return render_template('app1.html', name=request.form['username'])
     else:
         return 'no'
 
+@app.route("/<user>/blog/")
+def user_blog(user='user1'):
+    return render_template('blog.html',
+                            user=user,
+                            links=records[user]['links'])
 
 
 if __name__=='__main__':
