@@ -36,5 +36,46 @@ def solution(A):
     return minavgind
 
 a=solution([4,2,2,5,1,5,8])
-print(a)
+#print(a)
+
+#print([1,2,3][2])
+
+def fb(a, b):
+    for x in range(a, b+1):
+        if x % 3 == 0 and x % 5 == 0:
+            print("FizzBuzz")
+        elif x % 3 == 0:
+            print("Fizz")
+        elif x % 5 == 0:
+            print("Buzz")
+        else:
+            print(x)
+
+def test_fb():
+    a, b = input().split()
+    a = int(a)
+    b = int(b)
+    fb(a, b)
+
+def ana(a, b):
+    return a == ''.join(reversed(b))
+
+def anag(a, b):
+    a=a.lower()
+    b=b.lower()
+    for x in a:
+        if x not in b:
+            return False
+    return True
+
+def test_ana():
+    a=input()
+    b=input()
+    print(anag(a,b))
+
+
+
+
+
+
 
