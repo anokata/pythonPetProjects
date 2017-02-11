@@ -17,6 +17,7 @@ records = {
 def root():
     return "<h1>x</h1>"
 
+@app.route("/index")
 @app.route("/<dir>-<int:num>/", methods=['GET', 'POST'])
 def sub_root(dir, num):
     if request.method == 'POST':
