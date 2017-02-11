@@ -1,7 +1,12 @@
 <!doctype html>
 <title>Template 1</title>
 {% if name %}
-  <h1>{{ name }}!</h1>
+<h1>{{ name }}! #{{ num }}</h1>
 {% else %}
   <h1>no name!</h1>
 {% endif %}
+<form name='user' method='post' action='/template1/'>
+    Age:<br>
+    <input type='text' >
+    <input type='submit' value='send'>
+</form>

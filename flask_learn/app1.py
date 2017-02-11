@@ -12,12 +12,21 @@ def sub_root(dir, num):
     if request.method == 'POST':
         return 'POST'
     else:
-        return ' '.join(("<h2> dir:", dir, "_", 
-                         str(num), "</h2>"))
+        name_arg = request.args.get('dir', 'nodir')
+        return ' '.join(("<h2> dir:", dir, "_", str(num), 
+                         'NAME: ', name_arg,
+                         "</h2>"))
 
-@app.route("/template1/<arg>")
-def templ1(arg=None):
-    return render_template('app1.html', name=arg)
+@app.route("/template1/")
+def templ1(methods=['POST', 'GET']):
+    if request.method == 'GET':
+        num_arg = request.args.get('num', 0)
+        return render_template('app1.html', num=num_arg)
+    elif request.method == 'POST':
+        return render_template('app1.html', num=num_arg)
+    else:
+        return 'no'
+
 
 
 if __name__=='__main__':
