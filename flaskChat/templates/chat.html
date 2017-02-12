@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Chat</h1>
-<h3>talk from {{ user_from }} to {{ user_to }}</h3>
+<div>talk from <b>{{ user_from }}</b> to <b>{{ user_to }}</b></div>
 <form action="" method="post" name="chat">
     {{form.hidden_tag()}}
     <p>

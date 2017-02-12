@@ -122,6 +122,11 @@ class RegistrationForm(FlaskForm):
 def load_user(user_id):
     return User.query.get(user_id)
 
+
+@app.route('/public', methods=['GET', 'POST'])
+def public():
+    return render_template('public.html')
+
 @app.route('/users', methods=['GET', 'POST'])
 def users():
     users = User.query.all()
