@@ -62,10 +62,30 @@ class Messages(db.Model):
         self.user_from_id = user_from_id
         self.user_to_id = user_to_id
         self.message = message
-        timestamp = datetime.datetime.utcnow()
+        self.timestamp = datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<msg %r>' % (self.message)
+
+    def get_messages(self, from_id, to_id):
+        
+        msgs_from = self.query.filter_by(
+                user_from_id=from_id,
+                user_to_id=to_id
+                ).all()
+        msgs_to = self.query.filter_by(
+                user_from_id=to_id,
+                user_to_id=from_id
+                ).all()
+        msgs = list()
+        msgs.extend(msgs_from)
+        msgs.extend(msgs_to)
+        msgs.sort(key=lambda x: x.timestamp)
+        text = ''
+        for x in msgs:
+            text += "{1} | {0}\n".format(x.message, x.timestamp)
+        return text
+
 
 
 class ChatForm(FlaskForm):
@@ -107,23 +127,31 @@ def users():
     users = User.query.all()
     return render_template('users.html', users=users)
 
+def show_messages(form, user_to_id):
+    # Get all messages
+    m = Messages.get_messages(Messages, current_user.id, user_to_id)
+    form.chat.data = m
+
+
 @login_required
 @app.route('/chat/<name>', methods=['GET', 'POST'])
 def chat(name=None):
     if name == None:
         return render_template('chat.html', form=form)
+    user_to_id = User.get_id_by_name(User, name)
     form = ChatForm(request.form)
     if request.method == 'POST' and form.validate():
         msg = Messages(message=form.message.data, 
                     user_from_id=current_user.id,
-                    user_to_id=User.get_id_by_name(User, name))
+                    user_to_id=user_to_id)
         db.session.add(msg)
         db.session.commit()
+        show_messages(form, user_to_id)
         return render_template('chat.html', form=form,
                     user_from=current_user.name,
                     user_to=name)
     else:
-        form.message.data = 'enter message'
+        show_messages(form, user_to_id)
         return render_template('chat.html', form=form, 
                     user_from=current_user.name,
                     user_to=name)
