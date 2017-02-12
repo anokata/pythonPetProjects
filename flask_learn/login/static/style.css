@@ -20,3 +20,7 @@ h2              { font-size: 1.2em; }
     background: #eef;
     border: 1px solid #eee;
 }
+textarea {
+    width: 40%;
+    height: 300px;
+}

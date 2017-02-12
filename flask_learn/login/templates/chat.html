@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Chat</h1>
+<h3>talk from {{ user_from }} to {{ user_to }}</h3>
+<form action="" method="post" name="chat">
+    {{form.hidden_tag()}}
+    <p>
+    <div>
+    {{ form.chat }}
+    </div>
+    {{ form.message }}
+    </p>
+    <p><input type="submit" value="Send"></p>
+</form>
+{% endblock %}

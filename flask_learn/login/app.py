@@ -1,6 +1,6 @@
 from flask import Flask, flash, redirect, session, url_for, request, g, request, render_template
 from flask_wtf import FlaskForm
-from wtforms import TextField, BooleanField, PasswordField, validators
+from wtforms import TextField, BooleanField, PasswordField, validators, TextAreaField, SelectField
 from wtforms.validators import Required
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
@@ -60,6 +60,14 @@ class Messages(db.Model):
     def __repr__(self):
         return '<msg %r>' % (self.message)
 
+
+class ChatForm(FlaskForm):
+    message = TextField('message', validators = [
+                        Required(),
+                        validators.Length(min=1, max=220)
+    ])
+    chat = TextAreaField()
+
 class LoginForm(FlaskForm):
     name = TextField('name', validators = [
                         Required(),
@@ -86,6 +94,25 @@ class RegistrationForm(FlaskForm):
 @lm.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+@app.route('/users', methods=['GET', 'POST'])
+def users():
+    users = User.query.all()
+    return render_template('users.html', users=users)
+
+@login_required
+@app.route('/chat/<name>', methods=['GET', 'POST'])
+def chat(name=None):
+    if name == None:
+        return render_template('chat.html', form=form)
+    form = ChatForm(request.form)
+    if request.method == 'POST' and form.validate():
+        return render_template('chat.html', form=form)
+    else:
+        return render_template('chat.html', form=form, 
+                    user_from=current_user.name,
+                    user_to=name)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
