@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-Name = {{ name }}
-<a href="/login">Log In</a>
 {% if current_user.is_authenticated %}
   Hi {{ current_user.name }}!
 {% endif %}

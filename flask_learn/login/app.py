@@ -117,9 +117,13 @@ def login():
             flash('Not exist, register please.')
             return redirect(url_for('register'))
         # Check user
-        login_user(user)
-        flash('Login OK')
-        return redirect(url_for('index'))
+        if user.password == form.password.data:
+            login_user(user)
+            flash('Login OK')
+            return redirect(url_for('index'))
+        else:
+            flash('Incorrect password!')
+            return redirect(url_for('login'))
     return render_template('login.html', form=form)
 
 @app.route("/")
