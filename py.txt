@@ -30,4 +30,6 @@ globals()
 functools.reduce
 filter()
 map()
+#pep8 conspect
+консистентность.
 
