@@ -5,10 +5,18 @@ from flask_wtf import FlaskForm
 from wtforms import TextField, BooleanField
 from wtforms.validators import Required
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from flask_openid import OpenID
+from config import basedir
+import os
 
 app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
+
+lm = LoginManager()
+lm.init_app(app)
+oid = OpenID(app, os.path.join(basedir, 'tmp'))
 
 records = {
         'user1': {
@@ -28,9 +36,19 @@ class User(db.Model):
     nickname = db.Column(db.String(64), index = True, unique = True)
     email = db.Column(db.String(120), index = True, unique = True)
     role = db.Column(db.SmallInteger, default = ROLE_USER)
+    posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
 
     def __repr__(self):
         return '<User %r>' % (self.nickname)
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    body = db.Column(db.String(140))
+    timestamp = db.Column(db.DateTime)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return '<Post %r>' % (self.body)
 
 class LoginForm(FlaskForm):
     openid = TextField('openid', validators = [Required()])
