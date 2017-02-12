@@ -32,4 +32,8 @@ filter()
 map()
 #pep8 conspect
 консистентность.
+прерывать строку Перед оператором
+funcall(some
+        + other
+        - more)
 
