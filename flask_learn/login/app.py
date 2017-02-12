@@ -41,6 +41,13 @@ class User(db.Model):
     def get_id(self):
         return str(self.id)
 
+    def get_id_by_name(self, name):
+        user = self.query.filter_by(name=name).first()
+        if user != None:
+            return user.id
+        else:
+            return False
+
     def __repr__(self):
         return '<User %r>' % (self.name)
 
@@ -52,7 +59,7 @@ class Messages(db.Model):
     user_to_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, user_from_id=None, user_to_id=None, message=''):
-        self.user_from_id = name
+        self.user_from_id = user_from_id
         self.user_to_id = user_to_id
         self.message = message
         timestamp = datetime.datetime.utcnow()
@@ -107,8 +114,16 @@ def chat(name=None):
         return render_template('chat.html', form=form)
     form = ChatForm(request.form)
     if request.method == 'POST' and form.validate():
-        return render_template('chat.html', form=form)
+        msg = Messages(message=form.message.data, 
+                    user_from_id=current_user.id,
+                    user_to_id=User.get_id_by_name(User, name))
+        db.session.add(msg)
+        db.session.commit()
+        return render_template('chat.html', form=form,
+                    user_from=current_user.name,
+                    user_to=name)
     else:
+        form.message.data = 'enter message'
         return render_template('chat.html', form=form, 
                     user_from=current_user.name,
                     user_to=name)
