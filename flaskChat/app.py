@@ -136,10 +136,10 @@ def show_messages(form, user_to_id):
 @login_required
 @app.route('/chat/<name>', methods=['GET', 'POST'])
 def chat(name=None):
+    form = ChatForm(request.form)
     if name == None:
         return render_template('chat.html', form=form)
     user_to_id = User.get_id_by_name(User, name)
-    form = ChatForm(request.form)
     if request.method == 'POST' and form.validate():
         msg = Messages(message=form.message.data, 
                     user_from_id=current_user.id,
