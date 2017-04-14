@@ -1,11 +1,11 @@
 """ . """
-import pyglet
-from pyglet.window import key
-from pyglet import clock
 import random
 import math
 import sys
 sys.path += ["../modules"]
+import pyglet
+from pyglet.window import key
+from pyglet import clock
 from pygletUtil import *
 from stateSystem import *
 from makeAnimation import makeAnimObj
