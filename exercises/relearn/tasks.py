@@ -127,6 +127,41 @@ def students_print():
 
     print(school_results_from_file_lc('input_test'))
 
-students_print()
+#students_print()
+
+def list_neigh_sum(lst):
+    if len(lst) == 1:
+        return lst
+    ln = len(lst)
+    result = list()
+    for i in range(ln):
+        if i == 0:
+            result.append(lst[-1] + lst[i+1])
+        elif i == ln - 1:
+            pass
+            result.append(lst[0] + lst[i-1])
+        else:
+            result.append(lst[i-1] + lst[i+1])
+    return result
+
+def string_to_intlist(string):
+    return [int(x) for x in string.split(" ")]
+
+from functools import reduce
+
+def intlist_to_string(lst):
+    return reduce(lambda x, y: x + str(y) + " ", lst, "")
+
+def test_list_nei():
+    print(list_neigh_sum([1]))
+    print(list_neigh_sum([1, 2]))
+    print(list_neigh_sum([1, 8, 2]))
+    print(list_neigh_sum([1, 3, 5, 6, 10]))
+    print(list_neigh_sum(string_to_intlist("1 2 3")))
+    print(intlist_to_string(list_neigh_sum(string_to_intlist("1 2 3"))))
+
+
+
+test_list_nei()
 
 
