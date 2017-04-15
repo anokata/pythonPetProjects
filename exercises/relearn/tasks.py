@@ -14,7 +14,7 @@ def dnk(string):
 
     return result
 
-print(dnk("aaabbdDcccz"))
+#print(dnk("aaabbdDcccz"))
 
 def unpackDnk(string):
     result = '';
@@ -32,7 +32,7 @@ def unpackDnk(string):
 
     return result
 
-print(unpackDnk("a12b12"))
+#print(unpackDnk("a12b12"))
 
 def unpackDnkFile(fileName):
     with open(fileName) as fin:
@@ -65,7 +65,59 @@ def find_popular_word_in_file(file_name):
     word, count = find_popular_word(file_to_words(file_name))
     print(word, count)
 
-print(find_popular_word(string_to_words("ab cd ed ab")))
-print(find_popular_word_in_file("tasks.py"))
-print(find_popular_word_in_file("input"))
+#print(find_popular_word(string_to_words("ab cd ed ab")))
+#print(find_popular_word_in_file("tasks.py"))
+#print(find_popular_word_in_file("input"))
+
+from collections import OrderedDict
+
+# @input string file name
+# @return dict of name:[marks]
+def school_results_from_file(file_name):
+    result = OrderedDict()
+    with open(file_name) as fin:
+        lines = fin.read().split("\n")
+    for line in lines:
+        if line == '':
+            continue
+        fields = line.split(";")
+        name = fields[0]
+        math_mark = int(fields[1])
+        phys_mark = int(fields[2])
+        rusl_mark = int(fields[3])
+        result[name] = [math_mark, phys_mark, rusl_mark]
+    return result
+
+def calc_avg_makrs_every(students_makrs):
+    result = OrderedDict()
+    for name, marks in students_makrs.items():
+        result[name] = sum(marks) / float(len(marks))
+    return result
+
+def calc_avg_marks_total(students_makrs):
+    if len(students_makrs) < 1:
+        return []
+    result = list()
+    first = True
+    for marks in students_makrs.values():
+        if first:
+            first = False
+            result = marks[::]
+        else:
+            result = (a + b for a, b in zip(marks, result))
+    result = list(result)
+    length = len(students_makrs)
+    return list(map(lambda x: x / length, result))
+
+def students_print():
+    inp = school_results_from_file('input')
+    avg = calc_avg_makrs_every(inp)
+    for avg_mark in avg.values():
+        print(avg_mark)
+    mid = calc_avg_marks_total(inp)
+    for mid_mark in mid:
+        print(mid_mark, end=' ')
+
+students_print()
+
 
