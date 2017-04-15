@@ -88,6 +88,13 @@ def school_results_from_file(file_name):
         result[name] = [math_mark, phys_mark, rusl_mark]
     return result
 
+def school_results_from_file_lc(file_name):
+    with open(file_name) as fin:
+        return [marks.split(";")[1:] for marks in fin.read().split("\n") if marks != '']
+
+def calc_avg_makrs_every_lc(students_marks):
+    return [avg/len(students_makrs[0]) for avg in students_marks]
+
 def calc_avg_makrs_every(students_makrs):
     result = OrderedDict()
     for name, marks in students_makrs.items():
@@ -110,13 +117,15 @@ def calc_avg_marks_total(students_makrs):
     return list(map(lambda x: x / length, result))
 
 def students_print():
-    inp = school_results_from_file('input')
+    inp = school_results_from_file('input_test')
     avg = calc_avg_makrs_every(inp)
     for avg_mark in avg.values():
         print(avg_mark)
     mid = calc_avg_marks_total(inp)
     for mid_mark in mid:
         print(mid_mark, end=' ')
+
+    print(school_results_from_file_lc('input_test'))
 
 students_print()
 
