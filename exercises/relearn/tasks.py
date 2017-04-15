@@ -160,7 +160,14 @@ def test_list_nei():
     print(list_neigh_sum(string_to_intlist("1 2 3")))
     print(intlist_to_string(list_neigh_sum(string_to_intlist("1 2 3"))))
 
+class Test_listnew:
+    def __init__(self):
+        self.a = []
+        self.a.append(1)
 
+t1 = Test_listnew()
+t2 = Test_listnew()
+print(t1.a, t2.a)
 
 test_list_nei()
 
