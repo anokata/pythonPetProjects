@@ -171,4 +171,21 @@ print(t1.a, t2.a)
 
 test_list_nei()
 
+class MyExc(Exception):
+    pass
+def test_excetptions_catch():
+    try:
+        print('try raise')
+        #exit(0)
+        return
+        raise MyExc()
+        raise Exception("hi")
+    except MyExc:
+        print('catch my exception')
+    else:
+        print('else')
+    finally:
+        print("finally")
 
+test_excetptions_catch()
+print("after try")
