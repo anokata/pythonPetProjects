@@ -189,3 +189,38 @@ def test_excetptions_catch():
 
 test_excetptions_catch()
 print("after try")
+
+def s(a, *vs, b=10):
+   res = a + b
+   for v in vs:
+       res += v
+   print(res)
+   return res
+
+#s(b=31, 0)
+s(11, 10)
+#s(11, 10, 10)
+s(5, 5, 5, 5, 1)
+s(11, b=20)
+s(21)
+s(11, 10, b=10)
+#s(0, 0, 31)
+
+def solution(A, B, C):
+    length = len(A)
+    nailed = length * [False]
+    all_nailed = False
+    nail_idx = 0
+    nails = 0
+    while not all_nailed:
+        all_nailed = True
+        for i in xrange(length):
+            if not nailed[i]:
+                all_nailed = False
+                if (A[i] <= C[nail_idx] <= B[i]):
+                    nailed[i] = True
+                    nails += 1
+        nail_idx += 1
+    
+        
+    return nails if all_nailed else -1s(b=31) 
