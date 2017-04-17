@@ -223,4 +223,34 @@ def solution(A, B, C):
         nail_idx += 1
     
         
-    return nails if all_nailed else -1s(b=31) 
+    return nails if all_nailed else -1 
+
+class List:
+    next = None
+    value = 0
+
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+    def add(self, node):
+        if self.next == None:
+            self.next = node
+        else:
+            self.next.add(node)
+
+    def __str__(self):
+        s = ''
+        if self.next != None:
+            s += str(self.value) + ", "
+            s += str(self.next)
+        else:
+            s = str(self.value) + '.'
+        return s
+
+l = List(3)
+l.add(List(4))
+l.add(List(8))
+l.add(List('end'))
+print(l)
+
