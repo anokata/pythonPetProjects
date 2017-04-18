@@ -254,3 +254,14 @@ l.add(List(8))
 l.add(List('end'))
 print(l)
 
+def multiply_table(a, b, c, e):
+    print('', end='\t')
+    for x in range(c, e + 1):
+        print(x, end='\t')
+    print()
+    for x in range(a, b + 1):
+        for y in [1] + list(range(c, e + 1)):
+            print(x * y, end='\t')
+        print()
+
+multiply_table(1, 3, 2, 5)
