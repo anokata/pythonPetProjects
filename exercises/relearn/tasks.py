@@ -265,3 +265,17 @@ def multiply_table(a, b, c, e):
         print()
 
 multiply_table(1, 3, 2, 5)
+
+
+def prog(n):
+    m = n % 10
+    k = n % 100
+    if m == 1 and k != 11:
+        print("%d программист" % n)
+    elif 4 >= m >= 2 and not (12 <= k <= 14):
+        print("%d программиста" % n)       
+    elif m <= 0 or m >= 5 or 11 <= k <= 14:
+        print("%d программистов" % n)
+
+for x in range(100, 200):
+    prog(x)
