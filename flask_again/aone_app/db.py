@@ -1,4 +1,4 @@
-from main import app
+from .main import app
 from flask import Flask, render_template, g, request, session, flash, redirect, url_for
 import sqlite3
 import os

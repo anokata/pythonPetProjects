@@ -1,7 +1,7 @@
-from main import app
+from .main import app
 from flask import Flask
 from flask import render_template, g, request, session, flash, redirect, url_for
-from db import *
+from .db import *
 
 @app.route('/all')
 def show_entries():

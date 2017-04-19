@@ -1,7 +1,6 @@
-from flask import Flask
+from aone_app import app
 import os
-
-app = Flask("aone")
+from .aone import *
 
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'aone.db'),

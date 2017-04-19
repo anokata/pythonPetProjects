@@ -1,8 +1,8 @@
-from main import app
+from .main import app
 from flask import render_template, g, request, session, flash, redirect, url_for
 import sqlite3
-from db import *
-from blog import *
+from .db import *
+from .blog import *
 
 @app.route('/')
 def view_all():
