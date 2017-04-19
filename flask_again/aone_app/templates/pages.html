@@ -7,10 +7,21 @@
     <input type=text size=30 name=link>
     <input type=submit value=Share>
 </form>
-<ul>
-{{ var }}
-{% for url in urls %}
-<li><a href="{{ url.link }}" >{{ url.name }}</a> </li>
-{% endfor %}
-</ul>
+<form id='main_form' action="{{ url_for('del_url') }}" method=post>
+    <table>
+    {{ var }}
+    <tbody>
+    {% for url in urls %}
+    <tr>
+    <td>
+        <input class='delete' type=button id="{{ url.id }}" value="Delete" />
+    </td>
+    <td>
+        <a href="{{ url.link }}" >{{ url.name }}</a> </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+</form>
+
 {% endblock %}

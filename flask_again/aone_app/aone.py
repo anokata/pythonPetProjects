@@ -7,7 +7,7 @@ from .blog import *
 @app.route('/')
 def view_all():
     db = get_db()
-    cur = db.execute('select name, link from urls')
+    cur = db.execute('select name, link, id from urls')
     urls = cur.fetchall()
     context = {
             "var": "gzd",
@@ -24,6 +24,15 @@ def add_url():
     flash('New link was successfully added')
     return redirect(url_for('view_all'))
 
+@app.route('/del_url', methods=['POST'])
+def del_url():
+    db = get_db()
+    db.execute('delete from urls where id = ?',
+                [request.form['id']])
+    db.commit()
+    #flash('Link was successfully Deleted!')
+    return ''
+    ##return redirect(url_for('view_all'))
 
 
 if __name__=='__main__':
