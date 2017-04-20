@@ -34,6 +34,7 @@ def del_url():
     return ''
     ##return redirect(url_for('view_all'))
 
+#TODO: переделать всё на управление с клавы(жс фронт) и вид как консоли?
 
 if __name__=='__main__':
     app.debug = True

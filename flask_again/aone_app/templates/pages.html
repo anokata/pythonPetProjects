@@ -5,11 +5,10 @@
     <input type=text size=30 name=name>
     <p>Link:</p>
     <input type=text size=30 name=link>
-    <input type=submit value=Share>
+    <input type=submit value=Add>
 </form>
 <form id='main_form' action="{{ url_for('del_url') }}" method=post>
     <table>
-    {{ var }}
     <tbody>
     {% for url in urls %}
     <tr>
