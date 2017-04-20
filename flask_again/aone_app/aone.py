@@ -3,15 +3,22 @@ from flask import render_template, g, request, session, flash, redirect, url_for
 import sqlite3
 from .db import *
 from .blog import *
+from .util import *
 
 @app.route('/')
 def view_all():
     db = get_db()
     cur = db.execute('select name, link, id from urls')
     urls = cur.fetchall()
+    cur = db.execute('select id, name, parent_id from dirs order by parent_id')
+    dirs = cur.fetchall()
+    nodes = dir2tree(dirs)
     context = {
             "var": "gzd",
             "urls": urls,
+            "dirs": dirs,
+            "nodes": str(nodes),
+            "root": nodes.map_to_div(),
             }
     return render_template("pages.html", **context)
 

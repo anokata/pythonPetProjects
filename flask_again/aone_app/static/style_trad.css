@@ -47,3 +47,19 @@ a {
 p {
     margin: 1em 0 0;
 }
+
+.button {
+    width: 100%;
+    margin-top: 1em;
+}
+
+.tree {
+    background-color: #efe;
+    border: solid 2px gray;
+    margin: 1em 1em 1em 1em;
+}
+
+.level-0 { background-color: #f9f; }
+.level-1 { background-color: #f99; }
+.level-2 { background-color: #9f9; }
+.level-3 { background-color: #99f; }
