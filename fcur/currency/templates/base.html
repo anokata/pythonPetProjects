@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="static/style.css" />
+    <title>Курсы валют</title>
+</head>
+<body>
+    <div id="page">
+    <div id="header">
+        {% block header %}
+        {% endblock %}
+    </div>
+    <div id="content" class='autoMargin'>{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        {% endblock %}
+    </div>
+  {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+  {% endfor %}
+    </div>
+</body>
+</html>
