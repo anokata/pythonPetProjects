@@ -1,6 +1,6 @@
 .queryForm {
     padding: 1em;
-    border: solid 2px gray;
+    /*border: solid 2px gray;*/
 }
 
 #content {
@@ -13,6 +13,15 @@ form div {
 
 .textInput {
     width: 70%;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid #bbb;
+    padding: 0.5em;
+}
+
+.submit {
+    background-color: #f8f8f8;
+    border: 1px solid rgb(170, 170, 170);
+    padding: 0.4em;
 }
 
 table {
@@ -46,4 +55,12 @@ tr td:hover { background: #666; color: #FFF; }
 
 h3 {
     padding: 10px;
+}
+
+.answer {
+    text-align: center;
+    font-weight: bold;
+    font-family: Helvetica,Arial,sans-serif;
+    font-size: 2em;
+    padding: 1em;
 }

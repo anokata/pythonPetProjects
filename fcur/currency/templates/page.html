@@ -3,19 +3,16 @@
 
 <form action='' method='post' class='queryForm'>
     <div class='autoMargin'>
-    <input class='textInput' type=text name=query>
-    <input type=submit value=Спросить>
+    <input class='textInput' type=text name=query value="">
+    <input class='submit' type=submit value=Спросить>
     </div>
 </form>
 
 <div class='answer autoMargin width70'>
-    Ответ:<br>
     {%if ans %}
-    {{ ans }}
+    {{ descripton | safe }}
     {%endif %}
 </div>
-
-<hr>
 
 <div class='autoMargin width70'>
     <h3>Данные валют за {{ date }}</h3>
