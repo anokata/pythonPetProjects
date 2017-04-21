@@ -12,32 +12,32 @@ def normalize_words(words):
 
 
 currency_names = {"USD":"Доллар США", 
+        "CAD": "Канадский доллар",
+        "NZD": "Новозеландский доллар",
+        "SGD": "Сингапурский Доллар",
         "RUB": "Рубль",
         "EUR": "Евро", 
-        "CAD": "Канадский доллар",
         "CHF": "Швейцарский франк",
         "CZK": "Чешская крона", 
         "DKK": "Датская крона",
-        "GBP": "Фунт стерлингов",
         "NOK": "Норвежская крона", 
-        "SEK": "",
-        "HUF": "",
-        "NZD": "",
-        "MYR": "",
-        "PHP": "",
-        "CNY": "",
-        "ILS": "",
-        "ZAR": "",
-        "RON": "",
-        "IDR": "",
-        "SGD": "",
-        "KRW": "",
-        "PLN": "",
-        "BRL": "",
-        "TRY": "",
-        "BGN": "",
-        "MXN": "",
-        "THB": "",
+        "SEK": "Шведская крона",
+        "GBP": "Фунт стерлингов",
+        "HUF": "Венгерский форинт",
+        "MYR": "Малайзийский ринггит",
+        "PHP": "Филиппинское песо",
+        "CNY": "Китайский Юань",
+        "ILS": "Израильский Новый Шекель",
+        "ZAR": "Южноафриканский рэнд",
+        "RON": "Румынский Лей",
+        "IDR": "Индонезийская рупия",
+        "KRW": "Корейский Вон",
+        "PLN": "Польский Злотый",
+        "BRL": "Бразильский Реал",
+        "TRY": "Турецкая лира",
+        "BGN": "Болгарский лев",
+        "MXN": "Мексиканское Песо",
+        "THB": "Тайландский Бат",
         "HRK": "",
         "HKD": "",
         "INR": "",
@@ -47,6 +47,7 @@ currency_names = {"USD":"Доллар США",
 name_to_code = {name.lower(): code for code, name in currency_names.items()}
 name_to_code["доллар"] = "USD"
 name_to_code["японский йена"] = "JPY"
+name_to_code["йена"] = "JPY"
 code_to_name = {code : name.lower() for code, name in currency_names.items()}
 
 main_currency = "RUB"
@@ -78,7 +79,9 @@ def load_currency_table():
     rates = data["rates"]
     table = fill_table(rates, history_rates)
 
-    return table, date
+    date_str = datetime.datetime.strptime(date, "%Y-%m-%d").date().strftime("%d %B %Y")
+
+    return table, date_str
 
 # Fills table with values and names and growth sign relative to previous value
 def fill_table(rates, history_rates):
