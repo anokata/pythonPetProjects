@@ -1,6 +1,7 @@
 import datetime
 import requests
 import pymorphy2
+from .russian_number import russian_number_to_int
 
 morph = pymorphy2.MorphAnalyzer()
 
@@ -15,39 +16,57 @@ currency_names = {"USD":"Доллар США",
         "CAD": "Канадский доллар",
         "NZD": "Новозеландский доллар",
         "SGD": "Сингапурский Доллар",
-        "RUB": "Рубль",
-        "EUR": "Евро", 
-        "CHF": "Швейцарский франк",
+        "HKD": "Гонконгский доллар",
+        "AUD": "Австралийский доллар", 
         "CZK": "Чешская крона", 
         "DKK": "Датская крона",
         "NOK": "Норвежская крона", 
         "SEK": "Шведская крона",
+        "IDR": "Индонезийская рупия",
+        "INR": "Индийская рупия",
+        "PHP": "Филиппинское песо",
+        "MXN": "Мексиканское песо",
+        "RUB": "Рубль",
+        "EUR": "Евро", 
+        "CHF": "Швейцарский франк",
         "GBP": "Фунт стерлингов",
         "HUF": "Венгерский форинт",
         "MYR": "Малайзийский ринггит",
-        "PHP": "Филиппинское песо",
         "CNY": "Китайский Юань",
         "ILS": "Израильский Новый Шекель",
         "ZAR": "Южноафриканский рэнд",
-        "RON": "Румынский Лей",
-        "IDR": "Индонезийская рупия",
-        "KRW": "Корейский Вон",
-        "PLN": "Польский Злотый",
-        "BRL": "Бразильский Реал",
+        "RON": "Румынский лей",
+        "KRW": "Корейский вон",
+        "PLN": "Польский злотый",
+        "BRL": "Бразильский реал",
         "TRY": "Турецкая лира",
         "BGN": "Болгарский лев",
-        "MXN": "Мексиканское Песо",
-        "THB": "Тайландский Бат",
-        "HRK": "",
-        "HKD": "",
-        "INR": "",
-        "JPY": "Японская Йена",
-        "AUD": "", }
+        "THB": "Тайландский бат",
+        "HRK": "Хорватская куна",
+        "JPY": "Японская йена",
+        }
 
 name_to_code = {name.lower(): code for code, name in currency_names.items()}
 name_to_code["доллар"] = "USD"
 name_to_code["японский йена"] = "JPY"
 name_to_code["йена"] = "JPY"
+name_to_code["евро"] = "EUR"
+name_to_code["франк"] = "CHF"
+name_to_code["фунт"] = "GBP"
+name_to_code["форинт"] = "HUF"
+name_to_code["ринггит"] = "MYR"
+name_to_code["юань"] = "CNY"
+name_to_code["шекель"] = "ILS"
+name_to_code["рэнд"] = "ZAR"
+name_to_code["лей"] = "RON"
+name_to_code["вон"] = "KRW"
+name_to_code["злотый"] = "PLN"
+name_to_code["реал"] = "BRL"
+name_to_code["лира"] = "TRY"
+name_to_code["лев"] = "BGN"
+name_to_code["бат"] = "THB"
+name_to_code["куна"] = "HRK"
+
 code_to_name = {code : name.lower() for code, name in currency_names.items()}
 
 main_currency = "RUB"
@@ -61,6 +80,12 @@ def load_pair_rate(currency_from, currency_to):
 
 #print(load_pair_rate("RUB", "USD")) # TODO Test
 
+def previous_day(date):
+    date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+    date = date - datetime.timedelta(days=1)
+    return date.strftime("%Y-%m-%d")
+
+
 # Load table data with values and growth sing, real names in dict
 # also return current data as string
 def load_currency_table():
@@ -69,9 +94,7 @@ def load_currency_table():
     data = res.json()
 
     date = data["date"]
-    last_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-    last_date = last_date - datetime.timedelta(days=1)
-    last_date = last_date.strftime("%Y-%m-%d")
+    last_date = previous_day(date)
 
     history_query = "http://api.fixer.io/{}?base={}".format(last_date, main_currency)
     history_rates = requests.get(history_query).json()["rates"]
@@ -106,7 +129,23 @@ def get_growth_symbol(difference):
 
 delimeters = ["to", "в", "in", "перевести"]
 
-#get_first_value TODO number in words
+def is_num_word(word):
+    return morph.parse(word)[0].tag.POS == "NUMR"
+
+def get_first_value(words): #TODO number in words
+    if words[0].isdigit(): #TODO Float
+        value_from = int(words[0])
+        return value_from, words[end:]
+
+    end = 0
+    number_words = list()
+    while is_num_word(words[end]):
+        number_words.append(words[end])
+        end += 1
+
+    number_words = normalize_words(number_words)
+    n = russian_number_to_int(number_words)
+    return n, words[end:]
 
 def calc_currency_from_to(currency_from, currency_to, amount):
     return amount * load_pair_rate(currency_from, currency_to)
@@ -136,16 +175,15 @@ def get_from_currency(words):
 
 def calculate_query(query):
     words = normalize_words(query.split(" "))
-    if words[0].isdigit(): #TODO Float
-        value_from = int(words[0])
-        currency_from, words = get_from_currency(words[1:])
-        currency_to = get_currency(words)
-        value = calc_currency_from_to(currency_from, currency_to, value_from)
-        value = round(value, 4)
-        query += "<BR> FROM {} {} TO {} = {}".format(value_from, currency_from,
-                currency_to, value)
-        print(query)
-    else:
-        return "Не понимаю"
+    value_from, words = get_first_value(words)
+    currency_from, words = get_from_currency(words)
+    currency_to = get_currency(words)
+    value = calc_currency_from_to(currency_from, currency_to, value_from)
+    value = round(value, 4)
+    query += "<BR> FROM {} {} TO {} = {}".format(value_from, currency_from,
+            currency_to, value)
+    print(query)
+    #return "", "Не понимаю"
     return ("{}".format(value), 
             "{} {} = {} {}".format(value_from, currency_from, value, currency_to))
+

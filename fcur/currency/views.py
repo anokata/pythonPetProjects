@@ -4,7 +4,7 @@ from .app import app
 from .currency import *
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/currency", methods=["GET", "POST"])
 def root():
     ans = ""
     descripton = ""
