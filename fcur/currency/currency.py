@@ -57,7 +57,7 @@ def fill_table(rates, history_rates):
         table[name] = {
                 "display_name": currency_names[name],
                 "name": name,
-                "value": value,
+                "value": round(1 / value, 4),
                 "growth": growth_symbol,
                 }
     return table
@@ -79,7 +79,7 @@ def log(fun):
     return logger
 
 def calc_currency_from_to(currency_from, currency_to, amount):
-    return amount * load_pair_rate(currency_from, currency_to)
+    return 1 / amount * load_pair_rate(currency_from, currency_to)
 
 ## queries funcs
 @log
