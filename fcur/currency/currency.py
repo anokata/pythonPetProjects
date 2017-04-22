@@ -49,6 +49,7 @@ currency_names = {"USD":"Доллар США",
 name_to_code = {name.lower(): code for code, name in currency_names.items()}
 name_to_code["доллар"] = "USD"
 name_to_code["японский йена"] = "JPY"
+name_to_code["чешский крон"] = "CZK"
 name_to_code["йена"] = "JPY"
 name_to_code["евро"] = "EUR"
 name_to_code["франк"] = "CHF"
@@ -74,7 +75,17 @@ main_currency = "RUB"
 main_query = "http://api.fixer.io/latest?base=" + main_currency
 pair_query = "http://api.fixer.io/latest?symbols={0},{1}&base={0}"
 
+def log(fun):
+    def logger(*args):
+        print(args)
+        result = fun(*args)
+        print(result)
+        return result
+    return logger
+
+@log
 def load_pair_rate(currency_from, currency_to):
+    print(currency_from, currency_to)
     return requests.get(pair_query.format(currency_from,
         currency_to)).json()["rates"][currency_to]
 
@@ -135,7 +146,7 @@ def is_num_word(word):
 def get_first_value(words): #TODO number in words
     if words[0].isdigit(): #TODO Float
         value_from = int(words[0])
-        return value_from, words[end:]
+        return value_from, words[1:]
 
     end = 0
     number_words = list()
@@ -150,6 +161,7 @@ def get_first_value(words): #TODO number in words
 def calc_currency_from_to(currency_from, currency_to, amount):
     return amount * load_pair_rate(currency_from, currency_to)
 
+@log
 def get_currency(words):
     if words[0].upper() in code_to_name:
         return words[0].upper()
@@ -159,6 +171,8 @@ def get_currency(words):
         return None # TODO Exception
     return name_to_code[currency]
 
+#TODO delete spaces!
+#TODO info icon. with samples
 
 def get_from_currency(words):
     currency = list()
