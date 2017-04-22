@@ -79,7 +79,7 @@ def log(fun):
     return logger
 
 def calc_currency_from_to(currency_from, currency_to, amount):
-    return 1 / amount * load_pair_rate(currency_from, currency_to)
+    return amount * load_pair_rate(currency_from, currency_to)
 
 ## queries funcs
 @log
