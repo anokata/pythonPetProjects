@@ -1,7 +1,7 @@
 from flask import render_template, request
 
 from .app import app
-from .currency import *
+from .currency import load_currency_table, calculate_query
 
 
 @app.route("/currency", methods=["GET", "POST"])
