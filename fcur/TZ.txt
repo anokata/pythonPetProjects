@@ -1,5 +1,5 @@
 Not parsed yet:
-две тысячи USD TO EUR
+2 новозеландский доллар в Венгерский форинт 
 
 pymorphy/nltk
 http://fixer.io/

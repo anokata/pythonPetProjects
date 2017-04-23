@@ -1,8 +1,9 @@
 from .util import log
-#TODO
+
 quantitives = {
         "миллион": 1000000,
         "тысяча": 1000,
+        "миллиард": 1000000000,
         }
 
 class NumberParseError():

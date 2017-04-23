@@ -120,7 +120,7 @@ def get_from_currency(words):
     return (currency, words[end + 1:])
 
 def is_num_word(word):
-    if normalize_word(word) in ["тысяча", "миллион", "один"]:
+    if normalize_word(word) in ["тысяча", "миллион", "один", "миллиард"]:
         return True
     for result in morph.parse(word):
         if result.tag.POS == "NUMR":
@@ -138,4 +138,4 @@ def normalize_words(words):
 ## Testing
 def test():
     print(load_pair_rate("RUB", "USD")) 
-    print(calculate_query("двадать три миллиона сорок одна тысяча пятьдесят шесть USD to EUR"))
+    print(calculate_query("двадцать пять миллиона сорок одна тысяча пятьдесят шесть USD to EUR"))
