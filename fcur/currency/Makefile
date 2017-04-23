@@ -4,5 +4,9 @@ run:
 currency_debug:
 	python3 ../currency_test.py
 
+test:
+	cd ..
+	make test
+
 app:
 	python3 app.py

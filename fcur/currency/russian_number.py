@@ -16,7 +16,11 @@ def russian_number_to_int(words):
         sum = 0
         for word in words:
             if word in quantitives:
-                sum += n * quantitives[word]
+                if (n != 0):
+                    sum += n * quantitives[word]
+                else:
+                    sum += quantitives[word]
+
                 n = 0
             else:
                 n += get_value(word)

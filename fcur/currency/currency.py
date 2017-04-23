@@ -86,7 +86,7 @@ def get_first_value(words):
     try:
         value_from = float(words[0])
         return value_from, words[1:]
-    except:
+    except ValueError:
         #first word is not number it is ok, try to translate from words
         pass
 
