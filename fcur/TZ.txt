@@ -1,6 +1,8 @@
+Not parsed yet:
+две тысячи USD TO EUR
+
 pymorphy/nltk
 http://fixer.io/
-
 
 Веб приложение «Курсы Валют»
 
@@ -11,12 +13,15 @@ http://fixer.io/
 - 30 EUR to USD
 - один доллар новой зеландии в австралийских долларах
 (number|word number) (currency) (в|to|in..) (currency eng-ru(norm))
-
 (для нормализации текста можно использовать pymorphy или nltk)
 
-Таблица с курсами валют
-В заголовке дата
+nginx
+- Должно уметь писать логи, 
+- обрабатывать 50x/40x ошибки (это реализуется на nginx перед бэкэндом
 
+
++Таблица с курсами валют
+В заголовке дата
 - Код валюты
 - Наименование валюты
 - Текущий курс к рублю
@@ -24,11 +29,11 @@ http://fixer.io/
 
 Использовать как источник данных
 http://fixer.io/
-
 Реализовать на Flask/Nginx/любой wsgi сервер
 
-Должно уметь писать логи, обрабатывать 50x/40x ошибки 
-(это реализуется на nginx перед бэкэндом
-
-
-USD	RUB	EUR	CAD	CHF CZK DKK GBP NOK SEK JPY AUD	CAD	
+!!!
+comments
+tests
+styling
+try except
+#TODO info icon. with samples

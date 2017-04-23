@@ -4,6 +4,7 @@ import requests
 import pymorphy2
 from .russian_number import russian_number_to_int
 from .currency_data import *
+from .util import *
 
 morph = pymorphy2.MorphAnalyzer()
 
@@ -63,22 +64,6 @@ def fill_table(rates, history_rates):
                 }
     return table
 
-def get_growth_symbol(difference):
-        if difference > 0:
-            return "+"
-        elif difference < 0:
-            return "-"
-        else:
-            return "0"
-
-def log(fun):
-    def logger(*args):
-        print(fun.__name__, " @ ", args, end=' ---> ')
-        result = fun(*args)
-        print(result)
-        return result
-    return logger
-
 def calc_currency_from_to(currency_from, currency_to, amount):
     return amount * load_pair_rate(currency_from, currency_to)
 
@@ -135,6 +120,8 @@ def get_from_currency(words):
     return (currency, words[end + 1:])
 
 def is_num_word(word):
+    if normalize_word(word) in ["тысяча", "миллион", "один"]:
+        return True
     for result in morph.parse(word):
         if result.tag.POS == "NUMR":
             return True
@@ -149,5 +136,6 @@ def normalize_words(words):
 
 
 ## Testing
-if __name__=='__main__':
-    print(load_pair_rate("RUB", "USD")) # TODO Test
+def test():
+    print(load_pair_rate("RUB", "USD")) 
+    print(calculate_query("двадать три миллиона сорок одна тысяча пятьдесят шесть USD to EUR"))

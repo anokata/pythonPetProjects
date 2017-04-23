@@ -1,17 +1,26 @@
+from .util import log
 #TODO
 quantitives = {
         "миллион": 1000000,
+        "тысяча": 1000,
         }
 
 class NumberParseError():
     pass
 
+@log
 def russian_number_to_int(words):
     try:
         n = 0
+        sum = 0
         for word in words:
-            n += get_value(word)
-        return n
+            if word in quantitives:
+                sum += n * quantitives[word]
+                n = 0
+            else:
+                n += get_value(word)
+        sum += n
+        return sum
     except:
         raise NumberParseError("can't parse number: " + str(words))
 
