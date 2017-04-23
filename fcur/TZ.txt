@@ -1,5 +1,14 @@
-Not parsed yet:
-2 новозеландский доллар в Венгерский форинт 
+nginx
+- Должно уметь писать логи, 
+- обрабатывать 50x/40x ошибки (это реализуется на nginx перед бэкэндом)
+
+!!!
+styling
+comments
+tests
+try except
+#TODO info icon. with samples
+
 
 pymorphy/nltk
 http://fixer.io/
@@ -8,16 +17,12 @@ http://fixer.io/
 
 Строка поиска
 Принимает запросы на человеческом языке, в виде
-- 100 рублей в долларах
++- 100 рублей в долларах
 - 50 риэлей в донга
-- 30 EUR to USD
-- один доллар новой зеландии в австралийских долларах
++- 30 EUR to USD
++- один доллар новой зеландии в австралийских долларах
 (number|word number) (currency) (в|to|in..) (currency eng-ru(norm))
 (для нормализации текста можно использовать pymorphy или nltk)
-
-nginx
-- Должно уметь писать логи, 
-- обрабатывать 50x/40x ошибки (это реализуется на nginx перед бэкэндом
 
 
 +Таблица с курсами валют
@@ -31,9 +36,3 @@ nginx
 http://fixer.io/
 Реализовать на Flask/Nginx/любой wsgi сервер
 
-!!!
-comments
-tests
-styling
-try except
-#TODO info icon. with samples

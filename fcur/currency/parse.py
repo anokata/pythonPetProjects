@@ -24,7 +24,7 @@ def get_first_value(words):
         value_from = float(words[0])
         return value_from, words[1:]
     except ValueError:
-        #first word is not number it is ok, try to translate from words
+        # If first word is not number it is ok, try to translate from words
         pass
 
     number_words = list(itertools.takewhile(is_num_word, words))
@@ -64,6 +64,8 @@ def is_num_word(word):
     return False
 
 def normalize_word(word):
+    if word in ["лев"]: 
+        return word
     return morph.parse(word.lower())[0].normal_form
 
 @log
