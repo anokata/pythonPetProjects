@@ -4,7 +4,6 @@ import requests
 import pymorphy2
 from .russian_number import russian_number_to_int
 from .currency_data import *
-#TODO info icon. with samples
 
 morph = pymorphy2.MorphAnalyzer()
 
@@ -12,10 +11,12 @@ main_query = "http://api.fixer.io/latest?base=" + main_currency
 pair_query = "http://api.fixer.io/latest?symbols={0},{1}&base={0}"
 history_query = "http://api.fixer.io/{}?base={}"
 
+class ParseError(Exception):
+    pass
+
 # Loads table data with values and growth sing, real names in dict
 # also return current data as string
 def load_currency_table():
-    #try TODO network error
     res = requests.get(main_query)
     data = res.json()
 
@@ -34,20 +35,20 @@ def load_currency_table():
 # Parses query string to number and currency pair
 # and transfer from one to another
 def calculate_query(query):
-    #TODO try
-    words = normalize_words(query.split(" "))
-    value_from, words = get_first_value(words)
-    currency_from, words = get_from_currency(words)
-    currency_to = get_currency(words)
-    value = calc_currency_from_to(currency_from, currency_to, value_from)
-    value = round(value, 4)
-    query += "<BR> FROM {} {} TO {} = {}".format(value_from, currency_from,
-            currency_to, value)
-    print(query)
-    #return "", "Не понимаю"
-    return ("{}".format(value), 
-            "{} {} = {} {}".format(value_from, currency_from, value, currency_to))
-
+    try:
+        words = normalize_words(query.split(" "))
+        value_from, words = get_first_value(words)
+        currency_from, words = get_from_currency(words)
+        currency_to = get_currency(words)
+        value = calc_currency_from_to(currency_from, currency_to, value_from)
+        value = round(value, 4)
+        query += "<BR> FROM {} {} TO {} = {}".format(value_from, currency_from,
+                currency_to, value)
+        print(query)
+        return ("{}".format(value), 
+                "{} {} = {} {}".format(value_from, currency_from, value, currency_to))
+    except Exception as e:
+        return "err", "Query error: " + str(e)
 
 # Fills table with values and names and growth sign relative to previous value
 def fill_table(rates, history_rates):
@@ -95,13 +96,19 @@ def previous_day(date):
 
 
 ##parsing
+@log
 def get_first_value(words): 
-    if words[0].isdigit(): #TODO Float
-        value_from = int(words[0])
+    try:
+        value_from = float(words[0])
         return value_from, words[1:]
+    except:
+        #first word is not number it is ok, try to translate from words
+        pass
 
     number_words = list(itertools.takewhile(is_num_word, words))
     end = len(number_words)
+    if end == 0:
+        raise ParseError("Can't find number in " + str(words))
 
     number_words = normalize_words(number_words)
     n = russian_number_to_int(number_words)
@@ -114,7 +121,7 @@ def get_currency(words):
 
     currency = " ".join(words).lower()
     if currency not in name_to_code:
-        return None # TODO Exception
+        raise ParseError("Can't parse currency in '{}'".format(" ".join(words)))
     return name_to_code[currency]
 
 
@@ -128,7 +135,10 @@ def get_from_currency(words):
     return (currency, words[end + 1:])
 
 def is_num_word(word):
-    return morph.parse(word)[0].tag.POS == "NUMR"
+    for result in morph.parse(word):
+        if result.tag.POS == "NUMR":
+            return True
+    return False
 
 def normalize_word(word):
     return morph.parse(word.lower())[0].normal_form

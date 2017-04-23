@@ -3,11 +3,17 @@ quantitives = {
         "миллион": 1000000,
         }
 
+class NumberParseError():
+    pass
+
 def russian_number_to_int(words):
-    n = 0
-    for word in words:
-        n += get_value(word)
-    return n
+    try:
+        n = 0
+        for word in words:
+            n += get_value(word)
+        return n
+    except:
+        raise NumberParseError("can't parse number: " + str(words))
 
 def is_quantitive(word):
     return word in quantitives
