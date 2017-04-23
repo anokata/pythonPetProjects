@@ -14,9 +14,9 @@ def root():
         ans, descripton = calculate_query(query)
 
     table, date = load_currency_table()
-    return render_template("page.html", 
-            ans=ans, 
-            descripton=descripton,
-            date=date, 
-            rates=table)
+    return render_template("page.html",
+                           ans=ans,
+                           descripton=descripton,
+                           date=date,
+                           rates=table)
 

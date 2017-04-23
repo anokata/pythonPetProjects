@@ -1,10 +1,10 @@
 import itertools
 import pymorphy2
 from .russian_number import russian_number_to_int
-from .currency_data import *
-from .util import *
+from .currency_data import name_to_code, code_to_name
+from .util import log
 
-morph = pymorphy2.MorphAnalyzer()
+MORPH = pymorphy2.MorphAnalyzer()
 
 class ParseError(Exception):
     pass
@@ -19,7 +19,7 @@ def parse_value_and_currencies(query):
 
 
 @log
-def get_first_value(words): 
+def get_first_value(words):
     try:
         value_from = float(words[0])
         return value_from, words[1:]
@@ -33,8 +33,8 @@ def get_first_value(words):
         raise ParseError("Can't find number in " + str(words))
 
     number_words = normalize_words(number_words)
-    n = russian_number_to_int(number_words)
-    return n, words[end:]
+    num = russian_number_to_int(number_words)
+    return num, words[end:]
 
 @log
 def get_currency(words):
@@ -58,18 +58,18 @@ def get_from_currency(words):
 def is_num_word(word):
     if normalize_word(word) in ["тысяча", "миллион", "один", "миллиард"]:
         return True
-    for result in morph.parse(word):
+    for result in MORPH.parse(word):
         if result.tag.POS == "NUMR":
             return True
     return False
 
 def normalize_word(word):
-    if word in ["лев"]: 
+    if word in ["лев"]:
         return word
-    return morph.parse(word.lower())[0].normal_form
+    return MORPH.parse(word.lower())[0].normal_form
 
 @log
 def normalize_words(words):
-    return list(filter(lambda x: x != '', map(str.strip, map(normalize_word, words))))
+    return [normalize_word(word).strip() for word in words if word != '']
 
 

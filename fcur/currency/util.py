@@ -6,12 +6,12 @@ def previous_day(date):
     return date.strftime("%Y-%m-%d")
 
 def get_growth_symbol(difference):
-        if difference > 0:
-            return "+"
-        elif difference < 0:
-            return "-"
-        else:
-            return "0"
+    if difference > 0:
+        return "+"
+    elif difference < 0:
+        return "-"
+    else:
+        return "0"
 
 def log(fun):
     def logger(*args):
@@ -20,3 +20,6 @@ def log(fun):
         print(result)
         return result
     return logger
+
+def date_format(datestr):
+    return datetime.datetime.strptime(datestr, "%Y-%m-%d").date().strftime("%d %B %Y")
