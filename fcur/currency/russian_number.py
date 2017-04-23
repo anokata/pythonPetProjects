@@ -80,5 +80,3 @@ def get_value(word):
     else:
         raise Exception("(!>>>) can't parse number")
 
-if __name__=='__main__':
-    print(russian_number_to_int("триста сорок один".split(' ')))

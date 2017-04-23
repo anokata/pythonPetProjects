@@ -1,19 +1,12 @@
-import datetime
-import itertools
 import requests
-import pymorphy2
-from .russian_number import russian_number_to_int
-from .currency_data import *
 from .util import *
-
-morph = pymorphy2.MorphAnalyzer()
+from .parse import parse_value_and_currencies
+from .currency_data import *
 
 main_query = "http://api.fixer.io/latest?base=" + main_currency
 pair_query = "http://api.fixer.io/latest?symbols={0},{1}&base={0}"
 history_query = "http://api.fixer.io/{}?base={}"
 
-class ParseError(Exception):
-    pass
 
 # Loads table data with values and growth sing, real names in dict
 # also return current data as string
@@ -30,20 +23,16 @@ def load_currency_table():
     table = fill_table(data["rates"], history_rates)
 
     date_str = datetime.datetime.strptime(date, "%Y-%m-%d").date().strftime("%d %B %Y")
-
     return table, date_str
 
 # Parses query string to number and currency pair
 # and transfer from one to another
 def calculate_query(query):
     try:
-        words = normalize_words(query.split(" "))
-        value_from, words = get_first_value(words)
-        currency_from, words = get_from_currency(words)
-        currency_to = get_currency(words)
+        value_from, currency_from, currency_to = parse_value_and_currencies(query)
         value = calc_currency_from_to(currency_from, currency_to, value_from)
         value = round(value, 4)
-        query += "<BR> FROM {} {} TO {} = {}".format(value_from, currency_from,
+        query += "FROM {} {} TO {} = {}".format(value_from, currency_from,
                 currency_to, value)
         print(query)
         return ("{}".format(value), 
@@ -64,78 +53,13 @@ def fill_table(rates, history_rates):
                 }
     return table
 
+# Translates specific amount of currency from one ot another base
 def calc_currency_from_to(currency_from, currency_to, amount):
     return amount * load_pair_rate(currency_from, currency_to)
 
-## queries funcs
+# Loads rate for one pair of currency in destination base
 @log
 def load_pair_rate(currency_from, currency_to):
     return requests.get(pair_query.format(currency_from,
         currency_to)).json()["rates"][currency_to]
 
-#util
-def previous_day(date):
-    date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-    date = date - datetime.timedelta(days=1)
-    return date.strftime("%Y-%m-%d")
-
-
-##parsing
-@log
-def get_first_value(words): 
-    try:
-        value_from = float(words[0])
-        return value_from, words[1:]
-    except ValueError:
-        #first word is not number it is ok, try to translate from words
-        pass
-
-    number_words = list(itertools.takewhile(is_num_word, words))
-    end = len(number_words)
-    if end == 0:
-        raise ParseError("Can't find number in " + str(words))
-
-    number_words = normalize_words(number_words)
-    n = russian_number_to_int(number_words)
-    return n, words[end:]
-
-@log
-def get_currency(words):
-    if words[0].upper() in code_to_name:
-        return words[0].upper()
-
-    currency = " ".join(words).lower()
-    if currency not in name_to_code:
-        raise ParseError("Can't parse currency in '{}'".format(" ".join(words)))
-    return name_to_code[currency]
-
-
-def get_from_currency(words):
-    delimeters = ["to", "в", "in", "перевести"]
-
-    currency = list(itertools.takewhile(lambda x: x not in delimeters, words))
-    end = len(currency)
-
-    currency = get_currency(currency)
-    return (currency, words[end + 1:])
-
-def is_num_word(word):
-    if normalize_word(word) in ["тысяча", "миллион", "один", "миллиард"]:
-        return True
-    for result in morph.parse(word):
-        if result.tag.POS == "NUMR":
-            return True
-    return False
-
-def normalize_word(word):
-    return morph.parse(word.lower())[0].normal_form
-
-@log
-def normalize_words(words):
-    return list(filter(lambda x: x != '', map(str.strip, map(normalize_word, words))))
-
-
-## Testing
-def test():
-    print(load_pair_rate("RUB", "USD")) 
-    print(calculate_query("двадцать пять миллиона сорок одна тысяча пятьдесят шесть USD to EUR"))

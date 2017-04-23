@@ -1,3 +1,9 @@
+import datetime
+
+def previous_day(date):
+    date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+    date = date - datetime.timedelta(days=1)
+    return date.strftime("%Y-%m-%d")
 
 def get_growth_symbol(difference):
         if difference > 0:

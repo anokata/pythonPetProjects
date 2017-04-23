@@ -35,6 +35,7 @@ currency_names = {"USD":"Доллар США",
 
 name_to_code = {name.lower(): code for code, name in currency_names.items()}
 name_to_code["доллар"] = "USD"
+name_to_code["доллар новый зеландия"] = "NZD"
 name_to_code["японский йена"] = "JPY"
 name_to_code["чешский крон"] = "CZK"
 name_to_code["йена"] = "JPY"
