@@ -279,3 +279,14 @@ def prog(n):
 
 for x in range(100, 200):
     prog(x)
+
+import datetime
+
+def date_add_days(datestr, n):
+    date = datetime.datetime.strptime(datestr, "%Y %m %d")
+    date = date + datetime.timedelta(days=n)
+    s = "{} {} {}".format(date.year, date.month, date.day)
+    return s
+
+print(date_add_days("2011 10 2", 2))
+#print(date_add_days(input(), int(input())))
