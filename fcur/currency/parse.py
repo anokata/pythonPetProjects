@@ -41,11 +41,10 @@ def get_currency(words):
     if words[0].upper() in code_to_name:
         return words[0].upper()
 
-    currency = " ".join(words).lower()
+    currency = " ".join(words).lower().strip()
     if currency not in name_to_code:
         raise ParseError("Can't parse currency in '{}'".format(" ".join(words)))
     return name_to_code[currency]
-
 
 def get_from_currency(words):
     delimeters = ["to", "в", "in", "перевести"]
