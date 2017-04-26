@@ -7,7 +7,7 @@
 <form id='dir_form' action="" method=post>
     Directory:
     {{ selected }}
-    <select class='submit dirSelect' name='dir'>
+    <select onchange='document.getElementById("dir_form").submit()' class='submit dirSelect' name='dir'>
         {%for dir in dirs %}
         {% if selected == dir.id %}
             <option selected value='{{ dir.id }}'>{{ dir.name }}</option>
@@ -27,6 +27,7 @@
     <p>Link:</p>
     <input class='textInput' type=text size=30 name=link><br>
     <input class='submit' type=submit value=Add class=button>
+    <input id='add_url_dir_id' name='dir_id' class='hidden' type=hidden value={{ selected }} >
 </form>
 
 <form id='main_form' action="{{ url_for('del_url') }}" method=post>
@@ -35,7 +36,7 @@
     {% for url in urls %}
     <tr>
     <td>
-        <input class='submit' type=button id="{{ url.id }}" value="Delete" />
+        <input class='submit' type=submit id="{{ url.id }}" value="Delete" />
     </td>
     <td>
         <a href="{{ url.link }}" >{{ url.name }}</a> </td>
@@ -43,6 +44,7 @@
     {% endfor %}
     </tbody>
     </table>
+    <input name='dir_id' class='hidden' type=hidden value={{ selected }} >
 </form>
 
 </div>
