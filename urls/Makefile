@@ -4,3 +4,6 @@ test:
 run:
 	python3 run.py
 
+db:
+	python3 init_db.py
+

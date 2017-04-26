@@ -1,3 +1,6 @@
+body {
+    font-family: Helvetica, Arial, sans-serif; 
+}
 
 #content {
     margin: auto;
@@ -44,8 +47,6 @@ tr:nth-child(even) td { background: #F1F1F1; }
 
 tr:nth-child(odd) td { background: #FEFEFE; }
 
-tr td:hover { background: #666; color: #FFF; }
-
 .autoMargin { margin: auto; }
 .width70 { width: 70%; }
 
@@ -53,3 +54,24 @@ h3 {
     padding: 10px;
 }
 
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-overflow: '';
+}
+
+a:hover { 
+    text-decoration:none;
+    text-shadow: 0 0 10px #fff;
+}
+
+a {
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 1.2em;
+    color: #000;
+}
+
+.dirSelect {
+    width: 50%;
+}
