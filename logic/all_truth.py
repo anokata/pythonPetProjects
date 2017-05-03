@@ -3,9 +3,9 @@ def test_formula(formula):
     var_len = len(var)
     for v in var:
         print("| {} ".format(v.center(7)), end='')
-    print("|")
+    print("| {} |".format(formula.center(7)))
     print(' ', end='')
-    print("-" * (10 * var_len))
+    print("-" * (13 * (var_len + 1)))
 
     for x in range(2 ** var_len):
         z = bin(x)[2:].zfill(var_len)
@@ -14,10 +14,14 @@ def test_formula(formula):
         for val in table_row:
             print(str(val).center(9), end='|')
         # result
-        print()
+        print(str(calc_formula(formula, *table_row)).center(9))
 
+def calc_formula(formula, *params):
+    #TODO
+    return params[0]
 
 def calc_implication(a, b):
+    """ End calculation """
     return (not a) or b
 
 def extract_formula_vars(formula):
