@@ -1,16 +1,16 @@
 from flask import render_template, request, redirect, url_for
 
-from .db import get_db
+from .db import get_db, init_db
 from .app import app
 #TODO: two panels two dirs
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/init", methods=["GET", "POST"])
 def root():
     """ Main app view """
     if request.method == 'POST':
         pass
-
-    return render_template("page.html")
+    init_db()
+    return 'init ok'
 
 def load_dirs():
     db = get_db()

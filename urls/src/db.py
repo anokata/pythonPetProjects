@@ -1,5 +1,5 @@
 from .app import app
-from flask import g
+from flask import g, current_app
 import sqlite3
 import os
 
@@ -14,14 +14,14 @@ def get_db():
         g.sqlite_db = connect_db()
     return g.sqlite_db
 
-@app.teardown_appcontext
+#@current_app.teardown_appcontext
 def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
 def init_db():
-    with app.app_context():
+    with current_app.app_context():
         db = get_db()
-        with app.open_resource('../schema.sql', mode='r') as f:
+        with current_app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()

@@ -1,10 +1,17 @@
 import os
-from flask import Flask
+#from flask import Flask
+from flask import Blueprint
 
-app = Flask(__name__)
+app = Blueprint("urls", __name__, 
+        template_folder='templates',
+        static_folder='static')
+
+#app = Flask(__name__)
 app.debug = True
+app.config = {}
 app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'urls.db'),
+    #DATABASE=os.path.join(app.root_path, 'urls.db'),
+    DATABASE='urls.db',
     SECRET_KEY='development key',
     USERNAME='admin',
     PASSWORD='123',
