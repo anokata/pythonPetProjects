@@ -7,11 +7,18 @@ import random
 from ByteFont import *
 from gl_main import *
 import stateSystem
+import ByteFont
+
+class State():
+    pass 
+
+state = State()
+state.world = State()
 
 def init():
-    #state.font = init_font(font_file, 16, 16)
-    #state.font10x16 = init_font(font_file10x16, 10, 16)
-    #set_fonts(state.font, state.font10x16)
+    state.font = init_font(ByteFont.font_file, 16, 16)
+    state.font10x16 = init_font(ByteFont.font_file10x16, 10, 16)
+    set_fonts(state.font10x16, state.font)
     pass
 
 def gl_draw_pre():
@@ -36,6 +43,7 @@ def DrawGLScene():
     gl_draw_pre()
     stateSystem.handleEvent('draw', state.world)
     #draw(state.world)
+    draw_chars_tex("hi", y=1, x=1, color=(0,1,0))
     gl_error_msg()
 
 def keyPressed(*args):
@@ -45,15 +53,18 @@ def keyPressed(*args):
         print('Switch to Latin keyboard layout. Переключите на латинскую раскладку.')
         return
     key_sym = bytes.decode(args[0])
-    #print(key_sym, ord(args[0]))
+    print(key_sym, ord(args[0]))
     stateSystem.handleEvent('keypress', key_sym, state.world)
-    update(state.world) # handle update
+    #update(state.world) # handle update
 
 def mouse(button, state, x, y):
     if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
         glutPostRedisplay()
 
 def motion(x, y):
+    pass
+
+def step():
     pass
 
 def ReSizeGLScene(Width, Height):
