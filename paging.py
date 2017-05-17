@@ -1,20 +1,18 @@
-
+input_file = 'input'
+input_file = '/home/ksi/Downloads/dataset_44327_15.txt'
 memory = {}
-with open('input') as fin:
+qr = list()
+with open(input_file) as fin:
     m = fin.read
     memory_n, queries_n, table_r_addr = [int(x) for x in next(fin).split()]
     for i in range(memory_n):
         paddr, value = [int(x) for x in next(fin).split()]
         memory[paddr] = value
+    for i in range(queries_n):
+        qr.append(int(fin.readline()))
+
 
 #memory_n = m # phys addr = value(8byte)
-qr = [
-42,
-0,
-4096,
-131313,
-        ]
-
 def mem(phys_addr):
     return memory.get(phys_addr, 0)
 
