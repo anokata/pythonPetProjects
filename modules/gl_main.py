@@ -58,3 +58,22 @@ def InitGL(Width, Height):
     glDepthFunc(GL_LESS)                
     glEnable(GL_DEPTH_TEST)             
     glShadeModel(GL_SMOOTH)             
+
+def gl_draw_pre_2d():
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    glLoadIdentity()                    
+    glDisable(GL_CULL_FACE)             
+    glShadeModel(GL_SMOOTH)
+    glEnable(GL_TEXTURE_2D)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glDisable(GL_DEPTH_TEST)
+    glColor4f(0, 1, 1, 0.5)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+
+def gl_error_msg():
+    err = glGetError()
+    if err:
+        print(err, gluErrorString(err))
+    glutSwapBuffers()
+
