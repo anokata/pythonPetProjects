@@ -1,11 +1,16 @@
+#!/usr/bin/python3
 import csv
+# sudo mkdir /run/fio/
+# sudo chown user:group /run/fio
 prefix = '/run/fio/'
 data = dict()
 fios = set()
 intersect = 0
+count = 0
 
 # Write
 def save():
+    print('saving')
     with open('result.csv', 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter='|',
                                 quotechar='"', quoting=csv.QUOTE_ALL)
@@ -24,11 +29,12 @@ def save():
             snils = v.get('snils', '')
             name = v.get('name', '')
             fio = v.get('fio', '')
-            writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, ])
-            #writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, fio, name])
+            #writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, ])
+            writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, name])
 
 def add_data(fio, f, i, o, email='', phone='', sex='', date='', snils='', name=''):
-    global intersect, data
+    global intersect, data, count
+    count += 1
     if fio in data:
         if data[fio].get('email','') == email:
             intersect += 1
@@ -63,7 +69,7 @@ with open(name, 'r') as csvfile:
         email = row[field_email]
         phone = row[field_phone]
         snils = row[field_snils]
-        add_data(fio, f, i, o, email, phone, snils=snils, name=name)
+        add_data(fio, f, i, o, email, phone, snils=snils, name='rpgu')
 
 print(name, 'ok')
 
@@ -91,7 +97,7 @@ with open(name, 'r') as csvfile:
             f = fiolst[1].capitalize() if len(fiolst) > 1 else ''
             o = fiolst[2].capitalize() if len(fiolst) > 2 else ''
             fio = f + ' ' + i + ' ' + o
-        add_data(fio, f, i, o, email, phone, name=name)
+        add_data(fio, f, i, o, email, phone, name='dobro')
 
 print(name, 'ok')
 
@@ -116,7 +122,7 @@ with open(name, 'r') as csvfile:
         f = row[field_f].capitalize()
         i = row[field_i].capitalize()
         o = row[field_o].capitalize()
-        add_data(fio, f, i, o, email, phone, snils=snils, sex=sex, date=date, name=name)
+        add_data(fio, f, i, o, email, phone, snils=snils, sex=sex, date=date, name='zdrav')
 
 print(name, 'ok')
 
@@ -143,10 +149,11 @@ with open(name, 'r') as csvfile:
         f = row[field_f].capitalize()
         i = row[field_i].capitalize()
         o = row[field_o].capitalize()
-        add_data(fio, f, i, o, email, phone, snils=snils, sex=sex, date=date, name=name)
+        add_data(fio, f, i, o, email, phone, snils=snils, sex=sex, date=date, name='obr')
 
 print(name, 'ok')
-print(len(data))
-print('inter', intersect)
+print('all records', count)
+print('uniq records', len(data))
+print('intersected', intersect)
 save()
 
