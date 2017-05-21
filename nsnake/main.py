@@ -110,7 +110,7 @@ class App:
     win = None
     snake = None
     bonusFactory = None
-    bonuses = list()
+    bonuses = dict()
 
     def main(stdscr):
         curses.start_color()
@@ -128,7 +128,8 @@ class App:
         App.snake.snake_color = curses.color_pair(1) | curses.A_BOLD
 
         App.bonusFactory = BonusFactory(App.window)
-        App.bonuses.append(App.bonusFactory.make())
+        bonus = App.bonusFactory.make()
+        App.bonuses[(bonus.x, bonus.y)] = bonus
 
         App.field = {(x,y):z for x in range(App.width) 
             for y in range(App.height) for z in [Char('.', App.colors.cl_nwhite)]}
@@ -164,9 +165,12 @@ class App:
                 color = field[(x, y)].color
                 App.win.addstr(y, x, char, color)
         App.snake.draw()
-        for bonus in App.bonuses:
+        for bonus in App.bonuses.values():
             x, y = bonus.x, bonus.y
             App.win.addstr(y, x, bonus.char, bonus.color)
+
+    def intersect():
+        pass
 
 
 if __name__=='__main__':
