@@ -1,6 +1,9 @@
 import curses
 import time
 import random
+# teleports
+# TODO 
+# facade to curses -> makes classes like colors etc
 
 class Char:
 
@@ -91,10 +94,15 @@ class Snake:
         x, y = self.snake[0]
         self.win.addstr(y, x, self.head, self.snake_color)
 
+    def enlarge(self, x, y):
+        pass # TODO
+        self.snake.insert(0, (x, y))
+
 class Window():
     width = 40
     height = 20
     colors = Colors()
+    messages = None #TODO
 
     def __init__(self, descriptor):
         self.descriptor = descriptor
@@ -150,6 +158,8 @@ class App:
                 continue
             if chr(key) in ('w', 'a', 's', 'd'):
                 App.snake.go(chr(key))
+            if chr(key) == 'l':
+                App.snake.enlarge(App.snake.snake[0][0], App.snake.snake[0][1])
             notEnd = key != ord('q')
 
     def __init__(self):
@@ -170,7 +180,7 @@ class App:
             App.win.addstr(y, x, bonus.char, bonus.color)
 
     def intersect():
-        pass
+        pass #TODO
 
 
 if __name__=='__main__':
