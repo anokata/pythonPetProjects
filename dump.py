@@ -29,8 +29,8 @@ def save():
             snils = v.get('snils', '')
             name = v.get('name', '')
             fio = v.get('fio', '')
-            #writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, ])
-            writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, name])
+            writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, ])
+            #writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, name])
 
 def add_data(fio, f, i, o, email='', phone='', sex='', date='', snils='', name=''):
     global intersect, data, count
