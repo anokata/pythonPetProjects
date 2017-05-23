@@ -120,19 +120,25 @@ class App:
     bonusFactory = None
     bonuses = dict()
 
-    def main(stdscr):
-        curses.start_color()
+    def init_colors():
+        all_colors = []
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)
+
+        App.colors.cl_bwhite = curses.color_pair(2) | curses.A_BOLD
+        App.colors.cl_dwhite = curses.color_pair(2) | curses.A_DIM
+        App.colors.cl_nwhite = curses.color_pair(2)
+
+
+    def main(stdscr):
+        curses.start_color()
+        App.init_colors()
         stdscr.clear()
         curses.curs_set(False)
 
         App.window = Window(stdscr)
         App.win = stdscr
         App.snake = Snake(App.window)
-        App.colors.cl_bwhite = curses.color_pair(2) | curses.A_BOLD
-        App.colors.cl_dwhite = curses.color_pair(2) | curses.A_DIM
-        App.colors.cl_nwhite = curses.color_pair(2)
         App.snake.snake_color = curses.color_pair(1) | curses.A_BOLD
 
         App.bonusFactory = BonusFactory(App.window)
