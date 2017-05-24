@@ -42,7 +42,8 @@ class Snake:
     LEFT = 'a'
     RIGHT = 'd'
     direction = RIGHT
-    snake = [(1, 1), (1, 2), (1, 3), (1, 4), (2, 4), (3, 4), (3, 5), (3, 6), (3, 7)]
+    #snake = [(1, 1), (1, 2), (1, 3), (1, 4), (2, 4), (3, 4), (3, 5), (3, 6), (3, 7)]
+    snake = [(1, 1)]
 
     def __init__(self, win):
         self.win = win.descriptor
@@ -142,8 +143,9 @@ class App:
         App.snake.snake_color = curses.color_pair(1) | curses.A_BOLD
 
         App.bonusFactory = BonusFactory(App.window)
-        bonus = App.bonusFactory.make()
-        App.bonuses[(bonus.x, bonus.y)] = bonus
+        for i in range(50):
+            bonus = App.bonusFactory.make()
+            App.bonuses[(bonus.x, bonus.y)] = bonus
 
         App.field = {(x,y):z for x in range(App.width) 
             for y in range(App.height) for z in [Char('.', App.colors.cl_nwhite)]}
@@ -154,6 +156,7 @@ class App:
         notEnd = True
         App.win.nodelay(True)
         while notEnd:
+            App.intersect()
             App.update()
             App.draw_field(App.field)
             stdscr.refresh()
@@ -186,7 +189,15 @@ class App:
             App.win.addstr(y, x, bonus.char, bonus.color)
 
     def intersect():
-        pass #TODO
+        to_pop = list()
+        for bonus in App.bonuses.values():
+            x, y = bonus.x, bonus.y
+            if (x, y) == App.snake.snake[0]:
+                App.snake.enlarge(x, y)
+                to_pop.append((x, y))
+        for x, y in to_pop:
+            App.bonuses.pop((x, y))
+
 
 
 if __name__=='__main__':
