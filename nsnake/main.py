@@ -160,22 +160,43 @@ class App:
         App.draw_field(App.field)
         stdscr.refresh()
 
-        notEnd = True
         App.win.nodelay(True)
-        while notEnd:
-            App.intersect()
-            App.update()
-            App.draw_field(App.field)
-            stdscr.refresh()
-            time.sleep(0.1)
 
-            key = App.win.getch()
+        ss.addState('run') 
+        ss.addState('menu') 
+        ss.changeState('run') 
+        ss.setEventHandler('run', 'proc', App.game)
+
+        App.proc()
+
+    def handle():
+        pass
+        #ss.
+
+    def game():
+        App.intersect()
+        App.update()
+        App.draw_field(App.field)
+        App.win.refresh()
+        time.sleep(0.1)
+
+        key = App.win.getch()
+        if key == curses.ERR:
+            return key
+        if chr(key) in ('w', 'a', 's', 'd'):
+            App.snake.go(chr(key))
+        if chr(key) == 'l':
+            App.snake.enlarge(App.snake.snake[0][0], App.snake.snake[0][1])
+        return key
+
+
+    def proc():
+        notEnd = True
+        while notEnd:
+            #key = App.game()
+            key = ss.handleEvent('proc')
             if key == curses.ERR:
                 continue
-            if chr(key) in ('w', 'a', 's', 'd'):
-                App.snake.go(chr(key))
-            if chr(key) == 'l':
-                App.snake.enlarge(App.snake.snake[0][0], App.snake.snake[0][1])
             notEnd = key != ord('q')
 
     def __init__(self):
