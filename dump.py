@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import csv
+# if not exist(dest_path):
 # sudo mkdir /run/fio/
 # sudo chown user:group /run/fio
 data = dict()
@@ -67,6 +68,32 @@ def add_data(fio, f, i, o, email='', phone='', sex='', date='', snils='', name='
             'date':date,
             }
 
+def proc_file(desc):
+    name = prefix + desc['name']
+    field_f = desc['f']
+    field_i = desc['i']
+    field_o = desc['o']
+    field_fio = desc['fio']
+    field_phone = desc['phone']
+    field_email = desc['email']
+    field_snils = desc['snils']
+    delimiter = desc['delimiter']
+    quotechar = desc['quotechar']
+    with open(name, 'r') as csvfile:
+        reader = csv.reader(csvfile, delimiter=delimiter, quotechar=quotechar)
+        for row in reader:
+            if field_fio:
+                pass #TODO
+            else:
+                fio = (row[field_f] + ' ' + row[field_i] + ' ' + row[field_o]).strip().upper()
+            f = row[field_f].capitalize()
+            i = row[field_i].capitalize()
+            o = row[field_o].capitalize()
+            email = row[field_email]
+            phone = row[field_phone]
+            snils = row[field_snils]
+            add_data(fio, f, i, o, email, phone, snils=snils, name=name)
+    print(name, 'ok')
 
 name = prefix + rpgu
 field_f = 0
