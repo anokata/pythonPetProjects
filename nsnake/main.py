@@ -119,7 +119,7 @@ class Menu():
         self.win = win
 
     def draw(self):
-        x = 1
+        x = self.win.width // 2
         y = 1
         i = 0
         for item in self.items:
@@ -132,7 +132,18 @@ class Menu():
             i += 1
 
     def next(self):
-        pass # TODO
+        pass # TODO use
+        if self.selected == (len(self.items) - 1):
+            self.selected = 0
+        else:
+            self.selected += 1
+
+    def pred(self):
+        if self.selected == 0:
+            self.selected = len(self.items) - 1
+        else:
+            self.selected -= 1
+
 
 class App:
     colors = Colors()
@@ -195,6 +206,7 @@ class App:
         App.proc()
 
     def menu():
+        # TODO move to Menu class
         App.menu.draw()
         App.win.refresh()
         time.sleep(0.1)
@@ -203,7 +215,12 @@ class App:
         if key == curses.ERR:
             return key
         if chr(key) in ('j', 'k', '\n'):
-            pass
+            key_func = { 
+                    'j': App.menu.next,
+                    'k': App.menu.pred,
+                    'j': App.menu.next,
+                    }
+            key_func[key]()
         return key
 
     def game():
