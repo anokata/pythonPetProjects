@@ -1,9 +1,12 @@
+import paths
 import curses
 import time
 import random
+import stateSystem as ss
 # teleports
 # TODO 
 # facade to curses -> makes classes like colors etc
+# start menu: new game(game over, game state) scores(calc it, view) exit.
 
 class Char:
 
@@ -17,7 +20,7 @@ class Colors:
 class BonusFactory:
 
     class Bonus:
-        char = '\u2580'
+        char = '\u25ca'
 
         def __init__(self, x, y, color):
             self.x = x
@@ -32,7 +35,7 @@ class BonusFactory:
     def make(self):
         x = random.randint(1, self.width)
         y = random.randint(1, self.height)
-        return BonusFactory.Bonus(x, y, self.window.colors.cl_bwhite)
+        return BonusFactory.Bonus(x, y, self.window.colors.cl_ngreen)
 
 class Snake:
     char = '\u25CF'
@@ -96,7 +99,6 @@ class Snake:
         self.win.addstr(y, x, self.head, self.snake_color)
 
     def enlarge(self, x, y):
-        pass # TODO
         self.snake.insert(0, (x, y))
 
 class Window():
@@ -105,11 +107,9 @@ class Window():
     colors = Colors()
     messages = None #TODO
 
-    def __init__(self, descriptor):
+    def __init__(self, descriptor, colors):
         self.descriptor = descriptor
-        self.colors.cl_bwhite = curses.color_pair(2) | curses.A_BOLD
-        self.colors.cl_dwhite = curses.color_pair(2) | curses.A_DIM
-        self.colors.cl_nwhite = curses.color_pair(2)
+        self.colors = colors
 
 
 class App:
@@ -122,13 +122,20 @@ class App:
     bonuses = dict()
 
     def init_colors():
-        all_colors = []
+        all_colors = {
+                'red': curses.COLOR_RED,
+                'black': curses.COLOR_BLACK,
+                'green': curses.COLOR_GREEN,
+                }
+
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
         App.colors.cl_bwhite = curses.color_pair(2) | curses.A_BOLD
         App.colors.cl_dwhite = curses.color_pair(2) | curses.A_DIM
         App.colors.cl_nwhite = curses.color_pair(2)
+        App.colors.cl_ngreen = curses.color_pair(3)
 
 
     def main(stdscr):
@@ -137,7 +144,7 @@ class App:
         stdscr.clear()
         curses.curs_set(False)
 
-        App.window = Window(stdscr)
+        App.window = Window(stdscr, App.colors)
         App.win = stdscr
         App.snake = Snake(App.window)
         App.snake.snake_color = curses.color_pair(1) | curses.A_BOLD
