@@ -2,16 +2,32 @@
 import csv
 # sudo mkdir /run/fio/
 # sudo chown user:group /run/fio
-prefix = '/run/fio/'
 data = dict()
 fios = set()
 intersect = 0
 count = 0
+prefix = '/run/fio/'
+prefix = '/home/ksi/Downloads/fio/2017/'
+resultpath = '/run/fio/result_2017.csv'
+#rpgu = 'person-rpgu-20170517u.csv'
+#dobro = 'person-dobrodel-20170517.csv'
+#zdrav = 'person-zdrav-20170518.csv' 
+#obr = 'person-obr_20170517.csv'
+
+rpgu = 'person_rpgu_20160101.csv'
+dobro = 'person_dobrodel_20160101.csv'
+zdrav = 'person_zdrav_20160101.csv' 
+obr = 'person_obr_20160101.csv'
+
+rpgu = 'person_rpgu_20170101.csv'
+dobro = 'person_dobrodel_20170101.csv'
+zdrav = 'person_zdrav_20170101.csv' 
+obr = 'person_obr_20170101.csv'
 
 # Write
 def save():
     print('saving')
-    with open('result.csv', 'w') as csvfile:
+    with open(resultpath, 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter='|',
                                 quotechar='"', quoting=csv.QUOTE_ALL)
         writer.writerow(['FirstName', 'Name', 'LastName', 'Email', 'Date', 'Sex', 'Phone', 'snils'])
@@ -52,7 +68,7 @@ def add_data(fio, f, i, o, email='', phone='', sex='', date='', snils='', name='
             }
 
 
-name = prefix + 'person-rpgu-20170517u.csv'
+name = prefix + rpgu
 field_f = 0
 field_i = 1
 field_o = 2
@@ -73,7 +89,7 @@ with open(name, 'r') as csvfile:
 
 print(name, 'ok')
 
-name = prefix + 'person-dobrodel-20170517.csv'
+name = prefix + dobro
 field_fio = 0
 field_phone = 2
 field_email = 1
@@ -101,7 +117,7 @@ with open(name, 'r') as csvfile:
 
 print(name, 'ok')
 
-name = prefix + 'person-zdrav-20170518.csv' # ok
+name = prefix + zdrav
 field_f = 0
 field_i = 1
 field_o = 2
@@ -126,7 +142,7 @@ with open(name, 'r') as csvfile:
 
 print(name, 'ok')
 
-name = prefix + 'person-obr_20170517.csv'
+name = prefix + obr
 field_i = 'UserNameFirst'
 field_o = 'UserNameMiddle'
 field_f = 'UserNameLast'
