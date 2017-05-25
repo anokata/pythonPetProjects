@@ -111,6 +111,28 @@ class Window():
         self.descriptor = descriptor
         self.colors = colors
 
+class Menu():
+    items = ['new', 'scores', 'help', 'about', 'exit']
+    selected = 0
+
+    def __init__(self, win):
+        self.win = win
+
+    def draw(self):
+        x = 1
+        y = 1
+        i = 0
+        for item in self.items:
+            if i == self.selected:
+                self.win.descriptor.addstr(y, x, item, self.win.colors.cl_bwhite)
+            else:
+                self.win.descriptor.addstr(y, x, item, self.win.colors.cl_dwhite)
+
+            y += 1
+            i += 1
+
+    def next(self):
+        pass # TODO
 
 class App:
     colors = Colors()
@@ -157,7 +179,6 @@ class App:
         App.field = {(x,y):z for x in range(App.width) 
             for y in range(App.height) for z in [Char('.', App.colors.cl_nwhite)]}
 
-        App.draw_field(App.field)
         stdscr.refresh()
 
         App.win.nodelay(True)
@@ -165,13 +186,25 @@ class App:
         ss.addState('run') 
         ss.addState('menu') 
         ss.changeState('run') 
+        ss.changeState('menu') 
         ss.setEventHandler('run', 'proc', App.game)
+        ss.setEventHandler('menu', 'proc', App.menu)
+
+        App.menu = Menu(App.window)
 
         App.proc()
 
-    def handle():
-        pass
-        #ss.
+    def menu():
+        App.menu.draw()
+        App.win.refresh()
+        time.sleep(0.1)
+
+        key = App.win.getch()
+        if key == curses.ERR:
+            return key
+        if chr(key) in ('j', 'k', '\n'):
+            pass
+        return key
 
     def game():
         App.intersect()
