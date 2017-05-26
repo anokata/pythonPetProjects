@@ -12,6 +12,8 @@
     #setChangeHandler('mainRun','tst',lambda: print('mt'))
     #changeState('tst')
     #changeState('mainRun')
+
+    handleEvent('draw')
 """
 # Моя State System.
 # должна быть таблица состояний = состояниеБыло состояние стало = функцияПерехода

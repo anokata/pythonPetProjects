@@ -6,16 +6,12 @@ import stateSystem as ss
 from collections import OrderedDict
 import logging
 import logging.handlers
-#import tempfile
+import os
 
+logfile = 'log.log'
+os.remove(logfile)
 log = logging.getLogger('nsnake.main')
-fh = logging.FileHandler('/tmp/' + __name__ + '.log')
-fh.setLevel(logging.INFO)
-log.addHandler(fh)
-#handler = logging.handlers.SysLogHandler(address = '/dev/log')
-#log.addHandler(handler)
-log.debug("start")
-log.info("start")
+logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
 # teleports
 # TODO 
@@ -224,7 +220,7 @@ class App:
 
         App.menu = Menu(App.window)
         App.menu.add('new', lambda:ss.changeState('run'))
-        App.menu.add('exit', lambda:'q')
+        App.menu.add('exit', lambda:ord('q'))
 
         App.proc()
 
