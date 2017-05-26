@@ -4,6 +4,19 @@ import time
 import random
 import stateSystem as ss
 from collections import OrderedDict
+import logging
+import logging.handlers
+#import tempfile
+
+log = logging.getLogger('nsnake.main')
+fh = logging.FileHandler('/tmp/' + __name__ + '.log')
+fh.setLevel(logging.INFO)
+log.addHandler(fh)
+#handler = logging.handlers.SysLogHandler(address = '/dev/log')
+#log.addHandler(handler)
+log.debug("start")
+log.info("start")
+
 # teleports
 # TODO 
 # facade to curses -> makes classes like colors etc
