@@ -9,7 +9,10 @@ import logging.handlers
 import os
 
 logfile = 'log.log'
-os.remove(logfile)
+try: 
+    os.remove(logfile)
+except:
+    pass
 log = logging.getLogger('nsnake.main')
 logging.basicConfig(filename=logfile, level=logging.DEBUG)
 
@@ -17,6 +20,7 @@ logging.basicConfig(filename=logfile, level=logging.DEBUG)
 # TODO 
 # facade to curses -> makes classes like colors etc
 # start menu: new game(game over, game state) scores(calc it, view) exit.
+# determine window max wh and draw at center
 
 class Char:
 
