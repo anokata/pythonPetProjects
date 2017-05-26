@@ -219,8 +219,8 @@ class App:
         ss.setEventHandler('menu', 'proc', App.menu)
 
         App.menu = Menu(App.window)
-        App.menu.add('new', lambda:ss.changeState('run'))
-        App.menu.add('exit', lambda:ord('q'))
+        App.menu.add('[new]', lambda:ss.changeState('run'))
+        App.menu.add('[exit]', lambda:ord('q'))
 
         App.proc()
 
