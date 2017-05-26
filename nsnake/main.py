@@ -3,6 +3,7 @@ import curses
 import time
 import random
 import stateSystem as ss
+from collections import OrderedDict
 # teleports
 # TODO 
 # facade to curses -> makes classes like colors etc
@@ -112,17 +113,25 @@ class Window():
         self.colors = colors
 
 class Menu():
-    items = ['new', 'scores', 'help', 'about', 'exit']
     selected = 0
+    elements = OrderedDict()
+    items = list()
 
     def __init__(self, win):
         self.win = win
+
+    def add(self, name, func):
+        self.elements[name] = func
+        self.items.append(name)
+
+    def select(self):
+        return list(self.elements.values())[self.selected]()
 
     def draw(self):
         x = self.win.width // 2
         y = 1
         i = 0
-        for item in self.items:
+        for item in self.elements.keys():
             if i == self.selected:
                 self.win.descriptor.addstr(y, x, item, self.win.colors.cl_bwhite)
             else:
@@ -132,15 +141,14 @@ class Menu():
             i += 1
 
     def next(self):
-        pass # TODO use
-        if self.selected == (len(self.items) - 1):
+        if self.selected == (len(self.elements) - 1):
             self.selected = 0
         else:
             self.selected += 1
 
     def pred(self):
         if self.selected == 0:
-            self.selected = len(self.items) - 1
+            self.selected = len(self.elements) - 1
         else:
             self.selected -= 1
 
@@ -202,6 +210,8 @@ class App:
         ss.setEventHandler('menu', 'proc', App.menu)
 
         App.menu = Menu(App.window)
+        App.menu.add('new', lambda:ss.changeState('run'))
+        App.menu.add('exit', lambda:'q')
 
         App.proc()
 
@@ -214,13 +224,15 @@ class App:
         key = App.win.getch()
         if key == curses.ERR:
             return key
-        if chr(key) in ('j', 'k', '\n'):
+        keys = chr(key)
+        if keys in ('j', 'k', '\n'):
             key_func = { 
                     'j': App.menu.next,
                     'k': App.menu.pred,
-                    'j': App.menu.next,
+                    '\n': App.menu.select,
                     }
-            key_func[key]()
+            result = key_func[keys]()
+            return result if result else key
         return key
 
     def game():
