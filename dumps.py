@@ -1,13 +1,14 @@
 import csv
 import pprint
 from collections import OrderedDict 
+#TODO Tests, Gui?
 
 data = dict()
 alldata = dict()
 n = 0
 intersect = 0
-prefix = '/run/fio/'
-resultpath = '/run/fio/result.csv'
+prefix = '/run/fio/' #input
+resultpath = '/run/fio/result.csv' #input
 
 def save(order, **kwargs):
     print('*** saving')
