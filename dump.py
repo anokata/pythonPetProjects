@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+#TODO frequency analyze for delimeters
+#TODO format of fields
 import csv
 # if not exist(dest_path):
 # sudo mkdir /run/fio/
@@ -8,8 +10,8 @@ fios = set()
 intersect = 0
 count = 0
 prefix = '/run/fio/'
-prefix = '/home/ksi/Downloads/fio/2017/'
-resultpath = '/run/fio/result_2017.csv'
+#prefix = '/home/ksi/Downloads/fio/2017/'
+resultpath = '/run/fio/result_201705.csv'
 #rpgu = 'person-rpgu-20170517u.csv'
 #dobro = 'person-dobrodel-20170517.csv'
 #zdrav = 'person-zdrav-20170518.csv' 
@@ -20,10 +22,10 @@ dobro = 'person_dobrodel_20160101.csv'
 zdrav = 'person_zdrav_20160101.csv' 
 obr = 'person_obr_20160101.csv'
 
-rpgu = 'person_rpgu_20170101.csv'
-dobro = 'person_dobrodel_20170101.csv'
-zdrav = 'person_zdrav_20170101.csv' 
-obr = 'person_obr_20170101.csv'
+rpgu = 'userstill20170526.csv'
+dobro = 'person_dobrodel_20170530.csv'
+zdrav = 'person_zdrav_20170530.csv' 
+obr = 'person_obr_20170529.csv'
 
 # Write
 def save():
@@ -31,7 +33,7 @@ def save():
     with open(resultpath, 'w') as csvfile:
         writer = csv.writer(csvfile, delimiter='|',
                                 quotechar='"', quoting=csv.QUOTE_ALL)
-        writer.writerow(['FirstName', 'Name', 'LastName', 'Email', 'Date', 'Sex', 'Phone', 'snils'])
+        writer.writerow(['FirstName', 'Name', 'LastName', 'Email', 'Date', 'Sex', 'Phone', 'snils', 'Inn'])
 
 
         keylist = data.keys()
@@ -46,10 +48,11 @@ def save():
             snils = v.get('snils', '')
             name = v.get('name', '')
             fio = v.get('fio', '')
-            writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, ])
+            inn = v.get('inn', '')
+            writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, inn])
             #writer.writerow([v['f'], v['i'], v['o'], email, date, sex, phone, snils, name])
 
-def add_data(fio, f, i, o, email='', phone='', sex='', date='', snils='', name=''):
+def add_data(fio, f, i, o, email='', phone='', sex='', date='', snils='', name='', inn=''):
     global intersect, data, count
     count += 1
     if fio in data:
@@ -66,6 +69,7 @@ def add_data(fio, f, i, o, email='', phone='', sex='', date='', snils='', name='
             'snils':snils,
             'sex':sex,
             'date':date,
+            'inn':inn,
             }
 
 def proc_file(desc):
@@ -96,12 +100,14 @@ def proc_file(desc):
     print(name, 'ok')
 
 name = prefix + rpgu
-field_f = 0
-field_i = 1
-field_o = 2
-field_phone = 4
-field_email = 5
-field_snils = 3
+field_f = 1
+field_i = 2
+field_o = 3
+field_phone = 6
+field_email = 7
+field_snils = 5
+field_inn = 4
+field_date = 0
 with open(name, 'r') as csvfile:
     reader = csv.reader(csvfile, delimiter=';', quotechar='"')
     for row in reader:
@@ -112,7 +118,9 @@ with open(name, 'r') as csvfile:
         email = row[field_email]
         phone = row[field_phone]
         snils = row[field_snils]
-        add_data(fio, f, i, o, email, phone, snils=snils, name='rpgu')
+        date = row[field_date]
+        inn = row[field_inn]
+        add_data(fio, f, i, o, email, phone, snils=snils, name='rpgu', date=date, inn=inn)
 
 print(name, 'ok')
 
@@ -154,7 +162,7 @@ field_phone = 7
 field_email = 6
 field_snils = 5
 with open(name, 'r') as csvfile:
-    reader = csv.reader(csvfile, delimiter=';', quotechar='"')
+    reader = csv.reader(csvfile, delimiter=',', quotechar='"')
     for row in reader:
         fio = (row[field_f] + ' ' + row[field_i] + ' ' + row[field_o]).strip()
         email = row[field_email]
