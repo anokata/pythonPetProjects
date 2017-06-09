@@ -6,7 +6,6 @@ import csv
 # sudo mkdir /run/fio/
 # sudo chown user:group /run/fio
 data = dict()
-fios = set()
 intersect = 0
 count = 0
 prefix = '/run/fio/'
