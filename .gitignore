@@ -2,6 +2,7 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 walltext.png
+.mypy_cache
 *.py[cod]
 *$py.class
 *.swp
