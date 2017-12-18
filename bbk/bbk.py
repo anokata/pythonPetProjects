@@ -16,4 +16,18 @@ def is_term(s):
 def is_corr(s):
     return False
 
+def subs(let, cs, s):
+    return s
+
+class Symbol:
+    s = ' '
+    def __init__(self, ch):
+        self.s = ch
+    
+    def __str__(self):
+        return self.s
+
+    def __repr__(self):
+        return self.s
+
 
