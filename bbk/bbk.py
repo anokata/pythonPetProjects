@@ -31,3 +31,25 @@ class Symbol:
         return self.s
 
 
+class SymbolsCombination:
+    s = list() 
+    def __init__(self):
+        self.s = list() 
+
+    def __str__(self):
+        return ''.join(map(str, self.s))
+
+    def __repr__(self):
+        return ''.join(map(str, self.s))
+
+    def add(self, sym: Symbol):
+        self.s.append(sym)
+
+if __name__ == "__main__":
+    a=Symbol('a')
+    b=Symbol('b')
+    ab=SymbolsCombination()
+    ab.add(a)
+    ab.add(b)
+    print(a)
+    print(ab)
