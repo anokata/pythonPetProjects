@@ -32,6 +32,7 @@ class FindFunc(ast.NodeVisitor):
     in_func = False
     f_start = None
     f_end = None
+    doc = None
 
     def visit(self, node):
         if isinstance(node, ast.FunctionDef):
@@ -44,6 +45,8 @@ class FindFunc(ast.NodeVisitor):
             #print(l, node, self.last_func.name, self.last_func.lineno)
             self.in_func = True
             self.f_start = self.last_func.lineno
+            # TODO check docstring
+            self.doc = ast.get_docstring(self.last_func)
 
         if l and self.in_func and l > line_number and isinstance(node, ast.FunctionDef):
             #print('end? ', node.lineno - 1)
@@ -69,6 +72,5 @@ line_number = line_num_for_phrase_in_file(teststring, testfile)
 finder = FindFunc()
 finder.visit(tree)
 #print("{} - {}".format(finder.f_start, finder.f_end))
-
 
 print(cut_lines(file_content, finder.f_start, finder.f_end))
