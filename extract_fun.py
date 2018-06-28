@@ -34,6 +34,7 @@ class FindFunc(ast.NodeVisitor):
     f_end = None
     doc = None
     line_number = None
+    error = ""
 
     def __init__(self, line_number):
         self.line_number = line_number
@@ -50,6 +51,7 @@ class FindFunc(ast.NodeVisitor):
             self.doc = ast.get_docstring(self.last_func)
             if not self.doc:
                 print("Line #{} : Missing docstring for function".format(self.last_func.lineno))
+                error = "Line #{} : Missing docstring for function".format(self.last_func.lineno)
 
         if l and self.in_func and l > self.line_number and isinstance(node, ast.FunctionDef):
             self.in_func = False
@@ -73,6 +75,7 @@ class FindClass(ast.NodeVisitor):
     f_end = None
     doc = None
     line_number = None
+    error = ""
 
     def __init__(self, line_number):
         self.line_number = line_number
@@ -126,6 +129,15 @@ check_doc_in_class(testfile, teststring)
 diffile = "./diff"
 
 def process_diff(filename):
+    error_list = []
     diff_content = read_file(filename)
+    for line in diff_content.split("\n"):
+        if line.startswith("@"):
+            print(line)
+        else:
+            pass
 
 process_diff(diffile)
+# если строка удалена?
+# если изменена метод в классе то для класса тоже?
+# 
