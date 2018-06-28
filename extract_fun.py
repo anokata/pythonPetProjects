@@ -1,5 +1,6 @@
 #!/bin/env python
 import ast
+import unidiff
 
 testfile = "./dump.py"
 teststring = "'inn':inn,"
@@ -50,8 +51,8 @@ class FindFunc(ast.NodeVisitor):
             self.f_start = self.last_func.lineno
             self.doc = ast.get_docstring(self.last_func)
             if not self.doc:
-                print("Line #{} : Missing docstring for function".format(self.last_func.lineno))
-                error = "Line #{} : Missing docstring for function".format(self.last_func.lineno)
+                #print("Line #{} : Missing docstring for function".format(self.last_func.lineno))
+                self.error = "Line #{} : Missing docstring for function".format(self.last_func.lineno)
 
         if l and self.in_func and l > self.line_number and isinstance(node, ast.FunctionDef):
             self.in_func = False
@@ -93,7 +94,8 @@ class FindClass(ast.NodeVisitor):
 
             self.doc = ast.get_docstring(self.last_cls)
             if not self.doc:
-                print("Line #{} : Missing docstring for class".format(self.last_cls.lineno))
+                #print("Line #{} : Missing docstring for class".format(self.last_cls.lineno))
+                self.error = "Line #{} : Missing docstring for class".format(self.last_cls.lineno)
 
         if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
             self.in_cls  = False
@@ -112,6 +114,7 @@ def check_doc_in_fun(filename, line):
     finder.visit(tree)
     #print("{} - {}".format(finder.f_start, finder.f_end))
     #print(cut_lines(file_content, finder.f_start, finder.f_end))
+    return finder.error
 
 def check_doc_in_class(filename, line):
     file_content = read_file(filename)
@@ -121,6 +124,7 @@ def check_doc_in_class(filename, line):
     finder.visit(tree)
     #print("{} - {}".format(finder.f_start, finder.f_end))
     #print(cut_lines(file_content, finder.f_start, finder.f_end))
+    return finder.error
 
 
 check_doc_in_fun(testfile, teststring)
@@ -133,9 +137,22 @@ def process_diff(filename):
     diff_content = read_file(filename)
     for line in diff_content.split("\n"):
         if line.startswith("@"):
-            print(line)
+            #print(line)
+            pass
         else:
             pass
+
+    patch = unidiff.PatchSet(diff_content)
+    for file in patch:
+        for hunk in file:
+            for line in hunk:
+                error = check_doc_in_fun(file.path, line.value)
+                error_list.append(error)
+                error = check_doc_in_class(file.path, line.value)
+                error_list.append(error)
+
+    for e in set(error_list):
+        print(e)
 
 process_diff(diffile)
 # если строка удалена?
