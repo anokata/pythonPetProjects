@@ -27,32 +27,37 @@ def get_ast_tree(filename):
     return ast.parse(code_text)
 
 class FindFunc(ast.NodeVisitor):
+    """ doc """
 
     last_func = None
     in_func = False
     f_start = None
     f_end = None
     doc = None
+    line_number = None
+
+    def __init__(self, line_number):
+        self.line_number = line_number
 
     def visit(self, node):
         if isinstance(node, ast.FunctionDef):
             self.last_func = node
 
         l = getattr(node, 'lineno', None)
-        #print(l, node)
         ast.NodeVisitor.visit(self, node)
-        if l == line_number:
-            #print(l, node, self.last_func.name, self.last_func.lineno)
+        if l == self.line_number and not self.in_func:
             self.in_func = True
             self.f_start = self.last_func.lineno
             # TODO check docstring
             self.doc = ast.get_docstring(self.last_func)
+            if self.doc:
+                print("DOC OK")
+            else:
+                print("DOC ERR")
 
-        if l and self.in_func and l > line_number and isinstance(node, ast.FunctionDef):
-            #print('end? ', node.lineno - 1)
+        if l and self.in_func and l > self.line_number and isinstance(node, ast.FunctionDef):
             self.in_func = False
             self.f_end = self.last_func.lineno - 1
-            #print("{} - {}".format(self.f_start, self.f_end))
 
 
 def cut_lines(text, start, end):
@@ -62,15 +67,65 @@ def cut_lines(text, start, end):
             acc = "\n".join([acc, line])
     return acc
 
-#print(tree, tree.body)
-#print(line_number)
 
-file_content = read_file(testfile)
-tree = get_ast_tree(testfile)
-line_number = line_num_for_phrase_in_file(teststring, testfile)
+class FindClass(ast.NodeVisitor):
 
-finder = FindFunc()
-finder.visit(tree)
-#print("{} - {}".format(finder.f_start, finder.f_end))
+    last_cls = None
+    line_cls = None
+    in_cls  = False
+    f_start = None
+    f_end = None
+    doc = None
+    line_number = None
 
-print(cut_lines(file_content, finder.f_start, finder.f_end))
+    def __init__(self, line_number):
+        self.line_number = line_number
+
+    def visit(self, node):
+        if isinstance(node, ast.ClassDef):
+            self.last_cls = node
+
+        l = getattr(node, 'lineno', None)
+        ast.NodeVisitor.visit(self, node)
+        if l == self.line_number and not self.in_cls:
+            self.in_cls  = True
+            self.f_start = self.last_cls.lineno
+            self.line_cls = node
+
+            self.doc = ast.get_docstring(self.last_cls)
+            if self.doc:
+                print("CLASS DOC OK")
+            else:
+                print("CLASS DOC ERR")
+
+        if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
+            self.in_cls  = False
+            self.f_end = self.line_cls.lineno - 1
+
+
+
+testfile = "./extract_fun.py"
+teststring = "self.last_func = node"
+
+def check_doc_in_fun(filename, line):
+    file_content = read_file(filename)
+    tree = get_ast_tree(filename)
+    line_number = line_num_for_phrase_in_file(line, filename)
+    finder = FindFunc(line_number)
+    finder.visit(tree)
+    #print("{} - {}".format(finder.f_start, finder.f_end))
+    #print(cut_lines(file_content, finder.f_start, finder.f_end))
+
+def check_doc_in_class(filename, line):
+    file_content = read_file(filename)
+    tree = get_ast_tree(filename)
+    line_number = line_num_for_phrase_in_file(line, filename)
+    finder = FindClass(line_number)
+    finder.visit(tree)
+    #print("{} - {}".format(finder.f_start, finder.f_end))
+    #print(cut_lines(file_content, finder.f_start, finder.f_end))
+
+
+check_doc_in_fun(testfile, teststring)
+check_doc_in_class(testfile, teststring)
+
