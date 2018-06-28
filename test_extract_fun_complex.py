@@ -9,3 +9,20 @@ def a(x):
     class C():
         pass
     return y
+
+class Isodufu():
+    def salokado(a,c):
+        l = []
+        def inokotu():
+            return 1
+        return l + inokotu()
+
+import pprint
+def classix(a,b,c):
+    """ doc """
+    def clladflja(DFDFF):
+        some = list()
+        if 1 > 1:
+            print(1)
+
+    return clladflja(123123)
