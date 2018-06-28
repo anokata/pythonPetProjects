@@ -27,7 +27,6 @@ def get_ast_tree(filename):
     return ast.parse(code_text)
 
 class FindFunc(ast.NodeVisitor):
-    """ doc """
 
     last_func = None
     in_func = False
@@ -48,12 +47,9 @@ class FindFunc(ast.NodeVisitor):
         if l == self.line_number and not self.in_func:
             self.in_func = True
             self.f_start = self.last_func.lineno
-            # TODO check docstring
             self.doc = ast.get_docstring(self.last_func)
-            if self.doc:
-                print("DOC OK")
-            else:
-                print("DOC ERR")
+            if not self.doc:
+                print("Line #{} : Missing docstring for function".format(self.last_func.lineno))
 
         if l and self.in_func and l > self.line_number and isinstance(node, ast.FunctionDef):
             self.in_func = False
@@ -93,10 +89,8 @@ class FindClass(ast.NodeVisitor):
             self.line_cls = node
 
             self.doc = ast.get_docstring(self.last_cls)
-            if self.doc:
-                print("CLASS DOC OK")
-            else:
-                print("CLASS DOC ERR")
+            if not self.doc:
+                print("Line #{} : Missing docstring for class".format(self.last_cls.lineno))
 
         if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
             self.in_cls  = False
@@ -129,3 +123,9 @@ def check_doc_in_class(filename, line):
 check_doc_in_fun(testfile, teststring)
 check_doc_in_class(testfile, teststring)
 
+diffile = "./diff"
+
+def process_diff(filename):
+    diff_content = read_file(filename)
+
+process_diff(diffile)
