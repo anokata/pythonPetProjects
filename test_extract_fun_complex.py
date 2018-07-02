@@ -1,7 +1,7 @@
 import ast
 
 def a(x):
-    print(x*2)
+    print(x*3)
     y = [x*2 for x in list(str(x))]
     def b(z):
         print("some bizard", 2)
@@ -28,9 +28,11 @@ def classix(a,b,c):
 
     return clladflja(23123)
 
-class Changer2():
+class Changer():
     def method():
-        """ doc """
+        """ Doc """
         print(5)
+    def methoD():
+        print(66)
     def meth2():
         print(123)

@@ -1,19 +1,16 @@
 diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
-index 40c2301..010857e 100644
+index 010857e..a93ca92 100644
 --- a/test_extract_fun_complex.py
 +++ b/test_extract_fun_complex.py
-@@ -7 +7 @@ def a(x):
--        print("some bizard")
-+        print("some bizard", 2)
-@@ -10,0 +11 @@ def a(x):
-+        print(2)
-@@ -28 +29 @@ def classix(a,b,c):
--    return clladflja(123123)
-+    return clladflja(23123)
-@@ -30 +31 @@ def classix(a,b,c):
--class Changer():
-+class Changer2():
-@@ -32 +33,2 @@ class Changer():
--        print(4)
-+        """ doc """
-+        print(5)
+@@ -4 +4 @@ def a(x):
+-    print(x*2)
++    print(x*3)
+@@ -31 +31 @@ def classix(a,b,c):
+-class Changer2():
++class Changer():
+@@ -33 +33 @@ class Changer2():
+-        """ doc """
++        """ Doc """
+@@ -34,0 +35,2 @@ class Changer2():
++    def methoD():
++        print(66)
