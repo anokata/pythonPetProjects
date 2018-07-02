@@ -4,10 +4,11 @@ def a(x):
     print(x*2)
     y = [x*2 for x in list(str(x))]
     def b(z):
-        print("some bizard")
+        print("some bizard", 2)
 
     class C():
         pass
+        print(2)
     return y
 
 class Isodufu():
@@ -25,10 +26,11 @@ def classix(a,b,c):
         if 2 > 1:
             print(3)
 
-    return clladflja(123123)
+    return clladflja(23123)
 
-class Changer():
+class Changer2():
     def method():
-        print(4)
+        """ doc """
+        print(5)
     def meth2():
         print(123)

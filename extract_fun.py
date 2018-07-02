@@ -43,7 +43,7 @@ class FindFunc(ast.NodeVisitor):
         l = getattr(node, 'lineno', None)
         last_func_start = getattr(self.last_func, 'lineno', None)
         ast.NodeVisitor.visit(self, node)
-        if last_func_start and l == self.line_number and not self.in_func:
+        if last_func_start and l == self.line_number and not self.in_func and not isinstance(node, ast.ClassDef):
             self.in_func = True
             self.f_start = self.last_func.lineno
             self.doc = ast.get_docstring(self.last_func)
