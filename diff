@@ -1,58 +1,10 @@
-diff --git a/diff b/diff
-index dd11ba7..e69de29 100644
---- a/diff
-+++ b/diff
-@@ -1,41 +0,0 @@
--diff --git a/diff b/diff
--index 3169631..e69de29 100644
----- a/diff
--+++ b/diff
--@@ -1,29 +0,0 @@
---diff --git a/extract_fun.py b/extract_fun.py
---index 5212426..38bcd39 100755
------ a/extract_fun.py
---+++ b/extract_fun.py
---@@ -30 +29,0 @@ class FindFunc(ast.NodeVisitor):
----    """ doc """
---@@ -51 +49,0 @@ class FindFunc(ast.NodeVisitor):
----            # TODO check docstring
---@@ -53,4 +51,2 @@ class FindFunc(ast.NodeVisitor):
----            if self.doc:
----                print("DOC OK")
----            else:
----                print("DOC ERR")
---+            if not self.doc:
---+                print("Line #{} : Missing docstring for function".format(self.last_func.lineno))
---@@ -96,4 +92,2 @@ class FindClass(ast.NodeVisitor):
----            if self.doc:
----                print("CLASS DOC OK")
----            else:
----                print("CLASS DOC ERR")
---+            if not self.doc:
---+                print("Line #{} : Missing docstring for class".format(self.last_cls.lineno))
---@@ -131,0 +126,6 @@ check_doc_in_class(testfile, teststring)
---+diffile = "./diff"
---+
---+def process_diff(filename):
---+    diff_content = read_file(filename)
---+
---+process_diff(diffile)
--diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
--index 36ace57..e4139bf 100644
----- a/test_extract_fun_complex.py
--+++ b/test_extract_fun_complex.py
--@@ -26 +26 @@ def classix(a,b,c):
---            print(1)
--+            print(2)
 diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
-index e4139bf..cde0a13 100644
+index 83d683d..40c2301 100644
 --- a/test_extract_fun_complex.py
 +++ b/test_extract_fun_complex.py
-@@ -25 +25 @@ def classix(a,b,c):
--        if 1 > 1:
-+        if 2 > 1:
-@@ -28,0 +29,4 @@ def classix(a,b,c):
-+
-+class Changer() h:
-+    def method():
-+        print(4)
+@@ -26 +26 @@ def classix(a,b,c):
+-            print(2)
++            print(3)
+@@ -32,0 +33,2 @@ class Changer():
++    def meth2():
++        print(123)

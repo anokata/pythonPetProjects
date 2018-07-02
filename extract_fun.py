@@ -66,6 +66,8 @@ def cut_lines(text, start, end):
 
 class FindClass(ast.NodeVisitor):
 
+    last_func = None
+    in_func = False
     last_cls = None
     line_cls = None
     in_cls  = False
@@ -79,8 +81,12 @@ class FindClass(ast.NodeVisitor):
         self.line_number = line_number
 
     def visit(self, node):
+        if isinstance(node, ast.FunctionDef):
+            self.last_func = node
         if isinstance(node, ast.ClassDef):
             self.last_cls = node
+        if self.last_func and self.last_func.col_offset == 0:
+            self.last_cls = None
 
         l = getattr(node, 'lineno', None)
         last_class_start = getattr(self.last_cls, 'lineno', None)
@@ -97,7 +103,6 @@ class FindClass(ast.NodeVisitor):
         if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
             self.in_cls  = False
             self.f_end = self.line_cls.lineno - 1
-
 
 
 def check_doc_in_fun(filename, line):

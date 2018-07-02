@@ -23,10 +23,12 @@ def classix(a,b,c):
     def clladflja(DFDFF):
         some = list()
         if 2 > 1:
-            print(2)
+            print(3)
 
     return clladflja(123123)
 
 class Changer():
     def method():
         print(4)
+    def meth2():
+        print(123)
