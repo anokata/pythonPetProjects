@@ -47,7 +47,6 @@ class FindFunc(ast.NodeVisitor):
             self.f_start = self.last_func.lineno
             self.doc = ast.get_docstring(self.last_func)
             if not self.doc:
-                #print("Line #{} : Missing docstring for function".format(self.last_func.lineno))
                 self.error = "Line #{} : Missing docstring for function {}".format(
                         self.last_func.lineno, self.last_func.name)
 
@@ -91,7 +90,6 @@ class FindClass(ast.NodeVisitor):
 
             self.doc = ast.get_docstring(self.last_cls)
             if not self.doc:
-                #print("Line #{} : Missing docstring for class".format(self.last_cls.lineno))
                 self.error = "Line #{} : Missing docstring for class {}".format(self.last_cls.lineno, self.last_cls.name)
 
         if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
@@ -99,11 +97,6 @@ class FindClass(ast.NodeVisitor):
             self.f_end = self.line_cls.lineno - 1
 
 
-
-#testfile = "./extract_fun.py"
-#testfile = "./test_extract_fun_complex.py"
-#teststring = "self.last_func = node"
-diffile = "./diff"
 
 def check_doc_in_fun(filename, line):
     file_content = read_file(filename)
@@ -121,26 +114,23 @@ def check_doc_in_class(filename, line):
     line_number = line_num_for_phrase_in_file(line, filename)
     finder = FindClass(line_number)
     finder.visit(tree)
-    #print("{} - {}".format(finder.f_start, finder.f_end))
-    #print(cut_lines(file_content, finder.f_start, finder.f_end))
     return finder.error
 
 
+#testfile = "./extract_fun.py"
+#testfile = "./test_extract_fun_complex.py"
+#teststring = "self.last_func = node"
 #check_doc_in_fun(testfile, teststring)
 #check_doc_in_class(testfile, teststring)
 
 def process_diff(filename):
     error_list = []
     diff_content = read_file(filename)
-    for line in diff_content.split("\n"):
-        if line.startswith("@"):
-            #print(line)
-            pass
-        else:
-            pass
 
     patch = unidiff.PatchSet(diff_content)
     for file in patch:
+        if not file.path.endswith(".py"):
+            continue
         for hunk in file:
             for line in hunk:
                 error = check_doc_in_fun(file.path, line.value)
@@ -151,7 +141,8 @@ def process_diff(filename):
     for e in set(error_list):
         print(e)
 
+
+diffile = "./diff"
 process_diff(diffile)
 # если строка удалена?
-# если изменена метод в классе то для класса тоже?
-# 
+# если изменен метод в классе то для класса тоже?

@@ -23,6 +23,6 @@ def classix(a,b,c):
     def clladflja(DFDFF):
         some = list()
         if 1 > 1:
-            print(1)
+            print(2)
 
     return clladflja(123123)
