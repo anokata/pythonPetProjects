@@ -2,10 +2,6 @@
 import ast
 import unidiff
 
-testfile = "./dump.py"
-teststring = "'inn':inn,"
-
-
 def read_file(filename):
     with open(filename, 'r') as fin:
         return fin.read()
@@ -52,7 +48,8 @@ class FindFunc(ast.NodeVisitor):
             self.doc = ast.get_docstring(self.last_func)
             if not self.doc:
                 #print("Line #{} : Missing docstring for function".format(self.last_func.lineno))
-                self.error = "Line #{} : Missing docstring for function".format(self.last_func.lineno)
+                self.error = "Line #{} : Missing docstring for function {}".format(
+                        self.last_func.lineno, self.last_func.name)
 
         if l and self.in_func and l > self.line_number and isinstance(node, ast.FunctionDef):
             self.in_func = False
@@ -95,7 +92,7 @@ class FindClass(ast.NodeVisitor):
             self.doc = ast.get_docstring(self.last_cls)
             if not self.doc:
                 #print("Line #{} : Missing docstring for class".format(self.last_cls.lineno))
-                self.error = "Line #{} : Missing docstring for class".format(self.last_cls.lineno)
+                self.error = "Line #{} : Missing docstring for class {}".format(self.last_cls.lineno, self.last_cls.name)
 
         if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
             self.in_cls  = False
@@ -103,8 +100,10 @@ class FindClass(ast.NodeVisitor):
 
 
 
-testfile = "./extract_fun.py"
-teststring = "self.last_func = node"
+#testfile = "./extract_fun.py"
+#testfile = "./test_extract_fun_complex.py"
+#teststring = "self.last_func = node"
+diffile = "./diff"
 
 def check_doc_in_fun(filename, line):
     file_content = read_file(filename)
@@ -127,10 +126,8 @@ def check_doc_in_class(filename, line):
     return finder.error
 
 
-check_doc_in_fun(testfile, teststring)
-check_doc_in_class(testfile, teststring)
-
-diffile = "./diff"
+#check_doc_in_fun(testfile, teststring)
+#check_doc_in_class(testfile, teststring)
 
 def process_diff(filename):
     error_list = []
