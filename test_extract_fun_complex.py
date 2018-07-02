@@ -22,7 +22,11 @@ def classix(a,b,c):
     """ doc """
     def clladflja(DFDFF):
         some = list()
-        if 1 > 1:
+        if 2 > 1:
             print(2)
 
     return clladflja(123123)
+
+class Changer():
+    def method():
+        print(4)
