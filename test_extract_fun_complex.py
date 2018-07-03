@@ -31,7 +31,7 @@ def classix(a,b,c):
 class Changer():
     def method():
         """ Doc """
-        print(5)
+        print(7)
     def methoD():
         print(66)
     def meth2():

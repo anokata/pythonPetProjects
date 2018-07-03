@@ -153,3 +153,4 @@ diffile = "./diff"
 process_diff(diffile)
 # если строка удалена?
 # если изменен метод в классе то для класса тоже?
+# input from stdin

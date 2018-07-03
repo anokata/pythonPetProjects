@@ -1,16 +1,41 @@
+diff --git a/diff b/diff
+index 3185998..e69de29 100644
+--- a/diff
++++ b/diff
+@@ -1,16 +0,0 @@
+-diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
+-index 010857e..a93ca92 100644
+---- a/test_extract_fun_complex.py
+-+++ b/test_extract_fun_complex.py
+-@@ -4 +4 @@ def a(x):
+--    print(x*2)
+-+    print(x*3)
+-@@ -31 +31 @@ def classix(a,b,c):
+--class Changer2():
+-+class Changer():
+-@@ -33 +33 @@ class Changer2():
+--        """ doc """
+-+        """ Doc """
+-@@ -34,0 +35,2 @@ class Changer2():
+-+    def methoD():
+-+        print(66)
+diff --git a/extract_fun.py b/extract_fun.py
+index 45a49ea..1c4e817 100755
+--- a/extract_fun.py
++++ b/extract_fun.py
+@@ -155,0 +156 @@ process_diff(diffile)
++# input from stdin
+diff --git a/test.sh b/test.sh
+index 8a42052..4c32b94 100755
+--- a/test.sh
++++ b/test.sh
+@@ -1 +1 @@
+-git diff -U0 test_extract_fun_complex.py  > diff; python extract_fun.py 
++git diff -U0  > diff; python extract_fun.py 
 diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
-index 010857e..a93ca92 100644
+index a93ca92..2d21c3d 100644
 --- a/test_extract_fun_complex.py
 +++ b/test_extract_fun_complex.py
-@@ -4 +4 @@ def a(x):
--    print(x*2)
-+    print(x*3)
-@@ -31 +31 @@ def classix(a,b,c):
--class Changer2():
-+class Changer():
-@@ -33 +33 @@ class Changer2():
--        """ doc """
-+        """ Doc """
-@@ -34,0 +35,2 @@ class Changer2():
-+    def methoD():
-+        print(66)
+@@ -34 +34 @@ class Changer():
+-        print(5)
++        print(7)
