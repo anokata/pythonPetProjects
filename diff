@@ -1,169 +1,211 @@
 diff --git a/diff b/diff
-index 6f96ffc..e69de29 100644
+index 476bbac..e69de29 100644
 --- a/diff
 +++ b/diff
-@@ -1,41 +0,0 @@
+@@ -1,169 +0,0 @@
 -diff --git a/diff b/diff
--index 3185998..e69de29 100644
+-index 6f96ffc..e69de29 100644
 ---- a/diff
 -+++ b/diff
--@@ -1,16 +0,0 @@
+-@@ -1,41 +0,0 @@
+--diff --git a/diff b/diff
+--index 3185998..e69de29 100644
+----- a/diff
+--+++ b/diff
+--@@ -1,16 +0,0 @@
+---diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
+---index 010857e..a93ca92 100644
+------ a/test_extract_fun_complex.py
+---+++ b/test_extract_fun_complex.py
+---@@ -4 +4 @@ def a(x):
+----    print(x*2)
+---+    print(x*3)
+---@@ -31 +31 @@ def classix(a,b,c):
+----class Changer2():
+---+class Changer():
+---@@ -33 +33 @@ class Changer2():
+----        """ doc """
+---+        """ Doc """
+---@@ -34,0 +35,2 @@ class Changer2():
+---+    def methoD():
+---+        print(66)
+--diff --git a/extract_fun.py b/extract_fun.py
+--index 45a49ea..1c4e817 100755
+----- a/extract_fun.py
+--+++ b/extract_fun.py
+--@@ -155,0 +156 @@ process_diff(diffile)
+--+# input from stdin
+--diff --git a/test.sh b/test.sh
+--index 8a42052..4c32b94 100755
+----- a/test.sh
+--+++ b/test.sh
+--@@ -1 +1 @@
+---git diff -U0 test_extract_fun_complex.py  > diff; python extract_fun.py 
+--+git diff -U0  > diff; python extract_fun.py 
 --diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
---index 010857e..a93ca92 100644
+--index a93ca92..2d21c3d 100644
 ----- a/test_extract_fun_complex.py
 --+++ b/test_extract_fun_complex.py
---@@ -4 +4 @@ def a(x):
----    print(x*2)
---+    print(x*3)
---@@ -31 +31 @@ def classix(a,b,c):
----class Changer2():
---+class Changer():
---@@ -33 +33 @@ class Changer2():
----        """ doc """
---+        """ Doc """
---@@ -34,0 +35,2 @@ class Changer2():
---+    def methoD():
---+        print(66)
+--@@ -34 +34 @@ class Changer():
+---        print(5)
+--+        print(7)
 -diff --git a/extract_fun.py b/extract_fun.py
--index 45a49ea..1c4e817 100755
+-index 1c4e817..ebe4a9d 100755
 ---- a/extract_fun.py
 -+++ b/extract_fun.py
--@@ -155,0 +156 @@ process_diff(diffile)
--+# input from stdin
--diff --git a/test.sh b/test.sh
--index 8a42052..4c32b94 100755
----- a/test.sh
--+++ b/test.sh
--@@ -1 +1 @@
---git diff -U0 test_extract_fun_complex.py  > diff; python extract_fun.py 
--+git diff -U0  > diff; python extract_fun.py 
+-@@ -26,0 +27 @@ class FindFunc(ast.NodeVisitor):
+-+    """ visitor ast tree """
+-@@ -39,0 +41 @@ class FindFunc(ast.NodeVisitor):
+-+        """ visitor method """
+-@@ -41,0 +44,2 @@ class FindFunc(ast.NodeVisitor):
+-+        if isinstance(node, ast.ClassDef):
+-+            self.last_func = None
+-@@ -46,0 +51 @@ class FindFunc(ast.NodeVisitor):
+-+            print(self.line_number, l, self.last_func.name, self.last_func.lineno)
+-@@ -67,0 +73 @@ class FindClass(ast.NodeVisitor):
+-+    """ visitor ast tree """
+-@@ -83,0 +90 @@ class FindClass(ast.NodeVisitor):
+-+        """ visitor method """
+-@@ -101 +108,2 @@ class FindClass(ast.NodeVisitor):
+--                self.error = "Line #{} : Missing docstring for class {}".format(self.last_cls.lineno, self.last_cls.name)
+-+                self.error = "Line #{} : Missing docstring for class {}".format(
+-+                        self.last_cls.lineno, self.last_cls.name)
+-@@ -108,0 +117 @@ def check_doc_in_fun(filename, line):
+-+    """ check docstring presens in function by line sample """
+-@@ -111 +120,2 @@ def check_doc_in_fun(filename, line):
+--    line_number = line_num_for_phrase_in_file(line, filename)
+-+    #line_number = line_num_for_phrase_in_file(line, filename)
+-+    line_number = line
+-@@ -118,0 +129 @@ def check_doc_in_class(filename, line):
+-+    """ check docstring """
+-@@ -121,2 +132,2 @@ def check_doc_in_class(filename, line):
+--    line_number = line_num_for_phrase_in_file(line, filename)
+--    finder = FindClass(line_number)
+-+    #line_number = line_num_for_phrase_in_file(line, filename)
+-+    finder = FindClass(line)
+-@@ -133,0 +145 @@ def process_diff(filename):
+-+    """ test """
+-@@ -143,4 +155,18 @@ def process_diff(filename):
+--                error = check_doc_in_fun(file.path, line.value)
+--                error_list.append(error)
+--                error = check_doc_in_class(file.path, line.value)
+--                error_list.append(error)
+-+                #if line.source_line_no:
+-+                    #error = check_doc_in_fun(file.path, line.source_line_no)
+-+                    #if error:
+-+                        #error_list.append("{}: {}".format(file.path, error))
+-+
+-+                if line.source_line_no:
+-+                    error = check_doc_in_class(file.path, line.source_line_no)
+-+                    #print(file.path, line.source_line_no)
+-+                    if error:
+-+                        error_list.append("{}: {}".format(file.path, error))
+-+
+-+            if hunk.target_start:
+-+                error = check_doc_in_class(file.path, hunk.target_start)
+-+                if error:
+-+                    error_list.append("{}: {}".format(file.path, error))
+-+                error = check_doc_in_fun(file.path, hunk.target_start)
+-+                if error:
+-+                    error_list.append("{}: {}".format(file.path, error))
+-diff --git a/models.py b/models.py
+-index ed7759c..fef5f7b 100644
+---- a/models.py
+-+++ b/models.py
+-@@ -107 +107 @@ AUTO_REQUEST_STATES = (
+--ROOM = u'ROOM'
+-+ROOM = u'rOOM'
+-@@ -156 +155,0 @@ RLDD2_REQUEST_STATES = (
+--    (READY_TO_RECREATE, u'Заявка готова к повторной отправке'),
+-@@ -806,4 +805 @@ class AutoFnsRequestData(models.Model):
+--    """
+--    Запрос в ФНС, выполняемый в фоновом режиме
+--    """
+--    smev3 = models.ForeignKey(Smev3Journal, db_index=True, blank=True, null=True)
+-+    smev3 = models.ForeignKey(Smev3Journal,db_index=True, blank=True, null=True)
+-@@ -873 +869 @@ class AutoEgrpRequestData(models.Model):
+--        return dict(AUTO_REQUEST_STATES).get(self.status, '')
+-+        return dict(AUTO_REQUEST_STATES).get(self.status, 'k')
+-@@ -908,15 +904,11 @@ class RusZdravLicRequestData(models.Model):
+--    """
+--    Результаты запроса регистрации заявки на получение сведений
+--    """
+--    task = models.ForeignKey('licprocesses.Task', null=True, db_index=True)
+--    answer = models.ForeignKey(DataServiceRequest, null=True, db_index=True)
+--    inn = models.CharField(u'ИНН', max_length=12, null=True, blank=True)
+--    ogrn = models.CharField(u'ОГРН', max_length=20, null=True, blank=True)
+--    licno = models.CharField(u'Номер лицензии', max_length=20, null=True, blank=True)
+--
+--
+--class TreasuryServiceRequestData(models.Model):
+--    """
+--    Входные/выходные данные для сервиса Казначейства
+--    """
+--    data_service_request = models.ForeignKey(DataServiceRequest, db_index=True)
+-+    task += models.ForeignKey('licprocesses.Task', null=True, db_index=True)
+-+    answer += models.ForeignKey(DataServiceRequest, null=True, db_index=True)
+-+    inn += models.CharField(u'ИНН', max_length=12, null=True, blank=True)
+-+    ogrn += models.CharField(u'ОГРН', max_length=20, null=True, blank=True)
+-+    def a():
+-+        pass
+-+    licno += models.CharField(u'Номер лицензии', max_length=20, null=True, blank=True)
+-+    #adflasjf
+-+ #sldfjsdkfj
+-+class TreasuryServiceRequestData(models.Model): #asdlfkj
+-+    data_service_request += models.ForeignKey(DataServiceRequest, db_index=True)
+-@@ -1253,6 +1245,5 @@ class PguEvent(models.Model):
+--    def get_event_attempts(self):
+--        return self.event_history.all().order_by('-id')
+--
+--    def check_self_errors(self):
+--        """ Вернёт ошибку, если есть проблемы проверки"""
+--        error = ''
+-+    def get_event_attempts(self): #sdlfj
+-+        return self.event_history.all().order_by('-id') # 123
+-+ # 123
+-+    def check_self_errors(self): # 123
+-+        error = '' # 123
 -diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
--index a93ca92..2d21c3d 100644
+-index 2d21c3d..67d7540 100644
 ---- a/test_extract_fun_complex.py
 -+++ b/test_extract_fun_complex.py
--@@ -34 +34 @@ class Changer():
---        print(5)
--+        print(7)
+-@@ -14,0 +15,2 @@ class Isodufu():
+-+    """ class """
+-+    var = 1
 diff --git a/extract_fun.py b/extract_fun.py
-index 1c4e817..ebe4a9d 100755
+index ebe4a9d..29627c9 100755
 --- a/extract_fun.py
 +++ b/extract_fun.py
-@@ -26,0 +27 @@ class FindFunc(ast.NodeVisitor):
-+    """ visitor ast tree """
-@@ -39,0 +41 @@ class FindFunc(ast.NodeVisitor):
-+        """ visitor method """
-@@ -41,0 +44,2 @@ class FindFunc(ast.NodeVisitor):
-+        if isinstance(node, ast.ClassDef):
-+            self.last_func = None
-@@ -46,0 +51 @@ class FindFunc(ast.NodeVisitor):
-+            print(self.line_number, l, self.last_func.name, self.last_func.lineno)
-@@ -67,0 +73 @@ class FindClass(ast.NodeVisitor):
-+    """ visitor ast tree """
-@@ -83,0 +90 @@ class FindClass(ast.NodeVisitor):
-+        """ visitor method """
-@@ -101 +108,2 @@ class FindClass(ast.NodeVisitor):
--                self.error = "Line #{} : Missing docstring for class {}".format(self.last_cls.lineno, self.last_cls.name)
-+                self.error = "Line #{} : Missing docstring for class {}".format(
-+                        self.last_cls.lineno, self.last_cls.name)
-@@ -108,0 +117 @@ def check_doc_in_fun(filename, line):
-+    """ check docstring presens in function by line sample """
-@@ -111 +120,2 @@ def check_doc_in_fun(filename, line):
--    line_number = line_num_for_phrase_in_file(line, filename)
-+    #line_number = line_num_for_phrase_in_file(line, filename)
-+    line_number = line
-@@ -118,0 +129 @@ def check_doc_in_class(filename, line):
-+    """ check docstring """
-@@ -121,2 +132,2 @@ def check_doc_in_class(filename, line):
--    line_number = line_num_for_phrase_in_file(line, filename)
--    finder = FindClass(line_number)
-+    #line_number = line_num_for_phrase_in_file(line, filename)
-+    finder = FindClass(line)
-@@ -133,0 +145 @@ def process_diff(filename):
-+    """ test """
-@@ -143,4 +155,18 @@ def process_diff(filename):
--                error = check_doc_in_fun(file.path, line.value)
--                error_list.append(error)
--                error = check_doc_in_class(file.path, line.value)
--                error_list.append(error)
-+                #if line.source_line_no:
-+                    #error = check_doc_in_fun(file.path, line.source_line_no)
-+                    #if error:
-+                        #error_list.append("{}: {}".format(file.path, error))
-+
-+                if line.source_line_no:
-+                    error = check_doc_in_class(file.path, line.source_line_no)
-+                    #print(file.path, line.source_line_no)
-+                    if error:
-+                        error_list.append("{}: {}".format(file.path, error))
-+
-+            if hunk.target_start:
-+                error = check_doc_in_class(file.path, hunk.target_start)
-+                if error:
-+                    error_list.append("{}: {}".format(file.path, error))
-+                error = check_doc_in_fun(file.path, hunk.target_start)
-+                if error:
-+                    error_list.append("{}: {}".format(file.path, error))
+@@ -51 +51 @@ class FindFunc(ast.NodeVisitor):
+-            print(self.line_number, l, self.last_func.name, self.last_func.lineno)
++            #print(self.line_number, l, self.last_func.name, self.last_func.lineno)
+@@ -161,4 +161,6 @@ def process_diff(filename):
+-                    error = check_doc_in_class(file.path, line.source_line_no)
+-                    #print(file.path, line.source_line_no)
+-                    if error:
+-                        error_list.append("{}: {}".format(file.path, error))
++                    lines = len(hunk.target)
++                    for i in range(line.source_line_no, line.source_line_no + lines):
++                        #print(i, file.path, line.source_line_no)
++                        error = check_doc_in_class(file.path, i)
++                        if error:
++                            error_list.append("{}: {}".format(file.path, error))
 diff --git a/models.py b/models.py
-index ed7759c..fef5f7b 100644
+index fef5f7b..cdf59a2 100644
 --- a/models.py
 +++ b/models.py
-@@ -107 +107 @@ AUTO_REQUEST_STATES = (
--ROOM = u'ROOM'
-+ROOM = u'rOOM'
-@@ -156 +155,0 @@ RLDD2_REQUEST_STATES = (
--    (READY_TO_RECREATE, u'Заявка готова к повторной отправке'),
-@@ -806,4 +805 @@ class AutoFnsRequestData(models.Model):
--    """
--    Запрос в ФНС, выполняемый в фоновом режиме
--    """
--    smev3 = models.ForeignKey(Smev3Journal, db_index=True, blank=True, null=True)
-+    smev3 = models.ForeignKey(Smev3Journal,db_index=True, blank=True, null=True)
-@@ -873 +869 @@ class AutoEgrpRequestData(models.Model):
--        return dict(AUTO_REQUEST_STATES).get(self.status, '')
-+        return dict(AUTO_REQUEST_STATES).get(self.status, 'k')
-@@ -908,15 +904,11 @@ class RusZdravLicRequestData(models.Model):
--    """
--    Результаты запроса регистрации заявки на получение сведений
--    """
--    task = models.ForeignKey('licprocesses.Task', null=True, db_index=True)
--    answer = models.ForeignKey(DataServiceRequest, null=True, db_index=True)
--    inn = models.CharField(u'ИНН', max_length=12, null=True, blank=True)
--    ogrn = models.CharField(u'ОГРН', max_length=20, null=True, blank=True)
--    licno = models.CharField(u'Номер лицензии', max_length=20, null=True, blank=True)
--
--
--class TreasuryServiceRequestData(models.Model):
--    """
--    Входные/выходные данные для сервиса Казначейства
--    """
--    data_service_request = models.ForeignKey(DataServiceRequest, db_index=True)
-+    task += models.ForeignKey('licprocesses.Task', null=True, db_index=True)
-+    answer += models.ForeignKey(DataServiceRequest, null=True, db_index=True)
-+    inn += models.CharField(u'ИНН', max_length=12, null=True, blank=True)
-+    ogrn += models.CharField(u'ОГРН', max_length=20, null=True, blank=True)
-+    def a():
-+        pass
-+    licno += models.CharField(u'Номер лицензии', max_length=20, null=True, blank=True)
-+    #adflasjf
-+ #sldfjsdkfj
-+class TreasuryServiceRequestData(models.Model): #asdlfkj
-+    data_service_request += models.ForeignKey(DataServiceRequest, db_index=True)
-@@ -1253,6 +1245,5 @@ class PguEvent(models.Model):
--    def get_event_attempts(self):
--        return self.event_history.all().order_by('-id')
--
--    def check_self_errors(self):
--        """ Вернёт ошибку, если есть проблемы проверки"""
--        error = ''
-+    def get_event_attempts(self): #sdlfj
-+        return self.event_history.all().order_by('-id') # 123
-+ # 123
-+    def check_self_errors(self): # 123
-+        error = '' # 123
+@@ -2337 +2337 @@ class UserProfileCryptoVersion(models.Model):
+-        db_table = 'ws_userprofile_cryptoversion'
++        db_table = '_ws_userprofile_cryptoversion'
 diff --git a/test_extract_fun_complex.py b/test_extract_fun_complex.py
-index 2d21c3d..67d7540 100644
+index 67d7540..57a68b4 100644
 --- a/test_extract_fun_complex.py
 +++ b/test_extract_fun_complex.py
-@@ -14,0 +15,2 @@ class Isodufu():
-+    """ class """
-+    var = 1
+@@ -11 +11,4 @@ def a(x):
+-        print(2)
++        def ss():
++            print(0)
++    class B():
++        print(98080808)
+@@ -40,0 +44 @@ class Changer():
++

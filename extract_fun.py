@@ -48,7 +48,7 @@ class FindFunc(ast.NodeVisitor):
         last_func_start = getattr(self.last_func, 'lineno', None)
         ast.NodeVisitor.visit(self, node)
         if last_func_start and l == self.line_number and not self.in_func and not isinstance(node, ast.ClassDef):
-            print(self.line_number, l, self.last_func.name, self.last_func.lineno)
+            #print(self.line_number, l, self.last_func.name, self.last_func.lineno)
             self.in_func = True
             self.f_start = self.last_func.lineno
             self.doc = ast.get_docstring(self.last_func)
@@ -158,10 +158,12 @@ def process_diff(filename):
                         #error_list.append("{}: {}".format(file.path, error))
 
                 if line.source_line_no:
-                    error = check_doc_in_class(file.path, line.source_line_no)
-                    #print(file.path, line.source_line_no)
-                    if error:
-                        error_list.append("{}: {}".format(file.path, error))
+                    lines = len(hunk.target)
+                    for i in range(line.source_line_no, line.source_line_no + lines):
+                        #print(i, file.path, line.source_line_no)
+                        error = check_doc_in_class(file.path, i)
+                        if error:
+                            error_list.append("{}: {}".format(file.path, error))
 
             if hunk.target_start:
                 error = check_doc_in_class(file.path, hunk.target_start)

@@ -2334,7 +2334,7 @@ class UserProfileCryptoVersion(models.Model):
     datetime = models.DateTimeField(u'Время получения данных', null=True)
 
     class Meta:
-        db_table = 'ws_userprofile_cryptoversion'
+        db_table = '_ws_userprofile_cryptoversion'
 
 
 document_accepted_ws.connect(document_accepted_from_vis_guag_gs, sender=None, dispatch_uid='93923635498346876275')

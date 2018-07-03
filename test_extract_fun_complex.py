@@ -8,7 +8,10 @@ def a(x):
 
     class C():
         pass
-        print(2)
+        def ss():
+            print(0)
+    class B():
+        print(98080808)
     return y
 
 class Isodufu():
@@ -38,3 +41,4 @@ class Changer():
         print(66)
     def meth2():
         print(123)
+
