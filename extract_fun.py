@@ -24,6 +24,7 @@ def get_ast_tree(filename):
     return ast.parse(code_text)
 
 class FindFunc(ast.NodeVisitor):
+    """ visitor ast tree """
 
     last_func = None
     in_func = False
@@ -37,13 +38,17 @@ class FindFunc(ast.NodeVisitor):
         self.line_number = line_number
 
     def visit(self, node):
+        """ visitor method """
         if isinstance(node, ast.FunctionDef):
             self.last_func = node
+        if isinstance(node, ast.ClassDef):
+            self.last_func = None
 
         l = getattr(node, 'lineno', None)
         last_func_start = getattr(self.last_func, 'lineno', None)
         ast.NodeVisitor.visit(self, node)
         if last_func_start and l == self.line_number and not self.in_func and not isinstance(node, ast.ClassDef):
+            print(self.line_number, l, self.last_func.name, self.last_func.lineno)
             self.in_func = True
             self.f_start = self.last_func.lineno
             self.doc = ast.get_docstring(self.last_func)
@@ -65,6 +70,7 @@ def cut_lines(text, start, end):
 
 
 class FindClass(ast.NodeVisitor):
+    """ visitor ast tree """
 
     last_func = None
     in_func = False
@@ -81,6 +87,7 @@ class FindClass(ast.NodeVisitor):
         self.line_number = line_number
 
     def visit(self, node):
+        """ visitor method """
         if isinstance(node, ast.FunctionDef):
             self.last_func = node
         if isinstance(node, ast.ClassDef):
@@ -98,7 +105,8 @@ class FindClass(ast.NodeVisitor):
 
             self.doc = ast.get_docstring(self.last_cls)
             if not self.doc:
-                self.error = "Line #{} : Missing docstring for class {}".format(self.last_cls.lineno, self.last_cls.name)
+                self.error = "Line #{} : Missing docstring for class {}".format(
+                        self.last_cls.lineno, self.last_cls.name)
 
         if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
             self.in_cls  = False
@@ -106,9 +114,11 @@ class FindClass(ast.NodeVisitor):
 
 
 def check_doc_in_fun(filename, line):
+    """ check docstring presens in function by line sample """
     file_content = read_file(filename)
     tree = get_ast_tree(filename)
-    line_number = line_num_for_phrase_in_file(line, filename)
+    #line_number = line_num_for_phrase_in_file(line, filename)
+    line_number = line
     finder = FindFunc(line_number)
     finder.visit(tree)
     #print("{} - {}".format(finder.f_start, finder.f_end))
@@ -116,10 +126,11 @@ def check_doc_in_fun(filename, line):
     return finder.error
 
 def check_doc_in_class(filename, line):
+    """ check docstring """
     file_content = read_file(filename)
     tree = get_ast_tree(filename)
-    line_number = line_num_for_phrase_in_file(line, filename)
-    finder = FindClass(line_number)
+    #line_number = line_num_for_phrase_in_file(line, filename)
+    finder = FindClass(line)
     finder.visit(tree)
     return finder.error
 
@@ -131,6 +142,7 @@ def check_doc_in_class(filename, line):
 #check_doc_in_class(testfile, teststring)
 
 def process_diff(filename):
+    """ test """
     error_list = []
     diff_content = read_file(filename)
 
@@ -140,10 +152,24 @@ def process_diff(filename):
             continue
         for hunk in file:
             for line in hunk:
-                error = check_doc_in_fun(file.path, line.value)
-                error_list.append(error)
-                error = check_doc_in_class(file.path, line.value)
-                error_list.append(error)
+                #if line.source_line_no:
+                    #error = check_doc_in_fun(file.path, line.source_line_no)
+                    #if error:
+                        #error_list.append("{}: {}".format(file.path, error))
+
+                if line.source_line_no:
+                    error = check_doc_in_class(file.path, line.source_line_no)
+                    #print(file.path, line.source_line_no)
+                    if error:
+                        error_list.append("{}: {}".format(file.path, error))
+
+            if hunk.target_start:
+                error = check_doc_in_class(file.path, hunk.target_start)
+                if error:
+                    error_list.append("{}: {}".format(file.path, error))
+                error = check_doc_in_fun(file.path, hunk.target_start)
+                if error:
+                    error_list.append("{}: {}".format(file.path, error))
 
     for e in set(error_list):
         print(e)

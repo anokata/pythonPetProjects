@@ -104,7 +104,7 @@ AUTO_REQUEST_STATES = (
     (REJECTED, u'Заявка отклонена'),
 )
 
-ROOM = u'ROOM'
+ROOM = u'rOOM'
 EXTRA = u'EXTRA'
 GROUND = u'GROUND'
 BUILDING = u'BUILDING'
@@ -153,7 +153,6 @@ READY_TO_RECREATE = u'recreate_ready'
 
 RLDD2_REQUEST_STATES = (
     (CREATED, u'Заявка создана, ожидание обработки'),
-    (READY_TO_RECREATE, u'Заявка готова к повторной отправке'),
     (READY_TO_CREATE, u'Заявка готова к созданию'),
     (SIGN_WAIT, u'Результат услуги получен, ожидание ЭЦП'),
     (DOC_WAIT, u'Заявка обработана, ожидание результа услуги'),
@@ -803,10 +802,7 @@ class FnsRequestData(models.Model):
 
 
 class AutoFnsRequestData(models.Model):
-    """
-    Запрос в ФНС, выполняемый в фоновом режиме
-    """
-    smev3 = models.ForeignKey(Smev3Journal, db_index=True, blank=True, null=True)
+    smev3 = models.ForeignKey(Smev3Journal,db_index=True, blank=True, null=True)
     param = models.CharField(u'Параметр запроса', max_length=20, null=True, blank=True)
     param_type = models.CharField(u'Параметр запроса', max_length=100, choices=FNS_PARAM_TYPES, null=True, blank=True)
     type = models.IntegerField(u'Тип запроса', null=True, blank=True)
@@ -870,7 +866,7 @@ class AutoEgrpRequestData(models.Model):
 
     @property
     def request_status_text(self):
-        return dict(AUTO_REQUEST_STATES).get(self.status, '')
+        return dict(AUTO_REQUEST_STATES).get(self.status, 'k')
 
     @property
     def identification_method_text(self):
@@ -905,21 +901,17 @@ class AutoEgrpRequestHistory(models.Model):
 
 
 class RusZdravLicRequestData(models.Model):
-    """
-    Результаты запроса регистрации заявки на получение сведений
-    """
-    task = models.ForeignKey('licprocesses.Task', null=True, db_index=True)
-    answer = models.ForeignKey(DataServiceRequest, null=True, db_index=True)
-    inn = models.CharField(u'ИНН', max_length=12, null=True, blank=True)
-    ogrn = models.CharField(u'ОГРН', max_length=20, null=True, blank=True)
-    licno = models.CharField(u'Номер лицензии', max_length=20, null=True, blank=True)
-
-
-class TreasuryServiceRequestData(models.Model):
-    """
-    Входные/выходные данные для сервиса Казначейства
-    """
-    data_service_request = models.ForeignKey(DataServiceRequest, db_index=True)
+    task += models.ForeignKey('licprocesses.Task', null=True, db_index=True)
+    answer += models.ForeignKey(DataServiceRequest, null=True, db_index=True)
+    inn += models.CharField(u'ИНН', max_length=12, null=True, blank=True)
+    ogrn += models.CharField(u'ОГРН', max_length=20, null=True, blank=True)
+    def a():
+        pass
+    licno += models.CharField(u'Номер лицензии', max_length=20, null=True, blank=True)
+    #adflasjf
+ #sldfjsdkfj
+class TreasuryServiceRequestData(models.Model): #asdlfkj
+    data_service_request += models.ForeignKey(DataServiceRequest, db_index=True)
     """
     L{Ссылка на запрос, для которго предназначены данные.<DataServiceRequest>}
     """
@@ -1250,12 +1242,11 @@ class PguEvent(models.Model):
     additional_info = models.TextField(u'additionally', null=True, blank=True)
 
     @property
-    def get_event_attempts(self):
-        return self.event_history.all().order_by('-id')
-
-    def check_self_errors(self):
-        """ Вернёт ошибку, если есть проблемы проверки"""
-        error = ''
+    def get_event_attempts(self): #sdlfj
+        return self.event_history.all().order_by('-id') # 123
+ # 123
+    def check_self_errors(self): # 123
+        error = '' # 123
         comment = ''
         try:
             # проверяем ретроспекцию Задания

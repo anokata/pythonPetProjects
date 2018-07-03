@@ -12,6 +12,8 @@ def a(x):
     return y
 
 class Isodufu():
+    """ class """
+    var = 1
     def salokado(a,c):
         l = []
         def inokotu():
