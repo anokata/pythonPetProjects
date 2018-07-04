@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/bin/env python3
 import ast
 import unidiff
 import sys
@@ -62,7 +62,7 @@ class FindFunc(ast.NodeVisitor):
             self.doc = ast.get_docstring(self.last_func)
             if not self.doc:
                 #print(node.parent, node.parent.name, node.name)
-                self.error = "Line #{} : Missing docstring for function {}".format(
+                self.error = "{}: Missing docstring for function {}".format(
                         self.last_func.lineno, self.last_func.name)
 
         if l and self.in_func and l > self.line_number and isinstance(node, ast.FunctionDef):
@@ -114,7 +114,7 @@ class FindClass(ast.NodeVisitor):
 
             self.doc = ast.get_docstring(self.last_cls)
             if not self.doc:
-                self.error = "Line #{} : Missing docstring for class {}".format(
+                self.error = "{}: Missing docstring for class {}".format(
                         self.last_cls.lineno, self.last_cls.name)
 
         if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
@@ -126,7 +126,6 @@ def check_doc_in_fun(filename, line):
     """ check docstring presens in function by line sample """
     file_content = read_file(filename)
     tree = get_ast_tree(filename)
-    #line_number = line_num_for_phrase_in_file(line, filename)
     line_number = line
     finder = FindFunc(line_number)
     finder.visit(tree)
@@ -138,7 +137,6 @@ def check_doc_in_class(filename, line):
     """ check docstring """
     file_content = read_file(filename)
     tree = get_ast_tree(filename)
-    #line_number = line_num_for_phrase_in_file(line, filename)
     finder = FindClass(line)
     finder.visit(tree)
     return finder.error
@@ -171,22 +169,22 @@ def process_diff(content):
                         #print(i, file.path, line.source_line_no)
                         error = check_doc_in_class(file.path, i)
                         if error:
-                            error_list.append("{}: {}".format(file.path, error))
+                            error_list.append("{}:{}".format(file.path, error))
 
             if hunk.target_start:
                 error = check_doc_in_class(file.path, hunk.target_start)
                 if error:
-                    error_list.append("{}: {}".format(file.path, error))
+                    error_list.append("{}:{}".format(file.path, error))
                 error = check_doc_in_fun(file.path, hunk.target_start)
                 if error:
-                    error_list.append("{}: {}".format(file.path, error))
+                    error_list.append("{}:{}".format(file.path, error))
 
     for e in set(error_list):
         print(e)
+    exit(len(error_list))
 
 
 #diffile = "./diff"
 #diff_content = read_file(diffile)
 diff_content = sys.stdin.read()
 process_diff(diff_content)
-# input from stdin

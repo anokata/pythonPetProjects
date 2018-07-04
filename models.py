@@ -2333,8 +2333,13 @@ class UserProfileCryptoVersion(models.Model):
     version = models.CharField(u'Версия Криптошлюза', max_length=50, null=True)
     datetime = models.DateTimeField(u'Время получения данных', null=True)
 
+    def test():
+        """ x """
+        pass
+
     class Meta:
-        db_table = '_ws_userprofile_cryptoversion'
+        """ x """
+        db_table = 'ws_userprofile_cryptoversion'
 
 
 document_accepted_ws.connect(document_accepted_from_vis_guag_gs, sender=None, dispatch_uid='93923635498346876275')

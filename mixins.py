@@ -12,9 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class MixinTask(object):
-    """
-    Примесь к заданиям (Task) для отображения дела земельного участка
-    """
 
     @property
     def case_land(self):
@@ -64,11 +61,14 @@ class MixinTask(object):
 
     @staticmethod
     def case_land_result_type_registry():
+        """ x """
         from processes.minstroy.models import CaseLand
+        pass
         return CaseLand
 
     @staticmethod
     def case_land_result_type():
+        """ x """
         from processes.minstroy.models import CaseLand
         return CaseLand
 
