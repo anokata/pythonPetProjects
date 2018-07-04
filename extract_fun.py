@@ -1,6 +1,7 @@
 #!/bin/env python
 import ast
 import unidiff
+import sys
 
 def read_file(filename):
     with open(filename, 'r') as fin:
@@ -15,13 +16,20 @@ def line_num_for_phrase_in_file(phrase, filename):
     return -1
 
 def get_ast_tree(filename):
+    """ Build AST tree for whole file """
     try:
         with open(filename) as fin:
             code_text = fin.read()
     except:
         print("Error reading input file")
         exit()
-    return ast.parse(code_text)
+    tree = ast.parse(code_text)
+
+    #for node in ast.walk(tree):
+        #for child in ast.iter_child_nodes(node):
+            #child.parent = node
+
+    return tree
 
 class FindFunc(ast.NodeVisitor):
     """ visitor ast tree """
@@ -53,6 +61,7 @@ class FindFunc(ast.NodeVisitor):
             self.f_start = self.last_func.lineno
             self.doc = ast.get_docstring(self.last_func)
             if not self.doc:
+                #print(node.parent, node.parent.name, node.name)
                 self.error = "Line #{} : Missing docstring for function {}".format(
                         self.last_func.lineno, self.last_func.name)
 
@@ -141,12 +150,11 @@ def check_doc_in_class(filename, line):
 #check_doc_in_fun(testfile, teststring)
 #check_doc_in_class(testfile, teststring)
 
-def process_diff(filename):
+def process_diff(content):
     """ test """
     error_list = []
-    diff_content = read_file(filename)
 
-    patch = unidiff.PatchSet(diff_content)
+    patch = unidiff.PatchSet(content)
     for file in patch:
         if not file.path.endswith(".py"):
             continue
@@ -177,8 +185,8 @@ def process_diff(filename):
         print(e)
 
 
-diffile = "./diff"
-process_diff(diffile)
-# если строка удалена?
-# если изменен метод в классе то для класса тоже?
+#diffile = "./diff"
+#diff_content = read_file(diffile)
+diff_content = sys.stdin.read()
+process_diff(diff_content)
 # input from stdin
