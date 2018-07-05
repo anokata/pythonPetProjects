@@ -1,4 +1,5 @@
-#!/bin/env python3
+#!/bin/env python2
+# -*- coding: utf-8 -*-
 import ast
 import unidiff
 import sys
@@ -142,17 +143,11 @@ def check_doc_in_class(filename, line):
     return finder.error
 
 
-#testfile = "./extract_fun.py"
-#testfile = "./test_extract_fun_complex.py"
-#teststring = "self.last_func = node"
-#check_doc_in_fun(testfile, teststring)
-#check_doc_in_class(testfile, teststring)
-
 def process_diff(content):
     """ test """
     error_list = []
 
-    patch = unidiff.PatchSet(content)
+    patch = unidiff.PatchSet.from_string(content, encoding='utf-8')
     for file in patch:
         if not file.path.endswith(".py"):
             continue
@@ -184,7 +179,5 @@ def process_diff(content):
     exit(len(error_list))
 
 
-#diffile = "./diff"
-#diff_content = read_file(diffile)
 diff_content = sys.stdin.read()
 process_diff(diff_content)
