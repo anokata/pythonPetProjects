@@ -1,4 +1,4 @@
-#!/bin/env python2
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import ast
 import unidiff
@@ -146,6 +146,7 @@ def check_doc_in_class(filename, line):
 def process_diff(content):
     """ test """
     error_list = []
+    git_root = sys.argv[1]
 
     patch = unidiff.PatchSet.from_string(content, encoding='utf-8')
     for file in patch:
@@ -153,24 +154,18 @@ def process_diff(content):
             continue
         for hunk in file:
             for line in hunk:
-                #if line.source_line_no:
-                    #error = check_doc_in_fun(file.path, line.source_line_no)
-                    #if error:
-                        #error_list.append("{}: {}".format(file.path, error))
-
                 if line.source_line_no:
                     lines = len(hunk.target)
                     for i in range(line.source_line_no, line.source_line_no + lines):
-                        #print(i, file.path, line.source_line_no)
-                        error = check_doc_in_class(file.path, i)
+                        error = check_doc_in_class(git_root + '/' + file.path, i)
                         if error:
                             error_list.append("{}:{}".format(file.path, error))
 
             if hunk.target_start:
-                error = check_doc_in_class(file.path, hunk.target_start)
+                error = check_doc_in_class(git_root + '/' + file.path, hunk.target_start)
                 if error:
                     error_list.append("{}:{}".format(file.path, error))
-                error = check_doc_in_fun(file.path, hunk.target_start)
+                error = check_doc_in_fun(git_root + '/' + file.path, hunk.target_start)
                 if error:
                     error_list.append("{}:{}".format(file.path, error))
 
