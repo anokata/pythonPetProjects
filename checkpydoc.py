@@ -38,7 +38,6 @@ class FindFunc(ast.NodeVisitor):
     last_func = None
     in_func = False
     f_start = None
-    f_end = None
     doc = None
     line_number = None
     error = ""
@@ -68,7 +67,6 @@ class FindFunc(ast.NodeVisitor):
 
         if l and self.in_func and l > self.line_number and isinstance(node, ast.FunctionDef):
             self.in_func = False
-            self.f_end = self.last_func.lineno - 1
 
 
 def cut_lines(text, start, end):
@@ -88,7 +86,6 @@ class FindClass(ast.NodeVisitor):
     line_cls = None
     in_cls  = False
     f_start = None
-    f_end = None
     doc = None
     line_number = None
     error = ""
@@ -114,13 +111,12 @@ class FindClass(ast.NodeVisitor):
             self.line_cls = node
 
             self.doc = ast.get_docstring(self.last_cls)
-            if not self.doc:
+            if not self.doc and self.last_cls.name != "Meta":
                 self.error = "{}: Missing docstring for class {}".format(
                         self.last_cls.lineno, self.last_cls.name)
 
         if l and self.in_cls  and l > self.line_number and self.last_cls != self.line_cls:
             self.in_cls  = False
-            self.f_end = self.line_cls.lineno - 1
 
 
 def check_doc_in_fun(filename, line):
@@ -130,8 +126,6 @@ def check_doc_in_fun(filename, line):
     line_number = line
     finder = FindFunc(line_number)
     finder.visit(tree)
-    #print("{} - {}".format(finder.f_start, finder.f_end))
-    #print(cut_lines(file_content, finder.f_start, finder.f_end))
     return finder.error
 
 def check_doc_in_class(filename, line):
