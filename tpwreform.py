@@ -5,7 +5,7 @@
 
 base = 0
 delta = int(input("enter delta: "))
-k = 0.15
+k = float(input("enter coeff %:" ))/100
 x = [base]
 
 def next(xs):
