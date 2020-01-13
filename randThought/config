@@ -1,0 +1,9 @@
+{
+    "Records": [
+        {
+            "keywords": "cat",
+            "limit": 1,
+            "output_directory": "/home/ksi/ram/"
+        }
+    ]
+}

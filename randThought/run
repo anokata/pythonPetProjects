@@ -1,0 +1,8 @@
+#!/bin/bash
+#googleimagesdownload -cf config
+DIR="/home/ksi/ram/g"
+rm -rf $DIR
+mkdir -p $DIR
+googleimagesdownload --keywords "$1" --limit 1 --output_directory $DIR
+feh -r $DIR
+espeak "$1"
