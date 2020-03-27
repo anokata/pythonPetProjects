@@ -38,7 +38,10 @@ def preczeroformat(a):
 def main(stdscr):
     stdscr.clear()
     curses.curs_set(0)
-    curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.use_default_colors()
+    curses.init_pair(1, curses.COLOR_GREEN, -1)
+    curses.init_pair(2, curses.COLOR_RED, -1)
+    curses.init_pair(3, curses.COLOR_BLUE, -1)
     main_loop(stdscr)
     stdscr.refresh()
 
@@ -66,13 +69,13 @@ def redraw(stdscr):
     stdscr.clear()
     now = datetime.datetime.now()
     stdscr.addstr(0, 0, "(q) - Exit")
-    stdscr.addstr(1, 0, "{}:{}".format(now.hour, preczeroformat(now.minute)))
+    stdscr.addstr(1, 0, "{}".format(get_datetimestr(now)))
     if state.started:
-        stdscr.addstr(2, 0, "started")
+        stdscr.addstr(2, 0, "started: {}".format(get_datetimestr(state.time_started)), curses.color_pair(1))
         delta = state.get_delta()
-        stdscr.addstr(3, 0, "past: {}".format(get_timestr(delta)))
+        stdscr.addstr(3, 0, "past: {}".format(get_timestr(delta)), curses.color_pair(3))
     else:
-        stdscr.addstr(2, 0, "stoped")
+        stdscr.addstr(2, 0, "stoped", curses.color_pair(2))
 
     y = 4
     for r in state.records:
@@ -84,6 +87,8 @@ def redraw(stdscr):
 def get_timestr(d):
     return "{}:{}".format(d.seconds // 60, d.seconds % 60)
 
+def get_datetimestr(d):
+    return "{}:{}:{}".format(d.hour, preczeroformat(d.minute), preczeroformat(d.second))
 
 
 wrapper(main)
