@@ -5,7 +5,7 @@ itsdangerous==0.24
 Jinja2==2.9.6
 MarkupSafe==1.0
 packaging==16.8
-py==1.4.33
+py==1.10.0
 pyparsing==2.2.0
 pytest==3.0.7
 six==1.10.0
